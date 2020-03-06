@@ -9,6 +9,8 @@ let socket;
 const Chat = ({ location }) => {
   const [userName, setName] = useState("");
   const [userRoom, setRoom] = useState("");
+  const [userMessage, setMessage] = useState("");
+  const [messages, setMessages] = useState([]);
 
   const ENDPOINT = process.env.REACT_APP_SOCKET_ENDPOINT;
 
@@ -26,9 +28,33 @@ const Chat = ({ location }) => {
       }
     });
   }, [ENDPOINT, location.search]);
+
+  useEffect(() => {
+    socket.on("message", message => {
+      setMessages([...messages, message]);
+    });
+  }, [messages]);
+
+  const sendMessage = event => {
+    event.preventDefault();
+    console.log(userMessage);
+    if (userMessage) {
+      socket.emit("sendMessage", userMessage, () => setMessage(""));
+    }
+    console.log(userMessage, messages);
+  };
+
   return (
-    <div>
-      <h1>Chat</h1>
+    <div className="outerContainer">
+      <div className="container">
+        <input
+          value={userMessage}
+          onChange={event => setMessage(event.target.value)}
+          onKeyPress={event =>
+            event.key === "Enter" ? sendMessage(event) : null
+          }
+        />
+      </div>
     </div>
   );
 };
