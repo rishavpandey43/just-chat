@@ -4,7 +4,7 @@
   "description": "This is real time chat box, where users can chat with each other in a real time\"",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon index.js",
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
