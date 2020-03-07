@@ -4,6 +4,10 @@ import io from "socket.io-client";
 
 import "./chat.css";
 
+import Messages from "../Messages/Messages";
+import InfoBar from "../InfoBar/InfoBar";
+import Input from "./Input/Input";
+
 let socket;
 
 const Chat = ({ location }) => {
@@ -37,22 +41,21 @@ const Chat = ({ location }) => {
 
   const sendMessage = event => {
     event.preventDefault();
-    console.log(userMessage);
     if (userMessage) {
-      socket.emit("sendMessage", userMessage, () => setMessage(""));
+      socket.emit("sendMessage", userMessage);
+      setMessage("");
     }
-    console.log(userMessage, messages);
   };
 
   return (
     <div className="outerContainer">
       <div className="container">
-        <input
-          value={userMessage}
-          onChange={event => setMessage(event.target.value)}
-          onKeyPress={event =>
-            event.key === "Enter" ? sendMessage(event) : null
-          }
+        <InfoBar room={userRoom} />
+        <Messages messages={messages} name={userName} />
+        <Input
+          message={userMessage}
+          setMessage={setMessage}
+          sendMessage={sendMessage}
         />
       </div>
     </div>
