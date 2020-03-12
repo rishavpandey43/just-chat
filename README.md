@@ -14,9 +14,9 @@
 
 - [Installation](#installation)
 
-<!-- - [Deployment](#deployment) -->
+- [Deployment](#deployment)
 
-<!-- - [Contribution](#contribution) -->
+- [Contribution](#contribution)
 
 - [Authors](#authors)
 
@@ -28,21 +28,27 @@
 
 ## Introduction
 
-This is a simple chat app which is build using
+This is a simple chat app which is build using reactJS, nodeJS, express, mongoDB, socket.io.
+
+In this app, user can chat with it's peer and also chat with multiple peers in a group.
 
 <!-- ## Screenshots -->
 
 ## Features
 
-<!-- List of features ready and TODOs for future development
+- Features
 
-Awesome feature 1
-Awesome feature 2
-Awesome feature 3
-To-do list:
+  - User Registration
+  - Authentication of user using JWT
+  - Creating Groups and Deleting it.
+  - Joining Room
+  - Real Time chatting
 
-Wow improvement to be done 1
-Wow improvement to be done 2 -->
+- To-do list:
+  - Adding friends to profile
+  - Sending invitation to join group
+  - One to One conversation between friends.
+  - Media transfer between conversation
 
 ## Technologies Used
 
@@ -56,6 +62,10 @@ Wow improvement to be done 2 -->
   - socket.io ( ^2.3.0 )
 
 ## Installation
+
+clone the repository
+
+`git clone https://github.com/rishavpandey43/just-chat.git`
 
 - Front-End
 
@@ -85,17 +95,25 @@ Wow improvement to be done 2 -->
 
   `npm start`
 
-<!-- ## Deployment -->
+## Deployment
 
-<!-- ## Contribution
+- Front End Deployment
 
-Please read [CONTRIBUTING.md]() for details on our code of conduct, and the process for submitting pull requests to us. -->
+  Front-end part of application is deployed on Netlify
+
+- Back End Deployment
+
+  Back-end server of application s deployed on Heroku
+
+## Contribution
+
+Please read [CONTRIBUTING.md](docs/CONTRIBUTION.md) for details on our code of conduct, and the process for submitting pull requests to us.
 
 ## Authors
 
 - Rishav Pandey - Initial work - [rishavpandey43](https://github.com/rishavpandey43)
 
-<!-- See also the list of [contributors]() who participated in this project. -->
+See also the list of [contributors](https://github.com/rishavpandey43/just-chat/graphs/contributors) who participated in this project.
 
 <!-- ## Licence
 
