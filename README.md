@@ -69,9 +69,9 @@ clone the repository
 
 - Front-End
 
-  navigate to frontEnd folder
+  navigate to frontend folder
 
-  `cd frontEnd`
+  `cd frontend`
 
   install npm dependencies
 
@@ -83,9 +83,9 @@ clone the repository
 
 - Back-End
 
-  navigate to back-end folder
+  navigate to backend folder
 
-  `cd back-end`
+  `cd backend`
 
   install npm dependencies
 
