@@ -1,5 +1,5 @@
 [build]
-base = "frontEnd/"
+base = "frontend/"
 publish = "build/"
 command = "yarn build"
 [[redirects]]
