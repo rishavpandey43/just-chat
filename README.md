@@ -103,7 +103,7 @@ clone the repository
 
 - Back End Deployment
 
-  Back-end server of application s deployed on Heroku
+  Back-end server of application is deployed on Heroku
 
 ## Contribution
 
