@@ -1,14 +1,22 @@
-import React from "react";
-import { BrowserRouter as Router, Route } from "react-router-dom";
+import { bindActionCreators } from "redux";
+import { connect } from "react-redux";
+import { withRouter } from "react-router-dom";
 
-import Chat from "./components/Chat/Chat";
-import Join from "./components/Join/Join";
+import * as actionCreators from "./redux/actions/actionCreators";
 
-const App = () => (
-  <Router>
-    <Route path="/" exact component={Join} />
-    <Route path="/chat" component={Chat} />
-  </Router>
-);
+import MainApp from "./MainApp";
+
+function mapStateToProps(state) {
+  return {
+    user: state.user,
+    messages: state.messages
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators(actionCreators, dispatch);
+}
+
+const App = withRouter(connect(mapStateToProps, mapDispatchToProps)(MainApp));
 
 export default App;
