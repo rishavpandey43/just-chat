@@ -1,0 +1,13 @@
+.img-container,
+.desc-container {
+  margin-top: 50px;
+}
+
+.get-started-button button {
+  padding: 10px 15px;
+  border-radius: 5px;
+  border: 1px solid #f5871f;
+  background-color: #f5871f;
+  color: #fff;
+  font-size: 1.3em;
+}

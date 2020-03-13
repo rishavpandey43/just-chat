@@ -1,11 +1,18 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
-function Header() {
+import Navbar from "react-bootstrap/Navbar";
+
+const Header = () => {
   return (
-    <div>
-      <h1>Hello, I'm Header Component</h1>
-    </div>
+    <Navbar bg="light" expand="lg">
+      <div className="container">
+        <Navbar.Brand>
+          <Link to="/">Just Chat</Link>
+        </Navbar.Brand>
+      </div>
+    </Navbar>
   );
-}
+};
 
 export default Header;
