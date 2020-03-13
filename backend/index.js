@@ -1,72 +1,41 @@
-const express = require("express");
 const http = require("http");
-const socket = require("socket.io");
-const cors = require("cors");
+const express = require("express");
+const io = require("socket.io");
+const createError = require("http-errors");
+const cookieParser = require("cookie-parser");
+const logger = require("morgan");
+const dotenv = require("dotenv");
 
-const router = require("./routes/router");
-
-const {
-  addUser,
-  removeUser,
-  getUser,
-  getUsersInRoom
-} = require("./helperFunctions/users");
+dotenv.config();
 
 const PORT = process.env.PORT || 5000;
 
 const app = express();
-
 const server = http.createServer(app);
-const io = socket(server);
 
-io.on("connection", socket => {
-  socket.on("join", ({ name, room }, callback) => {
-    const { error, user } = addUser({ id: socket.id, name, room });
-    if (error) {
-      return callback(error);
-    }
-    socket.emit("message", {
-      user: "admin",
-      text: `${user.name}, welcome to the room ${user.room}`
-    });
-    socket.broadcast.to(user.room).emit("message", {
-      user: "admin",
-      text: `${user.name} has joined`
-    });
+app.use(logger("dev"));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
 
-    socket.join(user.room);
-
-    io.to(user.room).emit("roomData", {
-      room: user.room,
-      users: getUsersInRoom(user.room)
-    });
-
-    callback();
-  });
-
-  socket.on("sendMessage", (message, callback) => {
-    const user = getUser(socket.id);
-
-    io.to(user.room).emit("message", { user: user.name, text: message });
-    io.to(user.room).emit("roomData", {
-      room: user.room,
-      users: getUsersInRoom(user.room)
-    });
-  });
-
-  socket.on("disconnect", () => {
-    const user = removeUser(socket.id);
-
-    if (user) {
-      io.to(user.room).emit("message", {
-        user: "admin",
-        text: `${user.name} has left the chat room`
-      });
-    }
-  });
+app.use("/", (req, res) => {
+  res.send("Hello World");
 });
 
-app.use(router);
-app.use(cors());
+// catch 404 and forward to error handler
+app.use(function(req, res, next) {
+  next(createError(404));
+});
+
+// error handler
+app.use(function(err, req, res, next) {
+  // set locals, only providing error in development
+  res.locals.message = err.message;
+  res.locals.error = req.app.get("env") === "development" ? err : {};
+
+  // render the error page
+  res.status(err.status || 500);
+  res.render("error");
+});
 
 server.listen(PORT, () => console.log(`Server has started in port ${PORT}`));

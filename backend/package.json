@@ -1,23 +1,19 @@
 {
-  "name": "lets-gossip",
-  "version": "1.0.0",
-  "description": "This is real time chat box, where users can chat with each other in a real time\"",
-  "main": "index.js",
+  "name": "chat-app-backend",
+  "version": "0.0.0",
+  "private": true,
   "scripts": {
-    "start": "node index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "nodemon index.js"
   },
-  "keywords": [
-    "chat-box",
-    "project",
-    "socket.io"
-  ],
-  "author": "Rishav Pandey",
-  "license": "ISC",
   "dependencies": {
+    "cookie-parser": "~1.4.3",
     "cors": "^2.8.5",
-    "express": "^4.17.1",
-    "http": "0.0.0",
+    "debug": "~2.6.9",
+    "dotenv": "^8.2.0",
+    "express": "~4.16.0",
+    "http-errors": "~1.6.2",
+    "jade": "~1.11.0",
+    "morgan": "~1.9.0",
     "socket.io": "^2.3.0"
   },
   "devDependencies": {
