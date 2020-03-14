@@ -20,7 +20,7 @@
 
 - [Authors](#authors)
 
-<!-- - [Licence](licence) -->
+- [Licence](licence)
 
 - [Acknowledgement](#acknowledgement)
 
@@ -31,6 +31,7 @@
 This is a simple chat app which is build using reactJS, nodeJS, express, mongoDB, socket.io.
 
 In this app, user can chat with it's peer and also chat with multiple peers in a group.
+This application also features user registration, login using JWT authentication.
 
 <!-- ## Screenshots -->
 
@@ -45,6 +46,7 @@ In this app, user can chat with it's peer and also chat with multiple peers in a
   - Real Time chatting
 
 - To-do list:
+  - Email Verification
   - Adding friends to profile
   - Sending invitation to join group
   - One to One conversation between friends.
@@ -54,12 +56,18 @@ In this app, user can chat with it's peer and also chat with multiple peers in a
 
 - Front-End
   - ReactJS ( ^16.13.0 )
-  - socket.io client ( ^2.3.0 )
+  - Redux ( ^4.0.5 )
+  - Redux-Thunk ( ^2.3.0 )
+  - Redux-Logger ( ^3.0.6 )
   - Bootstrap ( ^4.4 )
+  - socket.io client ( ^2.3.0 )
 - Back-End
   - NodeJS ( ^v10.15.2 )
   - Express ( ^4.17.1 )
   - socket.io ( ^2.3.0 )
+  - mongoose (^5.9.4)
+  - Passport (^0.4.1)
+  - jsonwebtoken (^8.5.1)
 
 ## Installation
 
@@ -115,15 +123,15 @@ Please read [CONTRIBUTING.md](docs/CONTRIBUTION.md) for details on our code of c
 
 See also the list of [contributors](https://github.com/rishavpandey43/just-chat/graphs/contributors) who participated in this project.
 
-<!-- ## Licence
+## Licence
 
-This project is licensed under the MIT License - see the [LICENSE.md]() file for details -->
+This project is licensed under the MIT License - see the [LICENSE.md](LICENCE.md) file for details
 
 ## Acknowledgement
 
 - This project is inspired from a [youtube video](https://www.youtube.com/watch?v=ZwFA3YMfkoc)
 
-- It has been further improved with adding user login/sign-up, database connectivity, creating multiple rooms for group chat, creating / joining rooms
+- It's further improved with adding user login/sign-up, database connectivity, creating multiple rooms for group chat, creating / joining rooms
 
 ## Contact
 
