@@ -26,9 +26,13 @@ button:focus {
   margin: 0px auto;
 }
 
-.login-signup-wrapper .btn {
-  background-color: #f5871f;
+.btn,
+.btn:focus,
+.btn:active,
+.btn:hover {
+  background-color: #f5871f !important;
   color: #fff;
   font-size: 1.2em;
-  border: 1px solid #f5871f;
+  border: 1px solid #f5871f !important;
+  box-shadow: none;
 }

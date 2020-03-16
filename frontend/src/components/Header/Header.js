@@ -1,17 +1,24 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-import Navbar from "react-bootstrap/Navbar";
-
-const Header = () => {
+const Header = props => {
   return (
-    <Navbar bg="light" expand="lg">
+    <nav className="navbar navbar-expand-lg navbar-light bg-light">
       <div className="container">
-        <Navbar.Brand>
-          <Link to="/">Just Chat</Link>
-        </Navbar.Brand>
+        <div>
+          <Link to="/">
+            <span className="navbar-brand mb-0 h1">Just Chat</span>
+          </Link>
+        </div>
+        <div>
+          <ul className="navbar-nav mr-auto">
+            <li className="nav-item active">
+              <span>Logout</span>
+            </li>
+          </ul>
+        </div>
       </div>
-    </Navbar>
+    </nav>
   );
 };
 

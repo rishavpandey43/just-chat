@@ -12,6 +12,7 @@ import HomePage from "./components/HomePage/HomePage";
 import Login from "./components/Login/Login";
 import Signup from "./components/Signup/Signup";
 import Profile from "./components/Profile/Profile";
+import ChatBox from "./components/ChatBox/ChatBox";
 
 export default function MainApp(props) {
   return (
@@ -25,6 +26,10 @@ export default function MainApp(props) {
           <Route
             path="/profile/:name"
             component={() => <Profile {...props} />}
+          />
+          <Route
+            path="/chat/:type/:name"
+            component={() => <ChatBox {...props} />}
           />
           <Redirect to="/" />
         </Switch>

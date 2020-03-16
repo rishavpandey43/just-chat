@@ -1,0 +1,8 @@
+.messages-wrapper {
+  padding: 10px 20px;
+}
+
+.message-container {
+  height: calc(100vh - 185px);
+  overflow-y: auto;
+}
