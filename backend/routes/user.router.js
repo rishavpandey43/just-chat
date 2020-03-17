@@ -6,15 +6,30 @@ const User = require("../models/user.model"); // import User Schema
 
 // import authentication files
 const authenticate = require("../auth/authenticate");
-const cors = require("../auth/cors");
+const cors = require("../auth/cors.js");
 
 const userRouter = express.Router(); // initialize express router
 
+// Enabling CORS Pre-Flight
+userRouter.options("*", cors.corsWithOptions, (req, res) => {
+  res.sendStatus(200);
+});
+
 userRouter
-  .get("/", (req, res) => {
-    res.send("Hello World");
+  .get("/list", cors.cors, (req, res) => {
+    User.find({})
+      .then(
+        users => {
+          res.statusCode = 200;
+          res.setHeader("Content-Type", "application/json");
+          res.json(users);
+        },
+        err => next(err)
+      )
+      .catch(err => next(err));
   })
-  .post("/signup", (req, res, next) => {
+  .post("/signup", cors.corsWithOptions, (req, res, next) => {
+    console.log(req.body);
     User.register(
       new User({
         username: req.body.username,
@@ -29,13 +44,19 @@ userRouter
           res.setHeader("Content-Type", "application/json");
           res.json({ err: err });
         } else {
-          passport.authenticate("local")(req, res, () => {
-            res.statusCode = 200;
-            res.setHeader("Content-Type", "application/json");
-            res.json({
-              success: true,
-              status: "Registration Successful!",
-              userFullName: user.firstName + " " + user.lastName
+          if (req.body.firstName) user.firstName = req.body.firstName;
+          if (req.body.lastName) user.lastName = req.body.lastName;
+          user.save((err, user) => {
+            if (err) {
+              res.statusCode = 500;
+              res.setHeader("Content-Type", "application/json");
+              res.json({ err: err });
+              return;
+            }
+            passport.authenticate("local")(req, res, () => {
+              res.statusCode = 200;
+              res.setHeader("Content-Type", "application/json");
+              res.json({ success: true, status: "Registration Successful!" });
             });
           });
         }
@@ -51,7 +72,6 @@ userRouter
       token: token,
       status: "You are successfully logged in!"
     });
-  })
-  .post("/updateDetail", (req, res) => {});
+  });
 
 module.exports = userRouter;
