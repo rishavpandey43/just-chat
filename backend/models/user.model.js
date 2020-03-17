@@ -10,10 +10,16 @@ const userSchema = new Schema(
       required: true,
       unique: true,
       minlength: 4,
-      maxlength: 20
+      maxlength: 50
     },
-    firstName: { type: String },
-    lastName: { type: String }
+    firstName: { type: String, required: true, minlength: 4 },
+    lastName: { type: String, required: true, minlength: 4 },
+    groupList: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Group"
+      }
+    ]
   },
   {
     timestamps: true

@@ -29,7 +29,6 @@ userRouter
       .catch(err => next(err));
   })
   .post("/signup", cors.corsWithOptions, (req, res, next) => {
-    console.log(req.body);
     User.register(
       new User({
         username: req.body.username,
@@ -40,12 +39,28 @@ userRouter
       req.body.password,
       (err, user) => {
         if (err) {
-          res.statusCode = 500;
-          res.setHeader("Content-Type", "application/json");
-          res.json({ err: err });
+          if (err.name == "ValidationError" && err._message) {
+            res.statusCode = 422;
+            res.setHeader("Content-Type", "application/json");
+            res.json(`${err._message}, Please enter valid detail to continue`);
+            return;
+          }
+          if ((err.code = 11000)) {
+            console.log(err);
+            res.statusCode = 409;
+            res.setHeader("Content-Type", "application/json");
+            res.json("Email is already registered");
+            return;
+          } else {
+            res.statusCode = 500;
+            res.setHeader("Content-Type", "application/json");
+            res.json(err);
+            return;
+          }
         } else {
           if (req.body.firstName) user.firstName = req.body.firstName;
           if (req.body.lastName) user.lastName = req.body.lastName;
+          if (req.body.email) user.email = req.body.email;
           user.save((err, user) => {
             if (err) {
               res.statusCode = 500;
