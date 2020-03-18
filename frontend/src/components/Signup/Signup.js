@@ -5,7 +5,6 @@ import { Link } from "react-router-dom";
 import "./signup.css";
 
 import Loading from "../Loading/Loading";
-
 class Signup extends Component {
   constructor(props) {
     super(props);
@@ -18,7 +17,7 @@ class Signup extends Component {
         password: "",
         rePassword: ""
       },
-      loadingIsTrue: true,
+      loadingIsTrue: false,
       responseData: {
         status: "",
         statusCode: null
@@ -48,7 +47,43 @@ class Signup extends Component {
       } else isEmpty = false;
     }
     if (!isEmpty) {
+      // CHECK VALIDATION OF USER DETAILS
       const newUser = JSON.stringify({ ...this.state.userDetail });
+      if (/\s/g.test(this.state.userDetail.username)) {
+        let responseData = {
+          status:
+            "username consist of whitespace, please avoid whitespace to continue.",
+          statusCode: 422
+        };
+        this.setState({
+          loadingIsTrue: false,
+          responseData
+        });
+        return;
+      }
+      if (this.state.userDetail.password != this.state.userDetail.rePassword) {
+        let responseData = {
+          status: "Both password should be same",
+          statusCode: 422
+        };
+        this.setState({
+          loadingIsTrue: false,
+          responseData
+        });
+        return;
+      }
+      if (this.state.userDetail.password.length < 8) {
+        let responseData = {
+          status: "password length should be greater than or equal to 8",
+          statusCode: 422
+        };
+        this.setState({
+          loadingIsTrue: false,
+          responseData
+        });
+        return;
+      }
+
       this.setState({ loadingIsTrue: true });
       axios
         .post(process.env.REACT_APP_API_BASE_URL + "users/signup", newUser, {
@@ -71,12 +106,21 @@ class Signup extends Component {
               rePassword: ""
             }
           });
+          setTimeout(() => {
+            this.props.history.push("/login");
+          }, 500);
         })
         .catch(err => {
           let responseData = {
-            status: err.response.data,
-            statusCode: err.response.status
+            status: "Internal Server Error, please try again.",
+            statusCode: 500
           };
+          if (err.response) {
+            responseData = {
+              status: err.response.data,
+              statusCode: err.response.status
+            };
+          }
           this.setState({
             loadingIsTrue: false,
             responseData

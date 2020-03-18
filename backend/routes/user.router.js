@@ -45,8 +45,13 @@ userRouter
             res.json(`${err._message}, Please enter valid detail to continue`);
             return;
           }
-          if ((err.code = 11000)) {
-            console.log(err);
+          if (err.name === "UserExistsError") {
+            res.statusCode = 409;
+            res.setHeader("Content-Type", "application/json");
+            res.json(err.message);
+            return;
+          }
+          if (err.code == 11000 && err.name === "MongoError") {
             res.statusCode = 409;
             res.setHeader("Content-Type", "application/json");
             res.json("Email is already registered");
