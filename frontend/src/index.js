@@ -5,14 +5,14 @@ import { Provider } from "react-redux";
 
 import store from "./redux/store";
 
-import App from "./App";
+import ReduxApp from "./redux/ReduxApp";
 
-const MainApp = () => (
+const App = () => (
   <Provider store={store}>
     <BrowserRouter>
-      <App />
+      <ReduxApp />
     </BrowserRouter>
   </Provider>
 );
 
-ReactDOM.render(<MainApp />, document.getElementById("root"));
+ReactDOM.render(<App />, document.getElementById("root"));
