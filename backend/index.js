@@ -15,7 +15,7 @@ const userRouter = require("./routes/user.router");
 // configure dotenv to access environment variables
 dotenv.config();
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 6000;
 
 const app = express();
 const server = http.createServer(app);
@@ -44,5 +44,16 @@ app.use(cookieParser());
 app.use(passport.initialize());
 
 app.use("/users", userRouter);
+
+// error handler
+app.use((err, req, res, next) => {
+  res.statusCode = err.status || 500;
+  res.setHeader("Content-Type", "application/json");
+  res.json(
+    err.message && err.status
+      ? { message: err.message }
+      : { message: "Internal Server Error" }
+  );
+});
 
 server.listen(PORT, () => console.log(`Server has started in port ${PORT}`));
