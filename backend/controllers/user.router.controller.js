@@ -1,3 +1,4 @@
+const passport = require("passport");
 const User = require("../models/user.model"); // import User Schema
 
 const getUserListController = (req, res) => {
@@ -25,27 +26,27 @@ const userSignupController = (req, res, next) => {
     (err, user) => {
       if (err) {
         if (err.name == "ValidationError" && err._message) {
-          res.statusCode = 422;
-          res.setHeader("Content-Type", "application/json");
-          res.json(`${err._message}, Please enter valid detail to continue`);
-          return;
+          let error = new Error();
+          error.status = 422;
+          error.message = `${err._message}, Please enter valid detail to continue`;
+          next(error);
         }
         if (err.name === "UserExistsError") {
-          res.statusCode = 409;
-          res.setHeader("Content-Type", "application/json");
-          res.json(err.message);
-          return;
+          let error = new Error();
+          error.status = 409;
+          error.message = err.message;
+          next(error);
         }
         if (err.code == 11000 && err.name === "MongoError") {
-          res.statusCode = 409;
-          res.setHeader("Content-Type", "application/json");
-          res.json("Email is already registered");
-          return;
+          let error = new Error();
+          error.status = 409;
+          error.message = `Email is already registered`;
+          next(error);
         } else {
-          res.statusCode = 500;
-          res.setHeader("Content-Type", "application/json");
-          res.json(err);
-          return;
+          let error = new Error();
+          error.status = 500;
+          error.message = err.message;
+          next(error);
         }
       } else {
         if (req.body.firstName) user.firstName = req.body.firstName;
@@ -53,15 +54,24 @@ const userSignupController = (req, res, next) => {
         if (req.body.email) user.email = req.body.email;
         user.save((err, user) => {
           if (err) {
-            res.statusCode = 500;
-            res.setHeader("Content-Type", "application/json");
-            res.json({ err: err });
-            return;
+            let error = new Error();
+            error.status = 500;
+            error.message = err.message;
+            next(error);
           }
+          // also authenticate the user using local authentication on proper registration
           passport.authenticate("local")(req, res, () => {
             res.statusCode = 200;
             res.setHeader("Content-Type", "application/json");
-            res.json({ success: true, status: "Registration Successful!" });
+            res.json({
+              message: "Registration Successful!",
+              user: {
+                username: user.username,
+                email: user.email,
+                firstName: user.firstName,
+                lastName: user.lastName
+              }
+            });
           });
         });
       }
@@ -70,16 +80,17 @@ const userSignupController = (req, res, next) => {
 };
 
 const userLoginController = (req, res) => {
-  const token = authenticate.getToken({ _id: req.user._id });
+  // const token = authenticate.getToken({ _id: req.user._id });
   res.statusCode = 200;
   res.setHeader("Content-Type", "application/json");
-  res.json({
-    success: true,
-    token: token,
-    status: "You are successfully logged in!"
-  });
+  res.json({ success: true, status: "You are successfully logged in!" });
+};
+
+const userLogoutController = (req, res, next) => {
+  next();
 };
 
 exports.getUserListController = getUserListController;
 exports.userSignupController = userSignupController;
 exports.userLoginController = userLoginController;
+exports.userLogoutController = userLogoutController;

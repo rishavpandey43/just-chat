@@ -1,13 +1,14 @@
 // import required npm modules
-const http = require("http");
 const express = require("express");
 const io = require("socket.io");
 const mongoose = require("mongoose");
-const createError = require("http-errors");
 const cookieParser = require("cookie-parser");
-const logger = require("morgan");
+const session = require("express-session");
+const FileStore = require("session-file-store")(session);
+const { v4: uuidv4 } = require("uuid");
 const dotenv = require("dotenv");
-const passport = require("passport");
+var passport = require("passport");
+var authenticate = require("./utils/authenticate");
 
 // import required routes
 const userRouter = require("./routes/user.router");
@@ -15,10 +16,9 @@ const userRouter = require("./routes/user.router");
 // configure dotenv to access environment variables
 dotenv.config();
 
-const PORT = process.env.PORT || 6000;
+const PORT = process.env.PORT || 5000;
 
 const app = express();
-const server = http.createServer(app);
 
 // connect server to mongoDB Atlas
 const URI = process.env.ATLAS_DB_URI;
@@ -37,11 +37,25 @@ connection.on("error", function(err) {
   console.log("Mongoose default connection error: " + err);
 });
 
-app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
+app.use(cookieParser(process.env.COOKIE_SECRET_KEY));
+app.use(
+  session({
+    name: "SESSION_ID",
+    resave: false,
+    saveUninitialized: false,
+    secret: process.env.SESSION_SECRET,
+    store: new FileStore({ logFn: function() {} })
+    // cookie: {
+    //   maxAge: 24 * 60 * 60 * 1000,
+    //   secure: true
+    // }
+  })
+);
+
 app.use(passport.initialize());
+app.use(passport.session());
 
 app.use("/users", userRouter);
 
@@ -56,4 +70,4 @@ app.use((err, req, res, next) => {
   );
 });
 
-server.listen(PORT, () => console.log(`Server has started in port ${PORT}`));
+app.listen(PORT, () => console.log(`Server listening on port ${PORT}!`));

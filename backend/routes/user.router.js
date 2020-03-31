@@ -2,8 +2,6 @@
 const express = require("express");
 const passport = require("passport");
 
-const User = require("../models/user.model"); // import User Schema
-
 // import authentication files
 const authenticate = require("../utils/authenticate");
 const cors = require("../utils/cors.js");
@@ -33,6 +31,11 @@ userRouter
     cors.corsWithOptions,
     passport.authenticate("local"),
     userRouterController.userLoginController
+  )
+  .get(
+    "/logout",
+    cors.corsWithOptions,
+    userRouterController.userLogoutController
   );
 
 module.exports = userRouter;
