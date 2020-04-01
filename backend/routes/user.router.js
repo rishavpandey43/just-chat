@@ -30,6 +30,12 @@ userRouter
     "/logout",
     cors.corsWithOptions,
     userRouterController.userLogoutController
+  )
+  .get(
+    "/user-detail",
+    cors.corsWithOptions,
+    authenticate.verifyUser,
+    userRouterController.getUserListController
   );
 
 module.exports = userRouter;

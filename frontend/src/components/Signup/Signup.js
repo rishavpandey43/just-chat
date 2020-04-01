@@ -19,8 +19,8 @@ class Signup extends Component {
       },
       loadingIsTrue: false,
       responseData: {
-        status: "",
-        statusCode: null
+        message: "",
+        status: null
       }
     };
   }
@@ -35,8 +35,8 @@ class Signup extends Component {
     e.preventDefault();
     this.setState({
       responseData: {
-        status: "",
-        statusCode: null
+        message: "",
+        status: null
       }
     });
     let isEmpty = true;
@@ -51,9 +51,9 @@ class Signup extends Component {
       const newUser = JSON.stringify({ ...this.state.userDetail });
       if (/\s/g.test(this.state.userDetail.username)) {
         let responseData = {
-          status:
+          message:
             "username consist of whitespace, please avoid whitespace to continue.",
-          statusCode: 422
+          status: 422
         };
         this.setState({
           loadingIsTrue: false,
@@ -61,10 +61,10 @@ class Signup extends Component {
         });
         return;
       }
-      if (this.state.userDetail.password != this.state.userDetail.rePassword) {
+      if (this.state.userDetail.password !== this.state.userDetail.rePassword) {
         let responseData = {
-          status: "Both password should be same",
-          statusCode: 422
+          message: "Both password should be same",
+          status: 422
         };
         this.setState({
           loadingIsTrue: false,
@@ -74,8 +74,8 @@ class Signup extends Component {
       }
       if (this.state.userDetail.password.length < 8) {
         let responseData = {
-          status: "password length should be greater than or equal to 8",
-          statusCode: 422
+          message: "password length should be greater than or equal to 8",
+          status: 422
         };
         this.setState({
           loadingIsTrue: false,
@@ -91,8 +91,8 @@ class Signup extends Component {
         })
         .then(res => {
           let responseData = {
-            status: res.data.status,
-            statusCode: res.status
+            message: res.data.message,
+            status: res.status
           };
           this.setState({
             loadingIsTrue: false,
@@ -108,17 +108,18 @@ class Signup extends Component {
           });
           setTimeout(() => {
             this.props.history.push("/login");
-          }, 500);
+          }, 1000);
         })
         .catch(err => {
           let responseData = {
-            status: "Internal Server Error, please try again.",
-            statusCode: 500
+            message: "Internal Server Error, please try again.",
+            status: 500
           };
+          console.log(err.response);
           if (err.response) {
             responseData = {
-              status: err.response.data,
-              statusCode: err.response.status
+              message: err.response.data.message,
+              status: err.response.status
             };
           }
           this.setState({
@@ -261,14 +262,14 @@ class Signup extends Component {
                     </button>
                     <Loading isTrue={this.state.loadingIsTrue} />
                     <div>
-                      {this.state.responseData.statusCode ? (
-                        this.state.responseData.statusCode === 200 ? (
+                      {this.state.responseData.status ? (
+                        this.state.responseData.status === 200 ? (
                           <span className="text-success">
-                            {this.state.responseData.status}
+                            {this.state.responseData.message}
                           </span>
                         ) : (
                           <span className="text-danger">
-                            {this.state.responseData.status}
+                            {this.state.responseData.message}
                           </span>
                         )
                       ) : (

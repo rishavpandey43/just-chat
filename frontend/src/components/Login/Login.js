@@ -13,7 +13,6 @@ const Login = props => {
   });
 
   const handleInputChange = e => {
-    console.log(e.target.value);
     const value = e.target.value;
     let tempTarget = state.credentials;
     tempTarget[e.target.name] = value;

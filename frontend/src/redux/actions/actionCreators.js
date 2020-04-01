@@ -13,7 +13,8 @@ export const loginRequest = () => {
 export const loginSuccess = response => {
   return {
     type: actionTypes.LOGIN_SUCCESS,
-    message: response.message
+    message: response.message,
+    token: response.token
   };
 };
 
@@ -34,7 +35,7 @@ export const loginFetch = credentials => dispatch => {
     })
     .then(response => {
       dispatch(loginSuccess(response.data));
-      // localStorage.setItem("auth_practice_token", response.data.token);
+      localStorage.setItem("chat_auth_token", response.data.token);
     })
     .catch(err => {
       err.response
@@ -66,30 +67,33 @@ export const logoutSuccess = response => {
 
 export const logoutFailure = response => {
   return {
-    type: actionTypes.LOGOUT_FAILURE
+    type: actionTypes.LOGOUT_FAILURE,
+    message: response.message
   };
 };
 
-export const logoutFetch = credentials => dispatch => {
+export const logoutFetch = () => dispatch => {
   dispatch(logoutRequest());
-
   axios
     .get(baseUrl + "user/logout", {
       headers: { "Content-Type": "application/json" },
       withCredentials: true
     })
     .then(response => {
-      console.log(response);
-      dispatch(logoutSuccess(response.data));
-      // localStorage.setItem("auth_practice_token", response.data.token);
+      localStorage.removeItem("chat_auth_token");
+      if (!localStorage.getItem("chat_auth_token")) {
+        dispatch(logoutSuccess(response.data));
+      } else {
+        dispatch(
+          logoutFailure({
+            message: `Error logging out, please try again.`
+          })
+        );
+      }
     })
     .catch(err => {
       err.response
-        ? dispatch(
-            logoutFailure({
-              message: `${err.response.data}`
-            })
-          )
+        ? dispatch(logoutFailure(err.response.data))
         : dispatch(
             logoutFailure({
               message:

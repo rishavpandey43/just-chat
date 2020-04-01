@@ -1,18 +1,7 @@
 const passport = require("passport");
 const User = require("../models/user.model"); // import User Schema
 
-const getUserListController = (req, res, next) => {
-  User.find({})
-    .then(
-      users => {
-        res.statusCode = 200;
-        res.setHeader("Content-Type", "application/json");
-        res.json(users);
-      },
-      err => next(err)
-    )
-    .catch(err => next(err));
-};
+const authenticate = require("../utils/authenticate");
 
 const userSignupController = (req, res, next) => {
   User.register(
@@ -77,9 +66,11 @@ const userSignupController = (req, res, next) => {
 };
 
 const userLoginController = (req, res, next) => {
+  // on successful authentication, passport save user detail as req.user.
+  const token = authenticate.getToken({ _id: req.user._id });
   res.statusCode = 200;
   res.setHeader("Content-Type", "application/json");
-  res.json({ message: "You are successfully logged in!" });
+  res.json({ message: "You are successfully logged in!", token });
 };
 
 const userLogoutController = (req, res, next) => {
@@ -96,7 +87,20 @@ const userLogoutController = (req, res, next) => {
   }
 };
 
-exports.getUserListController = getUserListController;
+const getUserListController = (req, res, next) => {
+  User.find({})
+    .then(
+      users => {
+        res.statusCode = 200;
+        res.setHeader("Content-Type", "application/json");
+        res.json(users);
+      },
+      err => next(err)
+    )
+    .catch(err => next(err));
+};
+
 exports.userSignupController = userSignupController;
 exports.userLoginController = userLoginController;
 exports.userLogoutController = userLogoutController;
+exports.getUserListController = getUserListController;

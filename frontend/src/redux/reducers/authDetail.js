@@ -6,10 +6,11 @@ import * as actionTypes from "../actions/actionTypes";
 
 const initialState = {
   isLoading: false,
-  isAuthenticated: false,
+  isAuthenticated: localStorage.getItem("chat_auth_token") ? true : false,
   errMessage: null,
   successMessage: null,
-  token: null
+  token: localStorage.getItem("chat_auth_token") || null,
+  user: null
 };
 
 const authDetail = (state = initialState, action) => {
@@ -26,7 +27,8 @@ const authDetail = (state = initialState, action) => {
         isLoading: false,
         isAuthenticated: true,
         errMessage: "",
-        successMessage: action.message
+        successMessage: action.message,
+        token: action.token
       };
     case actionTypes.LOGIN_FAILURE:
       return {
@@ -46,14 +48,14 @@ const authDetail = (state = initialState, action) => {
         isLoading: false,
         isAuthenticated: false,
         errMessage: "",
-        successMessage: action.message
+        successMessage: action.message,
+        token: null
       };
     case actionTypes.LOGOUT_FAILURE:
       return {
         ...state,
         isLoading: false,
-        isAuthenticated: false,
-        errMessage: action.errMessage,
+        errMessage: action.message,
         successMessage: ""
       };
     default:
