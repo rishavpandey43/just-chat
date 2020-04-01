@@ -15,6 +15,8 @@ const JWTSecretKey = process.env.JWT_SECRET_KEY;
 passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
+/* passport-local-mongoose provides authenticate(),serializeUser()
+deserializeUser() method */
 
 exports.getToken = function(user) {
   return jwt.sign(user, JWTSecretKey, { expiresIn: 864000 });

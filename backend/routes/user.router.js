@@ -29,13 +29,20 @@ userRouter
   .get(
     "/logout",
     cors.corsWithOptions,
+    authenticate.verifyUser,
     userRouterController.userLogoutController
   )
   .get(
-    "/user-detail",
+    "/get-username",
     cors.corsWithOptions,
     authenticate.verifyUser,
-    userRouterController.getUserListController
+    userRouterController.getUserNameController
+  )
+  .get(
+    "/get-user-detail",
+    cors.corsWithOptions,
+    authenticate.verifyUser,
+    userRouterController.userDetailController
   );
 
 module.exports = userRouter;

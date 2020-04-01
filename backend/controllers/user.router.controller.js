@@ -79,7 +79,7 @@ const userLogoutController = (req, res, next) => {
     res.clearCookie("SESSION_ID"); // clean up!
     res.statusCode = 200;
     res.setHeader("Content-Type", "application/json");
-    res.json({ success: true, status: "You are successfully logged out!" });
+    res.json({ message: "You are successfully logged out!" });
   } else {
     var err = new Error("You are not logged in!");
     err.status = 403;
@@ -88,15 +88,40 @@ const userLogoutController = (req, res, next) => {
 };
 
 const getUserListController = (req, res, next) => {
-  User.find({})
-    .then(
-      users => {
+  // User.find({})
+  //   .then(
+  //     users => {
+  //       res.statusCode = 200;
+  //       res.setHeader("Content-Type", "application/json");
+  //       res.json(users);
+  //     },
+  //     err => next(err)
+  //   )
+  //   .catch(err => next(err));
+};
+
+const getUserNameController = (req, res, next) => {
+  res.statusCode = 200;
+  res.setHeader("Content-Type", "application/json");
+  res.json({ username: req.user.username });
+};
+
+const userDetailController = (req, res, next) => {
+  User.findOne({ username: req.query.username })
+    .then(user => {
+      if (!user) {
+        // res.statusCode = 200;
+        // res.setHeader("Content-Type", "application/json");
+        // res.json({ message: `${req.query.username} doesn't exit` });
+        var err = new Error(`${req.query.username} doesn't exit`);
+        err.status = 404;
+        next(err);
+      } else {
         res.statusCode = 200;
         res.setHeader("Content-Type", "application/json");
-        res.json(users);
-      },
-      err => next(err)
-    )
+        res.json({ user: user });
+      }
+    })
     .catch(err => next(err));
 };
 
@@ -104,3 +129,5 @@ exports.userSignupController = userSignupController;
 exports.userLoginController = userLoginController;
 exports.userLogoutController = userLogoutController;
 exports.getUserListController = getUserListController;
+exports.getUserNameController = getUserNameController;
+exports.userDetailController = userDetailController;
