@@ -1,19 +1,18 @@
 const cors = require("cors");
 
-const whitelist = [
+const whiteList = [
   "http://localhost:3000",
   "https://localhost:3443",
   "http://localhost:3001"
 ];
-var corsOptionsDelegate = (req, callback) => {
-  var corsOptions;
-  if (whitelist.indexOf(req.header("Origin")) !== -1) {
-    corsOptions = { origin: true };
-  } else {
-    corsOptions = { origin: false };
-  }
+
+const corsOptionDelegate = (req, callback) => {
+  let corsOptions;
+  if (whiteList.indexOf(req.header("Origin")) !== -1) {
+    corsOptions = { origin: true, credentials: true };
+  } else corsOptions = { origin: false, credentials: false };
   callback(null, corsOptions);
 };
 
 exports.cors = cors();
-exports.corsWithOptions = cors(corsOptionsDelegate);
+exports.corsWithOptions = cors(corsOptionDelegate);

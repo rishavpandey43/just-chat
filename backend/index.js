@@ -1,11 +1,11 @@
 // import required npm modules
 const express = require("express");
 const io = require("socket.io");
+const morgan = require("morgan");
 const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
 const FileStore = require("session-file-store")(session);
-const { v4: uuidv4 } = require("uuid");
 const dotenv = require("dotenv");
 var passport = require("passport");
 var authenticate = require("./utils/authenticate");
@@ -39,6 +39,7 @@ connection.on("error", function(err) {
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(morgan("tiny"));
 app.use(cookieParser(process.env.COOKIE_SECRET_KEY));
 app.use(
   session({
@@ -46,22 +47,21 @@ app.use(
     resave: false,
     saveUninitialized: false,
     secret: process.env.SESSION_SECRET,
-    store: new FileStore({ logFn: function() {} })
-    // cookie: {
-    //   maxAge: 24 * 60 * 60 * 1000,
-    //   secure: true
-    // }
+    store: new FileStore({
+      logFn: function() {}
+    }) /* { logFn: function() {} } */
   })
 );
 
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use("/users", userRouter);
+app.use("/user", userRouter);
 
 // error handler
 app.use((err, req, res, next) => {
   res.statusCode = err.status || 500;
+  console.log(err);
   res.setHeader("Content-Type", "application/json");
   res.json(
     err.message && err.status

@@ -1,15 +1,28 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
+import Loading from "../Loading/Loading";
+
 import "./login.css";
 const Login = props => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [state, setState] = useState({
+    credentials: {
+      username: "",
+      password: ""
+    }
+  });
+
+  const handleInputChange = e => {
+    console.log(e.target.value);
+    const value = e.target.value;
+    let tempTarget = state.credentials;
+    tempTarget[e.target.name] = value;
+    setState({ ...state, credentials: tempTarget });
+  };
 
   const handleSubmit = e => {
     e.preventDefault();
-    const credential = { email, password };
-    props.login(credential);
+    props.loginFetch(state.credentials);
   };
 
   return (
@@ -24,14 +37,15 @@ const Login = props => {
               <div className="card-body">
                 <form onSubmit={handleSubmit}>
                   <div className="form-group">
-                    <label>Email</label>
+                    <label>Username</label>
                     <input
-                      type="email"
+                      type="username"
                       className="form-control"
                       placeholder="johndoe@demo.com"
                       required
-                      value={email}
-                      onChange={e => setEmail(e.target.value)}
+                      name="username"
+                      value={state.credentials.username}
+                      onChange={handleInputChange}
                     />
                   </div>
                   <div className="form-group">
@@ -40,8 +54,9 @@ const Login = props => {
                       type="password"
                       className="form-control"
                       required
-                      value={password}
-                      onChange={e => setPassword(e.target.value)}
+                      name="password"
+                      value={state.credentials.password}
+                      onChange={handleInputChange}
                     />
                   </div>
                   <div className="form-group form-check">
@@ -59,6 +74,7 @@ const Login = props => {
                   <button type="submit" className="btn btn-primary">
                     Login
                   </button>
+                  <Loading isTrue={props.authDetail.isLoading} />
                 </form>
               </div>
             </div>

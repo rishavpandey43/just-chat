@@ -1,7 +1,7 @@
 const passport = require("passport");
 const User = require("../models/user.model"); // import User Schema
 
-const getUserListController = (req, res) => {
+const getUserListController = (req, res, next) => {
   User.find({})
     .then(
       users => {
@@ -26,26 +26,24 @@ const userSignupController = (req, res, next) => {
     (err, user) => {
       if (err) {
         if (err.name == "ValidationError" && err._message) {
-          let error = new Error();
+          let error = new Error(
+            `${err._message}, Please enter valid detail to continue`
+          );
           error.status = 422;
-          error.message = `${err._message}, Please enter valid detail to continue`;
           next(error);
         }
         if (err.name === "UserExistsError") {
-          let error = new Error();
+          let error = new Error(err.message);
           error.status = 409;
-          error.message = err.message;
           next(error);
         }
         if (err.code == 11000 && err.name === "MongoError") {
-          let error = new Error();
+          let error = new Error(`Email is already registered`);
           error.status = 409;
-          error.message = `Email is already registered`;
           next(error);
         } else {
-          let error = new Error();
+          let error = new Error(err.message);
           error.status = 500;
-          error.message = err.message;
           next(error);
         }
       } else {
@@ -54,9 +52,8 @@ const userSignupController = (req, res, next) => {
         if (req.body.email) user.email = req.body.email;
         user.save((err, user) => {
           if (err) {
-            let error = new Error();
+            let error = new Error(err.message);
             error.status = 500;
-            error.message = err.message;
             next(error);
           }
           // also authenticate the user using local authentication on proper registration
@@ -79,15 +76,24 @@ const userSignupController = (req, res, next) => {
   );
 };
 
-const userLoginController = (req, res) => {
-  // const token = authenticate.getToken({ _id: req.user._id });
+const userLoginController = (req, res, next) => {
   res.statusCode = 200;
   res.setHeader("Content-Type", "application/json");
-  res.json({ success: true, status: "You are successfully logged in!" });
+  res.json({ message: "You are successfully logged in!" });
 };
 
 const userLogoutController = (req, res, next) => {
-  next();
+  if (req.user) {
+    req.session.destroy();
+    res.clearCookie("SESSION_ID"); // clean up!
+    res.statusCode = 200;
+    res.setHeader("Content-Type", "application/json");
+    res.json({ success: true, status: "You are successfully logged out!" });
+  } else {
+    var err = new Error("You are not logged in!");
+    err.status = 403;
+    next(err);
+  }
 };
 
 exports.getUserListController = getUserListController;

@@ -12,9 +12,15 @@ const Header = props => {
         </div>
         <div>
           <ul className="navbar-nav mr-auto">
-            <li className="nav-item active">
-              <span>Logout</span>
-            </li>
+            {props.authDetail.isAuthenticated ? (
+              <li className="nav-item active">
+                <span onClick={props.logoutFetch} className="btn">
+                  Logout
+                </span>
+              </li>
+            ) : (
+              ""
+            )}
           </ul>
         </div>
       </div>

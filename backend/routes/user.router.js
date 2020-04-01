@@ -11,16 +11,10 @@ const userRouterController = require("../controllers/user.router.controller");
 const userRouter = express.Router(); // initialize express router
 
 // Enabling CORS Pre-Flight
-userRouter.options("*", cors.corsWithOptions, (req, res) => {
-  res.sendStatus(200);
-});
-
 userRouter
-  // .get(
-  //   "/list",
-  //   cors.corsWithOptions,
-  //   userRouterController.getUserListController
-  // )
+  .options("*", cors.corsWithOptions, (req, res) => {
+    res.sendStatus(200);
+  })
   .post(
     "/signup",
     cors.corsWithOptions,

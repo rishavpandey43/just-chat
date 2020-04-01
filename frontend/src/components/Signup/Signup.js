@@ -86,7 +86,7 @@ class Signup extends Component {
 
       this.setState({ loadingIsTrue: true });
       axios
-        .post(process.env.REACT_APP_API_BASE_URL + "users/signup", newUser, {
+        .post(process.env.REACT_APP_API_BASE_URL + "user/signup", newUser, {
           headers: { "Content-Type": "application/json" }
         })
         .then(res => {

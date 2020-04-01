@@ -2,43 +2,53 @@ import * as actionTypes from "./actionTypes";
 
 import axios from "axios";
 
-export const loginRequest = credentials => {
+const baseUrl = process.env.REACT_APP_API_BASE_URL;
+
+export const loginRequest = () => {
   return {
-    type: actionTypes.LOGIN_REQUEST,
-    credentials
+    type: actionTypes.LOGIN_REQUEST
   };
 };
 
 export const loginSuccess = response => {
   return {
     type: actionTypes.LOGIN_SUCCESS,
-    token: response.token
+    message: response.message
   };
 };
 
 export const loginFailure = response => {
   return {
     type: actionTypes.LOGIN_FAILURE,
-    token: response.token
+    message: response.message
   };
 };
 
-export const login = credentials => dispatch => {
-  dispatch(loginRequest(credentials));
+export const loginFetch = credentials => dispatch => {
+  dispatch(loginRequest());
 
   axios
-    .post(
-      process.env.REACT_APP_API_BASE_URL + "users/login",
-      JSON.stringify(credentials),
-      {
-        headers: { "Content-Type": "application/json" }
-      }
-    )
+    .post(baseUrl + "user/login", JSON.stringify(credentials), {
+      headers: { "Content-Type": "application/json" },
+      withCredentials: true
+    })
     .then(response => {
-      console.log(response);
+      dispatch(loginSuccess(response.data));
+      // localStorage.setItem("auth_practice_token", response.data.token);
     })
     .catch(err => {
-      console.log(err.response);
+      err.response
+        ? dispatch(
+            loginFailure({
+              message: `${err.response.data}, please enter correct detail to continue`
+            })
+          )
+        : dispatch(
+            loginFailure({
+              message:
+                "Network Error, Connection to server couldn't be established. Please try again."
+            })
+          );
     });
 };
 
@@ -48,14 +58,43 @@ export const logoutRequest = () => {
   };
 };
 
-export const logoutSuccess = () => {
+export const logoutSuccess = response => {
   return {
     type: actionTypes.LOGOUT_SUCCESS
   };
 };
 
-export const logoutFailure = () => {
+export const logoutFailure = response => {
   return {
     type: actionTypes.LOGOUT_FAILURE
   };
+};
+
+export const logoutFetch = credentials => dispatch => {
+  dispatch(logoutRequest());
+
+  axios
+    .get(baseUrl + "user/logout", {
+      headers: { "Content-Type": "application/json" },
+      withCredentials: true
+    })
+    .then(response => {
+      console.log(response);
+      dispatch(logoutSuccess(response.data));
+      // localStorage.setItem("auth_practice_token", response.data.token);
+    })
+    .catch(err => {
+      err.response
+        ? dispatch(
+            logoutFailure({
+              message: `${err.response.data}`
+            })
+          )
+        : dispatch(
+            logoutFailure({
+              message:
+                "Network Error, Connection to server couldn't be established. Please try again."
+            })
+          );
+    });
 };

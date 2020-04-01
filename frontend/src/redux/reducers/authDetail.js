@@ -6,12 +6,10 @@ import * as actionTypes from "../actions/actionTypes";
 
 const initialState = {
   isLoading: false,
-  isAuthenticated: localStorage.getItem("chat_app_token") ? true : false,
-  token: localStorage.getItem("chat_app_token"),
-  user: localStorage.getItem("chat_app_credentials")
-    ? JSON.parse(localStorage.getItem("chat_app_credentials"))
-    : null,
-  errMessage: null
+  isAuthenticated: false,
+  errMessage: null,
+  successMessage: null,
+  token: null
 };
 
 const authDetail = (state = initialState, action) => {
@@ -20,8 +18,7 @@ const authDetail = (state = initialState, action) => {
       return {
         ...state,
         isLoading: true,
-        isAuthenticated: false,
-        user: action.credentials
+        isAuthenticated: false
       };
     case actionTypes.LOGIN_SUCCESS:
       return {
@@ -29,7 +26,7 @@ const authDetail = (state = initialState, action) => {
         isLoading: false,
         isAuthenticated: true,
         errMessage: "",
-        token: action.token
+        successMessage: action.message
       };
     case actionTypes.LOGIN_FAILURE:
       return {
@@ -37,6 +34,27 @@ const authDetail = (state = initialState, action) => {
         isLoading: false,
         isAuthenticated: false,
         errMessage: action.message
+      };
+    case actionTypes.LOGOUT_REQUEST:
+      return {
+        ...state,
+        isLoading: true
+      };
+    case actionTypes.LOGOUT_SUCCESS:
+      return {
+        ...state,
+        isLoading: false,
+        isAuthenticated: false,
+        errMessage: "",
+        successMessage: action.message
+      };
+    case actionTypes.LOGOUT_FAILURE:
+      return {
+        ...state,
+        isLoading: false,
+        isAuthenticated: false,
+        errMessage: action.errMessage,
+        successMessage: ""
       };
     default:
       return state;
