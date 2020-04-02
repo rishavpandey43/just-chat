@@ -14,7 +14,8 @@ export const loginSuccess = response => {
   return {
     type: actionTypes.LOGIN_SUCCESS,
     message: response.message,
-    token: response.token
+    token: response.token,
+    userId: response.userId
   };
 };
 
@@ -36,12 +37,13 @@ export const loginFetch = credentials => dispatch => {
     .then(response => {
       dispatch(loginSuccess(response.data));
       localStorage.setItem("chat_auth_token", response.data.token);
+      localStorage.setItem("chat_auth_userId", response.data.userId);
     })
-    .catch(err => {
-      err.response
+    .catch(error => {
+      error.response
         ? dispatch(
             loginFailure({
-              message: `${err.response.data}, please enter correct detail to continue`
+              message: `${error.response.data}, please enter correct detail to continue`
             })
           )
         : dispatch(
@@ -61,7 +63,8 @@ export const logoutRequest = () => {
 
 export const logoutSuccess = response => {
   return {
-    type: actionTypes.LOGOUT_SUCCESS
+    type: actionTypes.LOGOUT_SUCCESS,
+    message: response.message
   };
 };
 
@@ -76,7 +79,10 @@ export const logoutFetch = () => dispatch => {
   dispatch(logoutRequest());
   axios
     .get(baseUrl + "user/logout", {
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("chat_auth_token")}`
+      },
       withCredentials: true
     })
     .then(response => {
@@ -91,9 +97,9 @@ export const logoutFetch = () => dispatch => {
         );
       }
     })
-    .catch(err => {
-      err.response
-        ? dispatch(logoutFailure(err.response.data))
+    .catch(error => {
+      error.response
+        ? dispatch(logoutFailure(error.response.data))
         : dispatch(
             logoutFailure({
               message:
@@ -102,3 +108,13 @@ export const logoutFetch = () => dispatch => {
           );
     });
 };
+
+// action for getting username
+
+// export const saveLoggedUserId = response => {
+//   console.log(response);
+//   return {
+//     type: actionTypes.SAVE_LOGGED_USER_ID,
+//     userId: response.userId
+//   };
+// };

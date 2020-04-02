@@ -10,7 +10,7 @@ const initialState = {
   errMessage: null,
   successMessage: null,
   token: localStorage.getItem("chat_auth_token") || null,
-  user: null
+  userId: localStorage.getItem("chat_auth_userId") || null
 };
 
 const authDetail = (state = initialState, action) => {
@@ -49,7 +49,7 @@ const authDetail = (state = initialState, action) => {
         isAuthenticated: false,
         errMessage: "",
         successMessage: action.message,
-        token: null
+        token: action.userId
       };
     case actionTypes.LOGOUT_FAILURE:
       return {
@@ -57,6 +57,11 @@ const authDetail = (state = initialState, action) => {
         isLoading: false,
         errMessage: action.message,
         successMessage: ""
+      };
+    case actionTypes.SAVE_LOGGED_USER_ID:
+      return {
+        ...state,
+        userId: action.userId
       };
     default:
       return state;

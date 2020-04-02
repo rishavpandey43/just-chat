@@ -1,9 +1,55 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+
+import Loading from "../Loading/Loading";
 
 import "./profile.css";
 
-const Profile = () => {
-  return (
+const baseUrl = process.env.REACT_APP_API_BASE_URL;
+
+const Profile = props => {
+  useEffect(() => {
+    if (props.authDetail.isAuthenticated) {
+      axios
+        .get(baseUrl + "user/get-user-detail", {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${props.authDetail.token}`
+          },
+          params: {
+            username: `${props.match.params.username}`
+          }
+        })
+        .then(response => {
+          const userDetail = {
+            userId: response.data.user._id,
+            username: response.data.user.username,
+            email: response.data.user.email,
+            firstName: response.data.user.firstName,
+            lastName: response.data.user.lastName
+          };
+          let tempState = { ...state };
+          tempState.userDetail = { ...userDetail };
+          setState(tempState);
+        })
+        .catch(error => {
+          console.log(error.response);
+          props.logoutFetch();
+        });
+    }
+  }, []);
+
+  const [state, setState] = useState({
+    authUserId: props.authDetail.userId,
+    userDetail: null
+  });
+  return !state.userDetail ? (
+    <div className="container">
+      <div style={{ margin: "auto", width: "80px", marginTop: "50px" }}>
+        <Loading isTrue={!state.userDetail} />
+      </div>
+    </div>
+  ) : (
     <div className="profile-wrapper">
       <div className="container">
         <div className="main-wrapper">
@@ -12,7 +58,13 @@ const Profile = () => {
               <div className="profile-container">
                 <div className="card">
                   <div className="card-head">
-                    <h3>Your Profile</h3>
+                    <h3>
+                      {state.userDetail
+                        ? state.authUserId === state.userDetail.userId
+                          ? `Your Profile`
+                          : `${state.userDetail.firstName} ${state.userDetail.lastName}'s Profile`
+                        : "Your Profile"}
+                    </h3>
                   </div>
                   <div className="card-body">
                     <div className="short-summary">
@@ -25,7 +77,11 @@ const Profile = () => {
                         />
                       </div>
                       <div className="user-name">
-                        <h3>John Doe</h3>
+                        <h3>
+                          {state.userDetail
+                            ? `${state.userDetail.firstName} ${state.userDetail.lastName}`
+                            : ``}
+                        </h3>
                       </div>
                     </div>
                     <div className="detail-summery">
@@ -36,11 +92,15 @@ const Profile = () => {
                         <div className="row">
                           <div className="col-12 col-sm-6">
                             <div className="label">
-                              <label>username:</label>
+                              <label>Username:</label>
                             </div>
                           </div>
                           <div className="col-12 col-sm-6">
-                            <div className="value">johndoe</div>
+                            <div className="value">
+                              {state.userDetail
+                                ? `${state.userDetail.username}`
+                                : ``}
+                            </div>
                           </div>
                         </div>
                         <div className="row">
@@ -50,17 +110,25 @@ const Profile = () => {
                             </div>
                           </div>
                           <div className="col-12 col-sm-6">
-                            <div className="value">John Doe</div>
+                            <div className="value">
+                              {state.userDetail
+                                ? `${state.userDetail.firstName} ${state.userDetail.lastName}`
+                                : ``}
+                            </div>
                           </div>
                         </div>
                         <div className="row">
                           <div className="col-12 col-sm-6">
                             <div className="label">
-                              <label>email:</label>
+                              <label>Email:</label>
                             </div>
                           </div>
                           <div className="col-12 col-sm-6">
-                            <div className="value">johndoe@demo.com</div>
+                            <div className="value">
+                              {state.userDetail
+                                ? `${state.userDetail.email}`
+                                : ``}
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -70,7 +138,13 @@ const Profile = () => {
               </div>
             </div>
             <div className="col-12 col-sm-6">
-              <div className="service-container">
+              <div
+                className={`service-container ${
+                  state.authUserId === state.userDetail.userId
+                    ? "d-block"
+                    : "d-none"
+                }`}
+              >
                 <div className="card">
                   <div className="card-head">
                     <h3>Say Hello!</h3>

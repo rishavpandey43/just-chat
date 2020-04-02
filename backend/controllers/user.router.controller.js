@@ -70,7 +70,11 @@ const userLoginController = (req, res, next) => {
   const token = authenticate.getToken({ _id: req.user._id });
   res.statusCode = 200;
   res.setHeader("Content-Type", "application/json");
-  res.json({ message: "You are successfully logged in!", token });
+  res.json({
+    message: "You are successfully logged in!",
+    token,
+    userId: req.user._id
+  });
 };
 
 const userLogoutController = (req, res, next) => {
@@ -103,17 +107,14 @@ const getUserListController = (req, res, next) => {
 const getUserNameController = (req, res, next) => {
   res.statusCode = 200;
   res.setHeader("Content-Type", "application/json");
-  res.json({ username: req.user.username });
+  res.json({ username: req.user.username, userId: req.user._id });
 };
 
 const userDetailController = (req, res, next) => {
   User.findOne({ username: req.query.username })
     .then(user => {
       if (!user) {
-        // res.statusCode = 200;
-        // res.setHeader("Content-Type", "application/json");
-        // res.json({ message: `${req.query.username} doesn't exit` });
-        var err = new Error(`${req.query.username} doesn't exit`);
+        var err = new Error(`$user {req.query.username} doesn't exit`);
         err.status = 404;
         next(err);
       } else {

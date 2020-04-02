@@ -1,10 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
 import Loading from "../Loading/Loading";
 
 import "./login.css";
 const Login = props => {
+  useEffect(() => {
+    if (props.authDetail.isAuthenticated) {
+      props.history.push("/");
+    }
+  }, []);
+
   const [state, setState] = useState({
     credentials: {
       username: "",
