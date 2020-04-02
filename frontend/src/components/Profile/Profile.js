@@ -41,8 +41,27 @@ const Profile = props => {
 
   const [state, setState] = useState({
     authUserId: props.authDetail.userId,
-    userDetail: null
+    userDetail: null,
+    userService: 0,
+    groupName: ""
   });
+
+  const createGroup = e => {
+    let tempState = { ...state };
+    tempState.userService = 0;
+    setState(tempState);
+  };
+
+  const joinGroup = e => {
+    let tempState = { ...state };
+    tempState.userService = 1;
+    setState(tempState);
+  };
+
+  const handleSubmit = e => {
+    e.preventDefault();
+  };
+
   return !state.userDetail ? (
     <div className="container">
       <div style={{ margin: "auto", width: "80px", marginTop: "50px" }}>
@@ -152,28 +171,59 @@ const Profile = props => {
                   <div className="card-body">
                     <div className="service-btn">
                       <div className="create-room-btn">
-                        <button className="btn btn-primary">
+                        <button
+                          className="btn btn-primary"
+                          onClick={createGroup}
+                        >
                           Create Group
                         </button>
                       </div>
                       <div className="join-room-btn">
-                        <button className="btn btn-primary">Join Group</button>
+                        <button
+                          className="btn btn-secondary"
+                          onClick={joinGroup}
+                        >
+                          Join Group
+                        </button>
                       </div>
                     </div>
                     <div className="service">
                       <div className="create-group-form">
-                        <form action=""></form>
+                        <form></form>
                       </div>
                       <div className="join-group-form">
-                        <form>
+                        <form onSubmit={handleSubmit}>
                           <div className="form-group">
-                            <label>Group</label>
-                            <input type="text" className="form-control" />
+                            <label>Group Name</label>
+                            <input
+                              type="text"
+                              className="form-control"
+                              name="groupName"
+                              value={state.groupName}
+                              required
+                              placeholder="group name should be min length of 5"
+                              minLength="5"
+                              onChange={e => {
+                                let tempState = { ...state };
+                                tempState.groupName = e.target.value;
+                                setState(tempState);
+                              }}
+                            />
                           </div>
-                          <button type="submit" className="btn btn-primary">
+                          <button
+                            type="submit"
+                            className={`btn btn-success ${
+                              state.userService === 0 ? "d-block" : "d-none"
+                            }`}
+                          >
                             Create Group
                           </button>
-                          <button type="submit" className="btn btn-primary">
+                          <button
+                            type="submit"
+                            className={`btn btn-success ${
+                              state.userService === 1 ? "d-block" : "d-none"
+                            }`}
+                          >
                             Join Group
                           </button>
                         </form>

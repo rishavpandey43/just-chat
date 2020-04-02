@@ -26,13 +26,8 @@ button:focus {
   margin: 0px auto;
 }
 
-.btn,
-.btn:focus,
-.btn:active,
-.btn:hover {
-  background-color: #f5871f !important;
+.btn {
   color: #fff;
   font-size: 1.2em;
-  border: 1px solid #f5871f !important;
   box-shadow: none;
 }
