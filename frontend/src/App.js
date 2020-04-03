@@ -14,10 +14,12 @@ import Signup from "./components/Signup/Signup";
 import PrivateRoute from "./components/PrivateRoute/PrivateRoute";
 import Profile from "./components/Profile/Profile";
 import ChatBox from "./components/ChatBox/ChatBox";
+import Flash from "./components/Flash/Flash";
 
 export default function MainApp(props) {
   return (
     <div>
+      <Flash />
       <Header {...props} />
       <Router history={props.history}>
         <Switch location={props.location}>

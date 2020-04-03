@@ -2,6 +2,8 @@ import * as actionTypes from "./actionTypes";
 
 import axios from "axios";
 
+import displayFlash from "../../utils/flashEvent";
+
 const baseUrl = process.env.REACT_APP_API_BASE_URL;
 
 export const loginRequest = () => {
@@ -43,20 +45,34 @@ export const loginFetch = formData => dispatch => {
         sessionStorage.setItem("chat_auth_userId", response.data.userId);
       }
       dispatch(loginSuccess(response.data));
+      displayFlash.emit("get-message", {
+        message: response.data.message,
+        type: "success"
+      });
     })
     .catch(error => {
-      error.response
-        ? dispatch(
-            loginFailure({
-              message: `${error.response.data}, please enter correct detail to continue`
-            })
-          )
-        : dispatch(
-            loginFailure({
-              message:
-                "Network Error, Connection to server couldn't be established. Please try again."
-            })
-          );
+      if (error.response) {
+        dispatch(
+          loginFailure({
+            message: `${error.response.data}, please enter correct detail to continue`
+          })
+        );
+        displayFlash.emit("get-message", {
+          message: `${error.response.data}, please enter correct detail to continue`,
+          type: "danger"
+        });
+      } else {
+        dispatch(
+          loginFailure({
+            message:
+              "Network Error, Connection to server couldn't be established. Please try again."
+          })
+        );
+        displayFlash.emit("get-message", {
+          message: `Network Error, Connection to server couldn't be established. Please try again.`,
+          type: "danger"
+        });
+      }
     });
 };
 
@@ -101,37 +117,95 @@ export const logoutFetch = () => dispatch => {
         !sessionStorage.getItem("chat_auth_token")
       ) {
         dispatch(logoutSuccess(response.data));
+        displayFlash.emit("get-message", {
+          message: response.data.message,
+          type: "success"
+        });
       } else {
         dispatch(
           logoutFailure({
             message: `Error logging out, please try again.`
           })
         );
+        displayFlash.emit("get-message", {
+          message: `Error logging out, please try again.`,
+          type: "danger"
+        });
       }
     })
     .catch(error => {
-      console.log(error.response);
-      error.response
-        ? dispatch(
-            logoutFailure({
-              message: error.response.data
-            })
-          )
-        : dispatch(
-            logoutFailure({
-              message:
-                "Network Error, Connection to server couldn't be established. Please try again."
-            })
-          );
+      if (error.response) {
+        dispatch(
+          loginFailure({
+            message: error.response.data
+          })
+        );
+        displayFlash.emit("get-message", {
+          message: error.response.data.message,
+          type: "danger"
+        });
+      } else {
+        dispatch(
+          loginFailure({
+            message:
+              "Network Error, Connection to server couldn't be established. Please try again."
+          })
+        );
+        displayFlash.emit("get-message", {
+          message: `Network Error, Connection to server couldn't be established. Please try again.`,
+          type: "danger"
+        });
+      }
     });
 };
 
-// action for getting username
+export const createNewGroupRequest = () => {
+  return {
+    type: actionTypes.CREATE_NEW_GROUP_REQUEST
+  };
+};
 
-// export const saveLoggedUserId = response => {
-//   console.log(response);
-//   return {
-//     type: actionTypes.SAVE_LOGGED_USER_ID,
-//     userId: response.userId
-//   };
-// };
+export const createNewGroupSuccess = response => {
+  return {
+    type: actionTypes.CREATE_NEW_GROUP_SUCCESS,
+    message: response.message
+  };
+};
+
+export const createNewGroupFailure = response => {
+  return {
+    type: actionTypes.CREATE_NEW_GROUP_FAILURE,
+    message: response.message
+  };
+};
+
+export const createNewGroupFetch = groupName => dispatch => {
+  dispatch(createNewGroupRequest());
+
+  axios
+    .post(baseUrl + "group/create-new-group", JSON.stringify(groupName), {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("chat_auth_token") ||
+          sessionStorage.getItem("chat_auth_token")}`
+      },
+      withCredentials: true
+    })
+    .then(response => {
+      displayFlash.emit("get-message", {
+        message: response.data.message,
+        type: "success"
+      });
+    })
+    .catch(error => {
+      error.response
+        ? displayFlash.emit("get-message", {
+            message: error.response.data.message,
+            type: "danger"
+          })
+        : displayFlash.emit("get-message", {
+            message: `Network Error, Connection to server couldn't be established. Please try again.`,
+            type: "danger"
+          });
+    });
+};

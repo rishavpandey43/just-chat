@@ -57,12 +57,15 @@ const Profile = props => {
 
   const handleSubmit = e => {
     e.preventDefault();
+    props.createNewGroupFetch({ groupName: state.groupName });
   };
 
   return !state.userDetail ? (
     <div className="container">
-      <div style={{ margin: "auto", width: "80px", marginTop: "50px" }}>
-        <Loading isTrue={!state.userDetail} />
+      <div className="main-wrapper">
+        <div style={{ margin: "auto", width: "80px", marginTop: "50px" }}>
+          <Loading isTrue={!state.userDetail} />
+        </div>
       </div>
     </div>
   ) : (
