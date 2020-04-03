@@ -1,0 +1,7 @@
+.chat-wrapper .main-wrapper {
+  border: 1px solid #aaa;
+}
+
+.inbox {
+  border-right: 1px solid #000;
+}
