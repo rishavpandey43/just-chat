@@ -32,10 +32,7 @@ const Profile = props => {
           tempState.userDetail = { ...userDetail };
           setState(tempState);
         })
-        .catch(error => {
-          console.log(error.response);
-          props.logoutFetch();
-        });
+        .catch(error => {});
     }
   }, []);
 

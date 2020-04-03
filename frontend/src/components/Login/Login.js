@@ -15,7 +15,8 @@ const Login = props => {
     credentials: {
       username: "",
       password: ""
-    }
+    },
+    rememberMe: false
   });
 
   const handleInputChange = e => {
@@ -27,7 +28,11 @@ const Login = props => {
 
   const handleSubmit = e => {
     e.preventDefault();
-    props.loginFetch(state.credentials);
+    const formData = {
+      credentials: { ...state.credentials },
+      rememberMe: state.rememberMe
+    };
+    props.loginFetch(formData);
   };
 
   return (
@@ -66,7 +71,19 @@ const Login = props => {
                   </div>
                   <div className="form-group form-check">
                     <label className="form-check-label">
-                      <input type="checkbox" className="form-check-input" />
+                      <input
+                        type="checkbox"
+                        className="form-check-input"
+                        name="rememberMe"
+                        checked={state.rememberMe}
+                        onChange={() => {
+                          let tempState = { ...state };
+                          tempState.rememberMe = state.rememberMe
+                            ? false
+                            : true;
+                          setState(tempState);
+                        }}
+                      />
                       Remember me
                     </label>
                   </div>

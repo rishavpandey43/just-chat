@@ -6,11 +6,21 @@ import * as actionTypes from "../actions/actionTypes";
 
 const initialState = {
   isLoading: false,
-  isAuthenticated: localStorage.getItem("chat_auth_token") ? true : false,
+  isAuthenticated:
+    localStorage.getItem("chat_auth_token") ||
+    sessionStorage.getItem("chat_auth_token")
+      ? true
+      : false,
   errMessage: null,
   successMessage: null,
-  token: localStorage.getItem("chat_auth_token") || null,
-  userId: localStorage.getItem("chat_auth_userId") || null
+  token:
+    localStorage.getItem("chat_auth_token") ||
+    sessionStorage.getItem("chat_auth_token") ||
+    null,
+  userId:
+    localStorage.getItem("chat_auth_userId") ||
+    sessionStorage.getItem("chat_auth_userId") ||
+    null
 };
 
 const authDetail = (state = initialState, action) => {

@@ -26,18 +26,23 @@ export const loginFailure = response => {
   };
 };
 
-export const loginFetch = credentials => dispatch => {
+export const loginFetch = formData => dispatch => {
   dispatch(loginRequest());
 
   axios
-    .post(baseUrl + "user/login", JSON.stringify(credentials), {
+    .post(baseUrl + "user/login", JSON.stringify(formData.credentials), {
       headers: { "Content-Type": "application/json" },
       withCredentials: true
     })
     .then(response => {
+      if (formData.rememberMe) {
+        localStorage.setItem("chat_auth_token", response.data.token);
+        localStorage.setItem("chat_auth_userId", response.data.userId);
+      } else {
+        sessionStorage.setItem("chat_auth_token", response.data.token);
+        sessionStorage.setItem("chat_auth_userId", response.data.userId);
+      }
       dispatch(loginSuccess(response.data));
-      localStorage.setItem("chat_auth_token", response.data.token);
-      localStorage.setItem("chat_auth_userId", response.data.userId);
     })
     .catch(error => {
       error.response
@@ -81,13 +86,20 @@ export const logoutFetch = () => dispatch => {
     .get(baseUrl + "user/logout", {
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("chat_auth_token")}`
+        Authorization: `Bearer ${localStorage.getItem("chat_auth_token") ||
+          sessionStorage.getItem("chat_auth_token")}`
       },
       withCredentials: true
     })
     .then(response => {
       localStorage.removeItem("chat_auth_token");
-      if (!localStorage.getItem("chat_auth_token")) {
+      localStorage.removeItem("chat_auth_userId");
+      sessionStorage.removeItem("chat_auth_token");
+      sessionStorage.removeItem("chat_auth_userId");
+      if (
+        !localStorage.getItem("chat_auth_token") &&
+        !sessionStorage.getItem("chat_auth_token")
+      ) {
         dispatch(logoutSuccess(response.data));
       } else {
         dispatch(
@@ -98,8 +110,13 @@ export const logoutFetch = () => dispatch => {
       }
     })
     .catch(error => {
+      console.log(error.response);
       error.response
-        ? dispatch(logoutFailure(error.response.data))
+        ? dispatch(
+            logoutFailure({
+              message: error.response.data
+            })
+          )
         : dispatch(
             logoutFailure({
               message:
