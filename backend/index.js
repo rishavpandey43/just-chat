@@ -1,72 +1,73 @@
+// import required npm modules
 const express = require("express");
-const http = require("http");
-const socket = require("socket.io");
-const cors = require("cors");
+const io = require("socket.io");
+const morgan = require("morgan");
+const mongoose = require("mongoose");
+const cookieParser = require("cookie-parser");
+const session = require("express-session");
+const FileStore = require("session-file-store")(session);
+const dotenv = require("dotenv");
+var passport = require("passport");
+var authenticate = require("./utils/authenticate");
 
-const router = require("./routes/router");
+// import required routes
+const userRouter = require("./routes/user.router");
 
-const {
-  addUser,
-  removeUser,
-  getUser,
-  getUsersInRoom
-} = require("./helperFunctions/users");
+// configure dotenv to access environment variables
+dotenv.config();
 
 const PORT = process.env.PORT || 5000;
 
 const app = express();
 
-const server = http.createServer(app);
-const io = socket(server);
-
-io.on("connection", socket => {
-  socket.on("join", ({ name, room }, callback) => {
-    const { error, user } = addUser({ id: socket.id, name, room });
-    if (error) {
-      return callback(error);
-    }
-    socket.emit("message", {
-      user: "admin",
-      text: `${user.name}, welcome to the room ${user.room}`
-    });
-    socket.broadcast.to(user.room).emit("message", {
-      user: "admin",
-      text: `${user.name} has joined`
-    });
-
-    socket.join(user.room);
-
-    io.to(user.room).emit("roomData", {
-      room: user.room,
-      users: getUsersInRoom(user.room)
-    });
-
-    callback();
-  });
-
-  socket.on("sendMessage", (message, callback) => {
-    const user = getUser(socket.id);
-
-    io.to(user.room).emit("message", { user: user.name, text: message });
-    io.to(user.room).emit("roomData", {
-      room: user.room,
-      users: getUsersInRoom(user.room)
-    });
-  });
-
-  socket.on("disconnect", () => {
-    const user = removeUser(socket.id);
-
-    if (user) {
-      io.to(user.room).emit("message", {
-        user: "admin",
-        text: `${user.name} has left the chat room`
-      });
-    }
-  });
+// connect server to mongoDB Atlas
+const URI = process.env.ATLAS_DB_URI;
+mongoose.connect(URI, {
+  useNewUrlParser: true,
+  useCreateIndex: true,
+  useUnifiedTopology: true
 });
 
-app.use(router);
-app.use(cors());
+const connection = mongoose.connection;
+connection.once("open", () => {
+  console.log("Mongoose database connection established successfully");
+});
 
-server.listen(PORT, () => console.log(`Server has started in port ${PORT}`));
+connection.on("error", function(err) {
+  console.log("Mongoose default connection error: " + err);
+});
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(morgan("tiny"));
+app.use(cookieParser(process.env.COOKIE_SECRET_KEY));
+app.use(
+  session({
+    name: "SESSION_ID",
+    resave: false,
+    saveUninitialized: false,
+    secret: process.env.SESSION_SECRET,
+    store: new FileStore({
+      logFn: function() {}
+    }) /* { logFn: function() {} } */
+  })
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.use("/user", userRouter);
+
+// error handler
+app.use((err, req, res, next) => {
+  res.statusCode = err.status || 500;
+  console.log(err);
+  res.setHeader("Content-Type", "application/json");
+  res.json(
+    err.message && err.status
+      ? { message: err.message }
+      : { message: "Internal Server Error" }
+  );
+});
+
+app.listen(PORT, () => console.log(`Server listening on port ${PORT}!`));

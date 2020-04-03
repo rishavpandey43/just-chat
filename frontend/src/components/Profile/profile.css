@@ -1,0 +1,23 @@
+.service-btn,
+.short-summary {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.service-btn div {
+  padding: 10px 20px;
+}
+
+.short-summary {
+  justify-content: start;
+}
+
+.profile-wrapper .user-name {
+  padding-left: 50px;
+}
+
+.detail-summery {
+  margin-top: 40px;
+}
