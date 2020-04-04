@@ -6,7 +6,7 @@ import displayFlash from "../../utils/flashEvent";
 
 const Flash = () => {
   const [display, setDisplay] = useState(false);
-  const [alertMessage, setAlertMessage] = useState("Ex mollit deserunt tempor");
+  const [alertMessage, setAlertMessage] = useState("");
   const [alertType, setAlertType] = useState("success");
 
   useEffect(() => {

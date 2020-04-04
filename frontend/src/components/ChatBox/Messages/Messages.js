@@ -18,12 +18,12 @@ const Messages = props => {
         <div className="text-center">
           <small>
             {`${props.currentGroup.groupDetail.name} was created by
-            ${props.currentGroup.groupDetail.createdBy} on
+            ${props.currentGroup.groupDetail.owner} on
             ${props.currentGroup.groupDetail.createdAt}`}
           </small>
         </div>
         <ScrollToBottom>
-          {props.currentGroup.messageList.map(message => (
+          {props.currentGroup.messages.map(message => (
             <Message />
           ))}
         </ScrollToBottom>

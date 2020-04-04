@@ -12,6 +12,7 @@ var authenticate = require("./utils/authenticate");
 
 // import required routes
 const userRouter = require("./routes/user.router");
+const groupRouter = require("./routes/group.router");
 
 // configure dotenv to access environment variables
 dotenv.config();
@@ -57,11 +58,12 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use("/user", userRouter);
+app.use("/group", groupRouter);
 
 // error handler
 app.use((err, req, res, next) => {
-  res.statusCode = err.status || 500;
   console.log(err);
+  res.statusCode = err.status || 500;
   res.setHeader("Content-Type", "application/json");
   res.json(
     err.message && err.status

@@ -31,15 +31,15 @@ class ChatBox extends Component {
         withCredentials: true
       })
       .then(response => {
-        let groupList = response.data.groupList.map(group => {
+        let groupList = response.data.groups.map(group => {
           let newGroup = new Object({
             groupDetail: {
               groupId: group._id,
               name: group.name,
-              createdBy: group.createdBy,
+              owner: group.owner,
               createdAt: moment(group.createdAt).format("Do MMMM YYYY")
             },
-            messageList: [...group.messageList]
+            messages: [...group.messages]
           });
           return newGroup;
         });
