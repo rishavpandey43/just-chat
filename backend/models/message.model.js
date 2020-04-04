@@ -9,7 +9,11 @@ const messageSchema = new Schema({
     required: true
   },
   content: { type: String, required: true }
-});
+},
+  {
+    timestamps: true
+  }
+);
 
 const chatAppDB = mongoose.connection.useDb("chat_app_db");
 

@@ -3,33 +3,41 @@ import ScrollToBottom from "react-scroll-to-bottom";
 
 import "./message.css";
 
+import Loading from "../../Loading/Loading";
+
 import Message from "./Message/Message";
 import MessageInput from "./MessageInput/MessageInput";
 
-const Messages = () => {
-  return (
+const Messages = props => {
+  return props.currentGroup ? (
     <div className="messages-wrapper">
       <div className="heading">
-        <h4>Group 1</h4>
+        <h4>{props.currentGroup.groupDetail.name}</h4>
       </div>
       <div className="message-container">
+        <div className="text-center">
+          <small>
+            {`${props.currentGroup.groupDetail.name} was created by
+            ${props.currentGroup.groupDetail.owner.firstName} ${props.currentGroup.groupDetail.owner.lastName} on
+            ${props.currentGroup.groupDetail.createdAt}`}
+          </small>
+        </div>
         <ScrollToBottom>
-          <Message />
-          <Message />
-          <Message />
-          <Message />
-          <Message />
-          <Message />
-          <Message />
-          <Message />
-          <Message />
+          {props.currentGroup.messages.map(message => (
+            <Message />
+          ))}
         </ScrollToBottom>
       </div>
       <div className="input-container">
         <MessageInput />
       </div>
     </div>
+  ) : (
+    <div className="text-center mt-5">
+      <h3>Select the conversation to view message.</h3>
+    </div>
   );
+  return;
 };
 
 export default Messages;

@@ -38,7 +38,8 @@ const authDetail = (state = initialState, action) => {
         isAuthenticated: true,
         errMessage: "",
         successMessage: action.message,
-        token: action.token
+        token: action.token,
+        userId: action.userId
       };
     case actionTypes.LOGIN_FAILURE:
       return {
@@ -67,11 +68,6 @@ const authDetail = (state = initialState, action) => {
         isLoading: false,
         errMessage: action.message,
         successMessage: ""
-      };
-    case actionTypes.SAVE_LOGGED_USER_ID:
-      return {
-        ...state,
-        userId: action.userId
       };
     default:
       return state;

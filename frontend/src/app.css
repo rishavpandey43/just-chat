@@ -30,3 +30,11 @@ button:focus {
   font-size: 1.2em;
   box-shadow: none;
 }
+
+body {
+  position: relative;
+}
+
+.row {
+  margin: 0px;
+}

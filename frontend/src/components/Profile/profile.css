@@ -21,3 +21,8 @@
 .detail-summery {
   margin-top: 40px;
 }
+
+.card-footer {
+  background-color: #fff;
+  border: none;
+}

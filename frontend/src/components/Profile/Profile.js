@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import axios from "axios";
+
+import displayFlash from "../../utils/flashEvent";
 
 import Loading from "../Loading/Loading";
 
@@ -8,6 +11,15 @@ import "./profile.css";
 const baseUrl = process.env.REACT_APP_API_BASE_URL;
 
 const Profile = props => {
+  const [state, setState] = useState({
+    authUserId: props.authDetail.userId,
+    userDetail: null,
+    userService: 0,
+    groupName: "",
+    privateGroup: false,
+    groupPassword: ""
+  });
+
   useEffect(() => {
     if (props.authDetail.isAuthenticated) {
       axios
@@ -34,35 +46,99 @@ const Profile = props => {
         })
         .catch(error => {});
     }
-  }, []);
+  }, [props.authDetail.isAuthenticated]);
 
-  const [state, setState] = useState({
-    authUserId: props.authDetail.userId,
-    userDetail: null,
-    userService: 0,
-    groupName: ""
-  });
+  const changeService = type => {
+    let tempState = { ...state };
+    tempState.userService = type;
+    setState(tempState);
+  };
 
   const createGroup = e => {
-    let tempState = { ...state };
-    tempState.userService = 0;
-    setState(tempState);
+    e.preventDefault();
+
+    axios
+      .post(
+        baseUrl + "group/create-new-group",
+        JSON.stringify({
+          name: state.groupName.trim(),
+          private: state.privateGroup,
+          password: state.groupPassword.trim()
+        }),
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("chat_auth_token") ||
+              sessionStorage.getItem("chat_auth_token")}`
+          },
+          withCredentials: true
+        }
+      )
+      .then(response => {
+        displayFlash.emit("get-message", {
+          message: response.data.message,
+          type: "success"
+        });
+        props.history.push(`/chat`);
+      })
+      .catch(error => {
+        error.response
+          ? displayFlash.emit("get-message", {
+              message: error.response.data.message,
+              type: "danger"
+            })
+          : displayFlash.emit("get-message", {
+              message: `Network Error, Connection to server couldn't be established. Please try again.`,
+              type: "danger"
+            });
+      });
   };
 
   const joinGroup = e => {
-    let tempState = { ...state };
-    tempState.userService = 1;
-    setState(tempState);
-  };
-
-  const handleSubmit = e => {
     e.preventDefault();
+    axios
+      .put(
+        baseUrl + "group/join-group",
+        JSON.stringify({
+          name: state.groupName.trim(),
+          private: state.privateGroup,
+          password: state.groupPassword.trim()
+        }),
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("chat_auth_token") ||
+              sessionStorage.getItem("chat_auth_token")}`
+          },
+          withCredentials: true
+        }
+      )
+      .then(response => {
+        displayFlash.emit("get-message", {
+          message: response.data.message,
+          type: "success"
+        });
+        props.history.push(`/chat`);
+      })
+      .catch(error => {
+        error.response
+          ? displayFlash.emit("get-message", {
+              message: error.response.data.message,
+              type: "danger"
+            })
+          : displayFlash.emit("get-message", {
+              message: `Network Error, Connection to server couldn't be established. Please try again.`,
+              type: "danger"
+            });
+      });
   };
 
   return !state.userDetail ? (
     <div className="container">
-      <div style={{ margin: "auto", width: "80px", marginTop: "50px" }}>
-        <Loading isTrue={!state.userDetail} />
+      <div className="main-wrapper">
+        <div style={{ margin: "auto", width: "80px", marginTop: "50px" }}>
+          <Loading isTrue={!state.userDetail} />
+        </div>
       </div>
     </div>
   ) : (
@@ -154,23 +230,23 @@ const Profile = props => {
               </div>
             </div>
             <div className="col-12 col-sm-6">
-              <div
-                className={`service-container ${
-                  state.authUserId === state.userDetail.userId
-                    ? "d-block"
-                    : "d-none"
-                }`}
-              >
+              <div className="service-container">
                 <div className="card">
                   <div className="card-head">
                     <h3>Say Hello!</h3>
                   </div>
-                  <div className="card-body">
+                  <div
+                    className={`card-body ${
+                      state.authUserId === state.userDetail.userId
+                        ? "d-block"
+                        : "d-none"
+                    }`}
+                  >
                     <div className="service-btn">
                       <div className="create-room-btn">
                         <button
                           className="btn btn-primary"
-                          onClick={createGroup}
+                          onClick={changeService.bind(null, 0)}
                         >
                           Create Group
                         </button>
@@ -178,7 +254,7 @@ const Profile = props => {
                       <div className="join-room-btn">
                         <button
                           className="btn btn-secondary"
-                          onClick={joinGroup}
+                          onClick={changeService.bind(null, 1)}
                         >
                           Join Group
                         </button>
@@ -189,7 +265,11 @@ const Profile = props => {
                         <form></form>
                       </div>
                       <div className="join-group-form">
-                        <form onSubmit={handleSubmit}>
+                        <form
+                          onSubmit={
+                            state.userService === 0 ? createGroup : joinGroup
+                          }
+                        >
                           <div className="form-group">
                             <label>Group Name</label>
                             <input
@@ -207,24 +287,59 @@ const Profile = props => {
                               }}
                             />
                           </div>
-                          <button
-                            type="submit"
-                            className={`btn btn-success ${
-                              state.userService === 0 ? "d-block" : "d-none"
-                            }`}
-                          >
-                            Create Group
-                          </button>
-                          <button
-                            type="submit"
-                            className={`btn btn-success ${
-                              state.userService === 1 ? "d-block" : "d-none"
-                            }`}
-                          >
-                            Join Group
+                          <div className="form-group form-check">
+                            <label className="form-check-label">
+                              <input
+                                type="checkbox"
+                                className="form-check-input"
+                                name="makePrivate"
+                                checked={state.privateGroup}
+                                onChange={() => {
+                                  let tempState = { ...state };
+                                  tempState.privateGroup = state.privateGroup
+                                    ? false
+                                    : true;
+                                  setState(tempState);
+                                }}
+                              />
+                              {state.userService === 0
+                                ? "Make Private Group"
+                                : "Join Private Group"}
+                            </label>
+                          </div>
+                          <div className="form-group">
+                            <label>Group Password</label>
+                            <input
+                              type="password"
+                              className="form-control"
+                              name="groupPassword"
+                              value={state.groupPassword}
+                              required={state.privateGroup}
+                              placeholder="password should be min length of 8"
+                              minLength="8"
+                              onChange={e => {
+                                let tempState = { ...state };
+                                tempState.groupPassword = e.target.value;
+                                setState(tempState);
+                              }}
+                            />
+                          </div>
+                          <button type="submit" className="btn btn-success">
+                            {state.userService === 0
+                              ? "Create Group"
+                              : "Join Group"}
                           </button>
                         </form>
                       </div>
+                    </div>
+                  </div>
+                  <div className="card-footer">
+                    <div className="inbox-link mt-5">
+                      <Link to="/chat">
+                        <button className="btn btn-info">
+                          Go to your inbox &rarr;
+                        </button>
+                      </Link>
                     </div>
                   </div>
                 </div>

@@ -2,15 +2,33 @@ const mongoose = require("mongoose");
 
 const Schema = mongoose.Schema;
 
-const groupSchema = new Schema({
-  name: { type: String, required },
-  messageList: [
-    {
+const groupSchema = new Schema(
+  {
+    name: { type: String, required: true },
+    owner: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Message"
-    }
-  ]
-});
+      ref: "User",
+      required: true
+    },
+    private: { type: Boolean, required: true },
+    password: { type: String },
+    members: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
+      }
+    ],
+    messages: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Message"
+      }
+    ]
+  },
+  {
+    timestamps: true
+  }
+);
 
 const chatAppDB = mongoose.connection.useDb("chat_app_db");
 

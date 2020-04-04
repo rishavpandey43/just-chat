@@ -20,6 +20,10 @@
   border-radius: 5px;
 }
 
+.active-recipient {
+  background-color: #eee;
+}
+
 .recipient-list:hover {
   background-color: #eee;
 }
