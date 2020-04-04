@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import axios from "axios";
+
+import displayFlash from "../../utils/flashEvent";
 
 import Loading from "../Loading/Loading";
 
@@ -34,7 +37,7 @@ const Profile = props => {
         })
         .catch(error => {});
     }
-  }, []);
+  }, [props.authDetail.isAuthenticated]);
 
   const [state, setState] = useState({
     authUserId: props.authDetail.userId,
@@ -43,13 +46,13 @@ const Profile = props => {
     groupName: ""
   });
 
-  const createGroup = e => {
+  const createGroup = () => {
     let tempState = { ...state };
     tempState.userService = 0;
     setState(tempState);
   };
 
-  const joinGroup = e => {
+  const joinGroup = () => {
     let tempState = { ...state };
     tempState.userService = 1;
     setState(tempState);
@@ -57,7 +60,38 @@ const Profile = props => {
 
   const handleSubmit = e => {
     e.preventDefault();
-    props.createNewGroupFetch({ groupName: state.groupName });
+
+    axios
+      .post(
+        baseUrl + "group/create-new-group",
+        JSON.stringify({ groupName: state.groupName.trim() }),
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("chat_auth_token") ||
+              sessionStorage.getItem("chat_auth_token")}`
+          },
+          withCredentials: true
+        }
+      )
+      .then(response => {
+        displayFlash.emit("get-message", {
+          message: response.data.message,
+          type: "success"
+        });
+        props.history.push(`/chat/${response.data.groupName}`);
+      })
+      .catch(error => {
+        error.response
+          ? displayFlash.emit("get-message", {
+              message: error.response.data.message,
+              type: "danger"
+            })
+          : displayFlash.emit("get-message", {
+              message: `Network Error, Connection to server couldn't be established. Please try again.`,
+              type: "danger"
+            });
+      });
   };
 
   return !state.userDetail ? (
@@ -157,18 +191,18 @@ const Profile = props => {
               </div>
             </div>
             <div className="col-12 col-sm-6">
-              <div
-                className={`service-container ${
-                  state.authUserId === state.userDetail.userId
-                    ? "d-block"
-                    : "d-none"
-                }`}
-              >
+              <div className="service-container">
                 <div className="card">
                   <div className="card-head">
                     <h3>Say Hello!</h3>
                   </div>
-                  <div className="card-body">
+                  <div
+                    className={`card-body ${
+                      state.authUserId === state.userDetail.userId
+                        ? "d-block"
+                        : "d-none"
+                    }`}
+                  >
                     <div className="service-btn">
                       <div className="create-room-btn">
                         <button
@@ -228,6 +262,15 @@ const Profile = props => {
                           </button>
                         </form>
                       </div>
+                    </div>
+                  </div>
+                  <div className="card-footer">
+                    <div className="inbox-link mt-5">
+                      <Link to="/chat">
+                        <button className="btn btn-info">
+                          Go to your inbox &rarr;
+                        </button>
+                      </Link>
                     </div>
                   </div>
                 </div>

@@ -35,7 +35,7 @@ export default function MainApp(props) {
           />
           <PrivateRoute
             exact
-            path="/chat/:type/:name"
+            path="/chat"
             mainProps={{ ...props }}
             component={props => <ChatBox {...props} />}
             // * The newly constructed props in PrivateRoute is then passed to protected components
