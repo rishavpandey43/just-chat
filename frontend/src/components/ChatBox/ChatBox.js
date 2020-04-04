@@ -8,6 +8,8 @@ import Inbox from "./Inbox/Inbox";
 import Messages from "./Messages/Messages";
 import Loading from "../Loading/Loading";
 
+import displayFlash from "../../utils/flashEvent";
+
 const baseUrl = process.env.REACT_APP_API_BASE_URL;
 
 class ChatBox extends Component {
@@ -16,13 +18,19 @@ class ChatBox extends Component {
 
     this.state = {
       groupList: [],
-      currentGroup: null
+      currentGroup: null,
+      isFetching: false
     };
   }
 
   componentDidMount() {
+    this.fetchGroupList();
+  }
+
+  fetchGroupList = () => {
+    this.setState({ isFetching: true });
     axios
-      .get(baseUrl + "group/get-group-lists", {
+      .get(baseUrl + "group/get-group-list", {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("chat_auth_token") ||
@@ -45,11 +53,27 @@ class ChatBox extends Component {
         });
         this.setState({
           groupList: [...groupList],
-          currentGroup: groupList[0]
+          currentGroup: groupList[0],
+          isFetching: false
         });
       })
-      .catch(error => {});
-  }
+      .catch(error => {
+        this.setState({
+          isFetching: false,
+          groupList: null,
+          currentGroup: null
+        });
+        error.response
+          ? displayFlash.emit("get-message", {
+              message: error.response.data.message,
+              type: "danger"
+            })
+          : displayFlash.emit("get-message", {
+              message: `Network Error, Connection to server couldn't be established. Please try again.`,
+              type: "danger"
+            });
+      });
+  };
 
   updateCurrentRecipient = recipientName => {
     let currentGroup = this.state.groupList.find(
@@ -66,6 +90,7 @@ class ChatBox extends Component {
             <div className="row">
               <div className="inbox col-12 col-sm-4">
                 <Inbox
+                  isFetching={this.state.isFetching}
                   groupList={this.state.groupList}
                   currentGroupName={
                     this.state.currentGroup
@@ -73,19 +98,19 @@ class ChatBox extends Component {
                       : ""
                   }
                   updateCurrentRecipient={this.updateCurrentRecipient}
+                  fetchGroupList={this.fetchGroupList}
                 />
               </div>
               <div className="messages col-12 col-sm-8">
-                {/* {this.state.currentGroup ? (
-                  <Messages currentGroup={this.state.currentGroup} />
-                ) : (
+                {this.state.isFetching ? (
                   <div className="empty-chat-div">
                     <div>
-                      <h3>Select the conversation to view message.</h3>
+                      <Loading isTrue={this.state.isFetching} />
                     </div>
                   </div>
-                )} */}
-                <Messages currentGroup={this.state.currentGroup} />
+                ) : (
+                  <Messages currentGroup={this.state.currentGroup} />
+                )}
               </div>
             </div>
           </div>

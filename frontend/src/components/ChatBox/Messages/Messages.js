@@ -18,7 +18,7 @@ const Messages = props => {
         <div className="text-center">
           <small>
             {`${props.currentGroup.groupDetail.name} was created by
-            ${props.currentGroup.groupDetail.owner} on
+            ${props.currentGroup.groupDetail.owner.firstName} ${props.currentGroup.groupDetail.owner.lastName} on
             ${props.currentGroup.groupDetail.createdAt}`}
           </small>
         </div>
@@ -34,7 +34,7 @@ const Messages = props => {
     </div>
   ) : (
     <div className="text-center mt-5">
-      <Loading isTrue={!props.currentGroup} />
+      <h3>Select the conversation to view message.</h3>
     </div>
   );
   return;

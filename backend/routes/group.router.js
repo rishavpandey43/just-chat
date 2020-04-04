@@ -25,7 +25,7 @@ groupRouter
     groupRouterController.joinGroupController
   )
   .get(
-    "/get-group-lists",
+    "/get-group-list",
     cors.corsWithOptions,
     authenticate.verifyUser,
     groupRouterController.getGroupListController

@@ -5,7 +5,7 @@ const Schema = mongoose.Schema;
 const groupSchema = new Schema(
   {
     name: { type: String, required: true },
-    ownerId: {
+    owner: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true

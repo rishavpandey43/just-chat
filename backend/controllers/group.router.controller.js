@@ -29,7 +29,7 @@ const createGroupController = (req, res, next) => {
                   .then(hashPassword => {
                     Group.create({
                       name: req.body.name,
-                      ownerId: req.user._id,
+                      owner: req.user._id,
                       private: req.body.private,
                       password: hashPassword
                     })
@@ -50,7 +50,7 @@ const createGroupController = (req, res, next) => {
         } else {
           Group.create({
             name: req.body.name,
-            ownerId: req.user._id,
+            owner: req.user._id,
             private: req.body.private
           })
             .then(group => {
@@ -83,7 +83,7 @@ const joinGroupController = (req, res, next) => {
         }
         // handle if user has requested as a group to be private, instead of being public original
         if (!group.private) {
-          if (group.ownerId.equals(req.user._id)) {
+          if (group.owner.equals(req.user._id)) {
             let err = new Error(
               `You're already the owner of this group, you can't join again.`
             );
@@ -116,7 +116,7 @@ const joinGroupController = (req, res, next) => {
             .then(validPassword => {
               // accept the request, if password is valid
               if (validPassword) {
-                if (group.ownerId.equals(req.user._id)) {
+                if (group.owner.equals(req.user._id)) {
                   let err = new Error(
                     `You're already the owner of this group, you can't join again.`
                   );
@@ -180,7 +180,7 @@ const joinGroupController = (req, res, next) => {
         }
         // now handle the public group
         else if (!group.private) {
-          if (group.ownerId.equals(req.user._id)) {
+          if (group.owner.equals(req.user._id)) {
             let err = new Error(
               `You're already the owner of this group, you can't join again.`
             );
@@ -213,8 +213,8 @@ const joinGroupController = (req, res, next) => {
 
 const getGroupListController = (req, res, next) => {
   // find only those group,in which user is member
-  Group.find({ $or: [{ ownerId: req.user._id }, { members: req.user._id }] })
-    .populate({ path: "ownerId members", model: User })
+  Group.find({ $or: [{ owner: req.user._id }, { members: req.user._id }] })
+    .populate({ path: "owner members", model: User })
     .then(groups => {
       res.statusCode = 200;
       res.setHeader("Content-Type", "application/json");
