@@ -1,5 +1,6 @@
 // import required npm modules
 const express = require("express");
+const http = require("http");
 const io = require("socket.io");
 const morgan = require("morgan");
 const mongoose = require("mongoose");
@@ -14,6 +15,10 @@ var authenticate = require("./utils/authenticate");
 const userRouter = require("./routes/user.router");
 const groupRouter = require("./routes/group.router");
 
+const User = require("./models/user.model");
+const Group = require("./models/group.model");
+const Message = require("./models/message.model");
+
 // configure dotenv to access environment variables
 dotenv.config();
 
@@ -21,12 +26,66 @@ const PORT = process.env.PORT || 5000;
 
 const app = express();
 
+// server instance
+const server = http.createServer(app);
+
+/* **************************************************************** */
+// * BELOW IS THE CONFIGURATION OF SOCKET AND ALL IT"S ASSOCIATED FUNCTIONALITY
+const socket = io(server);
+
+socket.on("connection", (socket) => {
+  socket.on("join-group", (data) => {
+    socket.join(data.groupId);
+  });
+
+  socket.on("send-message", ({ message, currentGroupId }) => {
+    const newMessage = new Message({
+      from: message.from,
+      content: message.content,
+    });
+
+    newMessage
+      .save()
+      .then((message) => {
+        Group.findById(currentGroupId)
+          .then((group) => {
+            group.messages.push(message);
+            group
+              .save()
+              .then((group) => {
+                socket
+                  .to(currentGroupId)
+                  .emit("receive-message", { success: true });
+              })
+              .catch((err) => {
+                console.log(err);
+                socket
+                  .to(currentGroupId)
+                  .emit("receive-message", { success: false });
+              });
+          })
+          .catch((err) => {
+            console.log(err);
+            socket
+              .to(currentGroupId)
+              .emit("receive-message", { success: false });
+          });
+      })
+      .catch((err) => {
+        console.log(err);
+        socket.to(currentGroupId).emit("receive-message", { success: false });
+      });
+  });
+});
+
+/* **************************************************************** */
+
 // connect server to mongoDB Atlas
 const URI = process.env.ATLAS_DB_URI;
 mongoose.connect(URI, {
   useNewUrlParser: true,
   useCreateIndex: true,
-  useUnifiedTopology: true
+  useUnifiedTopology: true,
 });
 
 const connection = mongoose.connection;
@@ -34,7 +93,7 @@ connection.once("open", () => {
   console.log("Mongoose database connection established successfully");
 });
 
-connection.on("error", function(err) {
+connection.on("error", function (err) {
   console.log("Mongoose default connection error: " + err);
 });
 
@@ -49,8 +108,8 @@ app.use(
     saveUninitialized: false,
     secret: process.env.SESSION_SECRET,
     store: new FileStore({
-      logFn: function() {}
-    }) /* { logFn: function() {} } */
+      logFn: function () {},
+    }) /* { logFn: function() {} } */,
   })
 );
 
@@ -72,4 +131,6 @@ app.use((err, req, res, next) => {
   );
 });
 
-app.listen(PORT, () => console.log(`Server listening on port ${PORT}!`));
+server.listen(PORT, "0.0.0.0", () =>
+  console.log(`Server listening on port ${PORT}!`)
+);

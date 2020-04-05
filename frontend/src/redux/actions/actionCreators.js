@@ -8,35 +8,35 @@ const baseUrl = process.env.REACT_APP_API_BASE_URL;
 
 export const loginRequest = () => {
   return {
-    type: actionTypes.LOGIN_REQUEST
+    type: actionTypes.LOGIN_REQUEST,
   };
 };
 
-export const loginSuccess = response => {
+export const loginSuccess = (response) => {
   return {
     type: actionTypes.LOGIN_SUCCESS,
     message: response.message,
     token: response.token,
-    userId: response.userId
+    userId: response.userId,
   };
 };
 
-export const loginFailure = response => {
+export const loginFailure = (response) => {
   return {
     type: actionTypes.LOGIN_FAILURE,
-    message: response.message
+    message: response.message,
   };
 };
 
-export const loginFetch = formData => dispatch => {
+export const loginFetch = (formData) => (dispatch) => {
   dispatch(loginRequest());
 
   axios
     .post(baseUrl + "user/login", JSON.stringify(formData.credentials), {
       headers: { "Content-Type": "application/json" },
-      withCredentials: true
+      withCredentials: true,
     })
-    .then(response => {
+    .then((response) => {
       if (formData.rememberMe) {
         localStorage.setItem("chat_auth_token", response.data.token);
         localStorage.setItem("chat_auth_userId", response.data.userId);
@@ -47,30 +47,30 @@ export const loginFetch = formData => dispatch => {
       dispatch(loginSuccess(response.data));
       displayFlash.emit("get-message", {
         message: response.data.message,
-        type: "success"
+        type: "success",
       });
     })
-    .catch(error => {
+    .catch((error) => {
       if (error.response) {
         dispatch(
           loginFailure({
-            message: `${error.response.data}, please enter correct detail to continue`
+            message: `${error.response.data}, please enter correct detail to continue`,
           })
         );
         displayFlash.emit("get-message", {
           message: `${error.response.data}, please enter correct detail to continue`,
-          type: "danger"
+          type: "danger",
         });
       } else {
         dispatch(
           loginFailure({
             message:
-              "Network Error, Connection to server couldn't be established. Please try again."
+              "Network Error, Connection to server couldn't be established. Please try again.",
           })
         );
         displayFlash.emit("get-message", {
           message: `Network Error, Connection to server couldn't be established. Please try again.`,
-          type: "danger"
+          type: "danger",
         });
       }
     });
@@ -78,36 +78,38 @@ export const loginFetch = formData => dispatch => {
 
 export const logoutRequest = () => {
   return {
-    type: actionTypes.LOGOUT_REQUEST
+    type: actionTypes.LOGOUT_REQUEST,
   };
 };
 
-export const logoutSuccess = response => {
+export const logoutSuccess = (response) => {
   return {
     type: actionTypes.LOGOUT_SUCCESS,
-    message: response.message
+    message: response.message,
   };
 };
 
-export const logoutFailure = response => {
+export const logoutFailure = (response) => {
   return {
     type: actionTypes.LOGOUT_FAILURE,
-    message: response.message
+    message: response.message,
   };
 };
 
-export const logoutFetch = () => dispatch => {
+export const logoutFetch = () => (dispatch) => {
   dispatch(logoutRequest());
   axios
     .get(baseUrl + "user/logout", {
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("chat_auth_token") ||
-          sessionStorage.getItem("chat_auth_token")}`
+        Authorization: `Bearer ${
+          localStorage.getItem("chat_auth_token") ||
+          sessionStorage.getItem("chat_auth_token")
+        }`,
       },
-      withCredentials: true
+      withCredentials: true,
     })
-    .then(response => {
+    .then((response) => {
       localStorage.removeItem("chat_auth_token");
       localStorage.removeItem("chat_auth_userId");
       sessionStorage.removeItem("chat_auth_token");
@@ -119,41 +121,41 @@ export const logoutFetch = () => dispatch => {
         dispatch(logoutSuccess(response.data));
         displayFlash.emit("get-message", {
           message: response.data.message,
-          type: "success"
+          type: "success",
         });
       } else {
         dispatch(
           logoutFailure({
-            message: `Error logging out, please try again.`
+            message: `Error logging out, please try again.`,
           })
         );
         displayFlash.emit("get-message", {
           message: `Error logging out, please try again.`,
-          type: "danger"
+          type: "danger",
         });
       }
     })
-    .catch(error => {
+    .catch((error) => {
       if (error.response) {
         dispatch(
           loginFailure({
-            message: error.response.data
+            message: error.response.data,
           })
         );
         displayFlash.emit("get-message", {
           message: error.response.data.message,
-          type: "danger"
+          type: "danger",
         });
       } else {
         dispatch(
           loginFailure({
             message:
-              "Network Error, Connection to server couldn't be established. Please try again."
+              "Network Error, Connection to server couldn't be established. Please try again.",
           })
         );
         displayFlash.emit("get-message", {
           message: `Network Error, Connection to server couldn't be established. Please try again.`,
-          type: "danger"
+          type: "danger",
         });
       }
     });

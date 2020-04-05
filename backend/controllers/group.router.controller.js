@@ -1,11 +1,12 @@
 const bcrypt = require("bcryptjs");
 
 const User = require("../models/user.model"); // import message group schema
+const Message = require("../models/message.model"); // import message group schema
 const Group = require("../models/group.model"); // import message group schema
 
 const createGroupController = (req, res, next) => {
   Group.findOne({ name: req.body.name })
-    .then(group => {
+    .then((group) => {
       if (group) {
         let err = new Error(
           `Group with this name already exist, please try with another name`
@@ -23,56 +24,56 @@ const createGroupController = (req, res, next) => {
           } else {
             bcrypt
               .genSalt(10)
-              .then(salt => {
+              .then((salt) => {
                 bcrypt
                   .hash(req.body.password, salt)
-                  .then(hashPassword => {
+                  .then((hashPassword) => {
                     Group.create({
                       name: req.body.name,
                       owner: req.user._id,
                       private: req.body.private,
-                      password: hashPassword
+                      password: hashPassword,
                     })
-                      .then(group => {
+                      .then((group) => {
                         res.statusCode = 200;
                         res.setHeader("Content-Type", "application/json");
                         res.json({
                           groupName: group.name,
-                          message: `Group has been successfully created`
+                          message: `Group has been successfully created`,
                         });
                       })
-                      .catch(err => next(err));
+                      .catch((err) => next(err));
                   })
-                  .catch(err => next(err));
+                  .catch((err) => next(err));
               })
-              .catch(err => next(err));
+              .catch((err) => next(err));
           }
         } else {
           Group.create({
             name: req.body.name,
             owner: req.user._id,
-            private: req.body.private
+            private: req.body.private,
           })
-            .then(group => {
+            .then((group) => {
               res.statusCode = 200;
               res.setHeader("Content-Type", "application/json");
               res.json({
                 groupName: group.name,
-                message: `Group has been successfully created`
+                message: `Group has been successfully created`,
               });
             })
-            .catch(err => next(err));
+            .catch((err) => next(err));
         }
       }
     })
-    .catch(err => next(err));
+    .catch((err) => next(err));
 };
 
 const joinGroupController = (req, res, next) => {
   // check if the requested group is private, and handle the request of private group
   if (req.body.private) {
     Group.findOne({ name: req.body.name })
-      .then(group => {
+      .then((group) => {
         // reject request, if group not found
         if (!group) {
           let err = new Error(
@@ -98,22 +99,22 @@ const joinGroupController = (req, res, next) => {
             group.members.push(req.user._id);
             group
               .save()
-              .then(group => {
+              .then((group) => {
                 res.statusCode = 200;
                 res.setHeader("Content-Type", "application/json");
                 res.json({
                   groupName: group.name,
-                  message: `You've successfully joined the group`
+                  message: `You've successfully joined the group`,
                 });
               })
-              .catch(err => next(err));
+              .catch((err) => next(err));
           }
         }
         // now handle the private group
         else {
           bcrypt
             .compare(req.body.password, group.password)
-            .then(validPassword => {
+            .then((validPassword) => {
               // accept the request, if password is valid
               if (validPassword) {
                 if (group.owner.equals(req.user._id)) {
@@ -133,15 +134,15 @@ const joinGroupController = (req, res, next) => {
                   group.members.push(req.user._id);
                   group
                     .save()
-                    .then(group => {
+                    .then((group) => {
                       res.statusCode = 200;
                       res.setHeader("Content-Type", "application/json");
                       res.json({
                         groupName: group.name,
-                        message: `You've successfully joined the group`
+                        message: `You've successfully joined the group`,
                       });
                     })
-                    .catch(err => next(err));
+                    .catch((err) => next(err));
                 }
               }
               // reject the request, if password is valid
@@ -153,15 +154,15 @@ const joinGroupController = (req, res, next) => {
                 next(err);
               }
             })
-            .catch(err => next(err));
+            .catch((err) => next(err));
         }
       })
-      .catch(err => next(err));
+      .catch((err) => next(err));
   }
   // handle the request of public groups
   else {
     Group.findOne({ name: req.body.name })
-      .then(group => {
+      .then((group) => {
         // reject request, if group not found
         if (!group) {
           let err = new Error(
@@ -195,34 +196,44 @@ const joinGroupController = (req, res, next) => {
             group.members.push(req.user._id);
             group
               .save()
-              .then(group => {
+              .then((group) => {
                 res.statusCode = 200;
                 res.setHeader("Content-Type", "application/json");
                 res.json({
                   groupName: group.name,
-                  message: `You've successfully joined the group`
+                  message: `You've successfully joined the group`,
                 });
               })
-              .catch(err => next(err));
+              .catch((err) => next(err));
           }
         }
       })
-      .catch(err => next(err));
+      .catch((err) => next(err));
   }
 };
 
 const getGroupListController = (req, res, next) => {
   // find only those group,in which user is member
-  Group.find({ $or: [{ owner: req.user._id }, { members: req.user._id }] })
-    .populate({ path: "owner members", model: User })
-    .then(groups => {
+  Group.find({
+    $or: [{ owner: req.user._id }, { members: req.user._id }],
+  })
+    .sort({ updatedAt: -1 })
+    .populate([
+      { path: "owner members messages", model: User },
+      {
+        path: "messages",
+        model: Message,
+        populate: { path: "from", model: User },
+      },
+    ])
+    .then((groups) => {
       res.statusCode = 200;
       res.setHeader("Content-Type", "application/json");
       res.json({
-        groups
+        groups,
       });
     })
-    .catch(err => next(err));
+    .catch((err) => next(err));
 };
 
 exports.createGroupController = createGroupController;

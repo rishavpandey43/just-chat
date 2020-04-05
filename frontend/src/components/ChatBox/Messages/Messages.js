@@ -8,7 +8,7 @@ import Loading from "../../Loading/Loading";
 import Message from "./Message/Message";
 import MessageInput from "./MessageInput/MessageInput";
 
-const Messages = props => {
+const Messages = (props) => {
   return props.currentGroup ? (
     <div className="messages-wrapper">
       <div className="heading">
@@ -23,13 +23,21 @@ const Messages = props => {
           </small>
         </div>
         <ScrollToBottom>
-          {props.currentGroup.messages.map(message => (
-            <Message />
+          {props.currentGroup.messages.map((message, i) => (
+            <Message
+              currentUserId={props.currentUserId}
+              message={message}
+              key={i}
+            />
           ))}
         </ScrollToBottom>
       </div>
       <div className="input-container">
-        <MessageInput />
+        <MessageInput
+          currentGroupId={props.currentGroup.groupDetail.groupId}
+          currentUserId={props.currentUserId}
+          sendMessage={props.sendMessage}
+        />
       </div>
     </div>
   ) : (
