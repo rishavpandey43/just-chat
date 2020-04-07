@@ -269,6 +269,11 @@ class Signup extends Component {
                           </button>
                         </div>
                       </form>
+                      <div className="home-page-link">
+                        <span>
+                          <Link to="/"> &larr;Go back to Homepage</Link>
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </div>
