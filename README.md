@@ -22,8 +22,6 @@
 
 - [Licence](licence)
 
-- [Acknowledgement](#acknowledgement)
-
 - [Contact](#contact)
 
 ## Introduction
@@ -41,7 +39,7 @@ This application also features user registration, login using JWT authentication
 
   - User Registration
   - Authentication of user using JWT
-  - Creating Groups and Deleting it.
+  - Creating Groups.
   - Joining Room
   - Real Time chatting
 
@@ -49,8 +47,8 @@ This application also features user registration, login using JWT authentication
   - Email Verification
   - Adding friends to profile
   - Sending invitation to join group
-  - One to One conversation between friends.
-  - Media transfer between conversation
+  - One to One chat between friends.
+  - Media transfer between chat
 
 ## Technologies Used
 
@@ -126,12 +124,6 @@ See also the list of [contributors](https://github.com/rishavpandey43/just-chat/
 ## Licence
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENCE.md) file for details
-
-## Acknowledgement
-
-- This project is inspired from a [youtube video](https://www.youtube.com/watch?v=ZwFA3YMfkoc)
-
-- It's further improved with adding user login/sign-up, database connectivity, creating multiple rooms for group chat, creating / joining rooms
 
 ## Contact
 

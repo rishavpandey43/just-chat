@@ -1,6 +1,8 @@
 import React, { Component } from "react";
+import { Link } from "react-router-dom";
 import axios from "axios";
 import moment from "moment";
+import socketIOClient from "socket.io-client";
 
 import "./chatbox.css";
 
@@ -12,6 +14,7 @@ import displayFlash from "../../utils/flashEvent";
 
 const baseUrl = process.env.REACT_APP_API_BASE_URL;
 
+const socketInstance = socketIOClient(baseUrl);
 class ChatBox extends Component {
   constructor(props) {
     super(props);
@@ -19,13 +22,27 @@ class ChatBox extends Component {
     this.state = {
       groupList: [],
       currentGroup: null,
-      isFetching: false
+      isFetching: false,
     };
   }
 
   componentDidMount() {
     this.fetchGroupList();
+    socketInstance.on("connect", () => {
+      this.setState({ socketInstance });
+    });
+
+    socketInstance.on("receive-message", (data) => {
+      this.fetchGroupList();
+      console.log(data);
+    });
   }
+
+  sendMessage = (data) => {
+    let currentGroup = this.state.currentGroup;
+    currentGroup.messages.push(data.message);
+    socketInstance.emit("send-message", data);
+  };
 
   fetchGroupList = () => {
     this.setState({ isFetching: true });
@@ -33,53 +50,65 @@ class ChatBox extends Component {
       .get(baseUrl + "group/get-group-list", {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("chat_auth_token") ||
-            sessionStorage.getItem("chat_auth_token")}`
+          Authorization: `Bearer ${
+            localStorage.getItem("chat_auth_token") ||
+            sessionStorage.getItem("chat_auth_token")
+          }`,
         },
-        withCredentials: true
+        withCredentials: true,
       })
-      .then(response => {
-        let groupList = response.data.groups.map(group => {
+      .then((response) => {
+        let groupList = response.data.groups.map((group) => {
           let newGroup = new Object({
             groupDetail: {
               groupId: group._id,
               name: group.name,
               owner: group.owner,
-              createdAt: moment(group.createdAt).format("Do MMMM YYYY")
+              createdAt: moment(group.createdAt).format("Do MMMM YYYY"),
             },
-            messages: [...group.messages]
+            messages: [...group.messages],
           });
           return newGroup;
         });
         this.setState({
           groupList: [...groupList],
           currentGroup: groupList[0],
-          isFetching: false
+          isFetching: false,
         });
+        if (this.state.socketInstance) {
+          this.state.socketInstance.emit("join-group", {
+            groupId: this.state.currentGroup.groupDetail.groupId,
+            userId: this.props.authDetail.userId,
+          });
+        }
       })
-      .catch(error => {
+      .catch((error) => {
         this.setState({
           isFetching: false,
           groupList: null,
-          currentGroup: null
+          currentGroup: null,
         });
         error.response
           ? displayFlash.emit("get-message", {
               message: error.response.data.message,
-              type: "danger"
+              type: "danger",
             })
           : displayFlash.emit("get-message", {
               message: `Network Error, Connection to server couldn't be established. Please try again.`,
-              type: "danger"
+              type: "danger",
             });
       });
   };
 
-  updateCurrentRecipient = recipientName => {
+  updateCurrentRecipient = (recipientName) => {
     let currentGroup = this.state.groupList.find(
-      group => group.groupDetail.name === recipientName
+      (group) => group.groupDetail.name === recipientName
     );
     this.setState({ currentGroup });
+    socketInstance.emit("join-group", {
+      groupId: currentGroup.groupDetail.groupId,
+      userId: this.props.authDetail.userId,
+    });
   };
 
   render() {
@@ -87,6 +116,7 @@ class ChatBox extends Component {
       <div className="chat-wrapper">
         <div className="container">
           <div className="main-wrapper">
+            <Link to="/profile"> &larr; Go back to profile</Link>
             <div className="row">
               <div className="inbox col-12 col-sm-4">
                 <Inbox
@@ -109,7 +139,11 @@ class ChatBox extends Component {
                     </div>
                   </div>
                 ) : (
-                  <Messages currentGroup={this.state.currentGroup} />
+                  <Messages
+                    currentGroup={this.state.currentGroup}
+                    currentUserId={this.props.authDetail.userId}
+                    sendMessage={this.sendMessage}
+                  />
                 )}
               </div>
             </div>

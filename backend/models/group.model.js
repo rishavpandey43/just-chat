@@ -8,25 +8,25 @@ const groupSchema = new Schema(
     owner: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true
+      required: true,
     },
     private: { type: Boolean, required: true },
     password: { type: String },
     members: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User"
-      }
+        ref: "User",
+      },
     ],
     messages: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Message"
-      }
-    ]
+        ref: "Message",
+      },
+    ],
   },
   {
-    timestamps: true
+    timestamps: true,
   }
 );
 
