@@ -1,5 +1,12 @@
 .main-wrapper {
-  min-height: calc(100vh - 56px);
+  min-height: calc(100vh);
+  display: flex;
+}
+
+.main-wrapper .grid-sec {
+  justify-content: center;
+  display: flex;
+  flex-direction: column;
 }
 
 a {
@@ -18,14 +25,6 @@ button:focus {
   outline: none;
 }
 
-.login-signup-wrapper {
-  background-color: lightblue;
-}
-
-.login-signup-wrapper .card {
-  margin: 0px auto;
-}
-
 .btn {
   font-size: 1.2em;
   box-shadow: none;
@@ -37,4 +36,40 @@ body {
 
 .row {
   margin: 0px;
+}
+
+.form-control {
+  border: none;
+  outline: none;
+  border-radius: 0;
+  border-bottom: 1px solid #e8ecf4;
+}
+
+.form-control:focus {
+  border: none;
+  box-shadow: none;
+  border-bottom: 1px solid #c90bce;
+}
+
+.form-div .btn {
+  background-color: #c90bce;
+  color: #fff;
+  border-radius: 2rem;
+  padding: 0.4rem 2rem;
+}
+
+.btn:hover {
+  color: #fff;
+}
+
+.form-div .col-12 {
+  padding: 0px;
+}
+
+.form-div .col-12:nth-child(1) {
+  padding-right: 10px;
+}
+
+.form-div .col-12:nth-child(2) {
+  padding-left: 10px;
 }

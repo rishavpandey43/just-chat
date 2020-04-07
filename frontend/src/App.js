@@ -20,29 +20,30 @@ export default function MainApp(props) {
   return (
     <div>
       <Flash />
-      <Header {...props} />
-      <Router history={props.history}>
-        <Switch location={props.location}>
-          <Route exact path="/" component={() => <HomePage {...props} />} />
-          <Route path="/login" component={() => <Login {...props} />} />
-          <Route path="/signup" component={() => <Signup {...props} />} />
-          <PrivateRoute
-            exact
-            path="/profile/:username"
-            mainProps={{ ...props }} // * pass the main app props separately to handle it PrivateProps component
-            component={props => <Profile {...props} />}
-            // * The newly constructed props in PrivateRoute is then passed to protected components
-          />
-          <PrivateRoute
-            exact
-            path="/chat"
-            mainProps={{ ...props }}
-            component={props => <ChatBox {...props} />}
-            // * The newly constructed props in PrivateRoute is then passed to protected components
-          />
-          <Redirect to="/" />
-        </Switch>
-      </Router>
+      <main>
+        <Router history={props.history}>
+          <Switch location={props.location}>
+            <Route exact path="/" component={() => <HomePage {...props} />} />
+            <Route path="/login" component={() => <Login {...props} />} />
+            <Route path="/signup" component={() => <Signup {...props} />} />
+            <PrivateRoute
+              exact
+              path="/profile/:username"
+              mainProps={{ ...props }} // * pass the main app props separately to handle it PrivateProps component
+              component={(props) => <Profile {...props} />}
+              // * The newly constructed props in PrivateRoute is then passed to protected components
+            />
+            <PrivateRoute
+              exact
+              path="/chat"
+              mainProps={{ ...props }}
+              component={(props) => <ChatBox {...props} />}
+              // * The newly constructed props in PrivateRoute is then passed to protected components
+            />
+            <Redirect to="/" />
+          </Switch>
+        </Router>
+      </main>
     </div>
   );
 }
