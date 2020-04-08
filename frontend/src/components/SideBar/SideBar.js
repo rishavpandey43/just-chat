@@ -8,7 +8,11 @@ import "./sideBar.css";
 
 const SideBar = (props) => {
   return (
-    <aside className="aside">
+    <aside
+      className={`${
+        props.authDetail.isAuthenticated ? "aside d-block" : "aside d-none"
+      }`}
+    >
       <div className="sidebar-wrapper">
         <div className="sidebar-btn">
           <button className="btn">
@@ -42,7 +46,7 @@ const SideBar = (props) => {
           </li>
         </ul>
         <div className="logout">
-          <button className="logout-btn btn">
+          <button onClick={props.logoutFetch} className="logout-btn btn">
             <FiLogOut />
           </button>
         </div>

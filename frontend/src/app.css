@@ -2,9 +2,17 @@
   display: flex;
 }
 
-main {
+.sidebar-active {
+  padding: 0rem 2rem;
   width: calc(100vw - 200px);
-  padding: 0rem 1rem;
+  position: absolute;
+  top: 0px;
+  left: 180px;
+  overflow-x: auto;
+}
+
+.sidebar-inactive {
+  width: 100vw;
 }
 
 .page-wrapper {
@@ -43,6 +51,14 @@ body {
   position: relative;
 }
 
+.fa-colored-icon {
+  color: #c90bce;
+}
+
+.fa-1-5x {
+  font-size: 1.5em;
+}
+
 .row {
   margin: 0px;
 }
@@ -65,10 +81,6 @@ body {
   color: #fff;
   border-radius: 2rem;
   padding: 0.4rem 2rem;
-}
-
-.btn:hover {
-  color: #fff;
 }
 
 .form-div .col-12 {

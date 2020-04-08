@@ -2,6 +2,13 @@ import React, { component, Component } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { MdSearch } from "react-icons/md";
+import {
+  FaRegAddressBook,
+  FaRegCalendarAlt,
+  FaHome,
+  FaUser,
+} from "react-icons/fa";
+import { FiPhone, FiMail } from "react-icons/fi";
 
 import "./profile.css";
 
@@ -33,7 +40,98 @@ class Profile extends Component {
           </form>
         </div>
         <div className="profile-card">
-          <h1>Hello World</h1>
+          <div className="profile-wrapper">
+            <div className="row">
+              <div className="col-12 col-md-6">
+                <div className="profile-detail">
+                  <div className="name">
+                    <h3>Rishav Pandey</h3>
+                    <span>Tech Geek</span>
+                  </div>
+                  <div className="action-btn mt-5">
+                    <div className="add-friend">
+                      <button className="btn">Add Friend</button>
+                    </div>
+                    <div className="row mt-4">
+                      <div className="col-6">
+                        <div className="send-message">
+                          <button className="btn">Send Message</button>
+                        </div>
+                      </div>
+                      <div className="col-6">
+                        <div className="unfriend">
+                          <button className="btn"> Unfriend</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="col-12 col-md-6">
+                <div className="profile-photo">
+                  <img
+                    src={require("../../assets/images/profile_pic.png")}
+                    alt=""
+                    width="100%"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="profile-card">
+          <div className="personal-info-wrapper">
+            <div className="about">
+              <div className="heading">
+                <h3>
+                  <FaUser className="fa-colored-icon" />
+                  <span className="pl-3">About Me</span>
+                </h3>
+              </div>
+              <div className="content">
+                <p>
+                  Cupidatat ut qui dolor commodo ea esse reprehenderit non
+                  commodo. Ullamco pariatur cillum dolore officia adipisicing
+                  incididunt ex velit. Excepteur pariatur dolore aute aliqua ad
+                  veniam veniam. Ad Lorem cupidatat est ipsum ex commodo Lorem
+                </p>
+              </div>
+            </div>
+            <div className="personal-info">
+              <div className="heading">
+                <h3>Personal Information</h3>
+              </div>
+              <div className="content">
+                <ul>
+                  <li className="info-list">
+                    <span className="icon">
+                      <FaRegCalendarAlt className="fa-colored-icon" />
+                    </span>
+                    <span className="text">21/ 02/ 1999</span>
+                  </li>
+                  <li className="info-list">
+                    <span className="icon">
+                      <FiPhone className="fa-colored-icon" />
+                    </span>
+                    <span className="text">+91- 9771578320</span>
+                  </li>
+                  <li className="info-list">
+                    <span className="icon">
+                      <FiMail className="fa-colored-icon" />
+                    </span>
+                    <span className="text">demo@demo.com</span>
+                  </li>
+                  <li className="info-list">
+                    <span className="icon">
+                      <FaHome className="fa-colored-icon" />
+                    </span>
+                    <span className="text">Jaipur, India</span>
+                  </li>
+                </ul>
+              </div>
+              <div className="social-link"></div>
+            </div>
+          </div>
         </div>
       </div>
     );

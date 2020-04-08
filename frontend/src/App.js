@@ -22,7 +22,13 @@ export default function MainApp(props) {
       <Flash />
       <div className="main-wrapper">
         <SideBar {...props} />
-        <main>
+        <main
+          className={`${
+            props.authDetail.isAuthenticated
+              ? "sidebar-active"
+              : "sidebar-inactive"
+          }`}
+        >
           <Router history={props.history}>
             <Switch location={props.location}>
               <Route exact path="/" component={() => <HomePage {...props} />} />

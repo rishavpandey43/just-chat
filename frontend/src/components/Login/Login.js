@@ -43,14 +43,14 @@ const Login = (props) => {
               </div>
             </div>
             <div className="col-12 col-sm-6 grid-sec">
-              <div class="card">
-                <div class="card-body">
+              <div className="card">
+                <div className="card-body">
                   <div className="heading">
                     <h3>Welcome Back :)</h3>
                   </div>
                   <div className="form-div">
                     <form onSubmit={handleSubmit}>
-                      <div class="form-group">
+                      <div className="form-group">
                         <label>Username</label>
                         <input
                           type="text"
@@ -68,7 +68,7 @@ const Login = (props) => {
                           }}
                         />
                       </div>
-                      <div class="form-group">
+                      <div className="form-group">
                         <label>Password</label>
                         <input
                           type="password"
@@ -84,8 +84,8 @@ const Login = (props) => {
                           }}
                         />
                       </div>
-                      <div class="form-group form-check">
-                        <label class="form-check-label">
+                      <div className="form-group form-check">
+                        <label className="form-check-label">
                           <input
                             type="checkbox"
                             className="form-check-input"
@@ -108,7 +108,7 @@ const Login = (props) => {
                           Sign up
                         </Link>
                       </small>
-                      <div class="form-group">
+                      <div className="form-group">
                         <button type="submit" className="btn">
                           Login
                         </button>

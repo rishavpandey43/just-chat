@@ -1,13 +1,15 @@
 .aside {
   background-color: #31353d;
   color: #fff;
-  width: 200px;
+  width: 180px;
+  position: fixed;
+  height: 100vh;
 }
 
 .sidebar-wrapper {
   position: relative;
-  height: calc(100vh - 16px);
   font-size: 1.2em;
+  height: calc(100vh - 16px);
 }
 
 .logout {
