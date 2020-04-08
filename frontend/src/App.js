@@ -7,7 +7,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "./app.css";
 
 // import components
-import Header from "./components/Header/Header";
+import SideBar from "./components/SideBar/SideBar";
 import HomePage from "./components/HomePage/HomePage";
 import Login from "./components/Login/Login";
 import Signup from "./components/Signup/Signup";
@@ -18,31 +18,35 @@ import Flash from "./components/Flash/Flash";
 
 export default function MainApp(props) {
   return (
-    <div>
+    <div style={{ position: "relative" }}>
       <Flash />
-      <Header {...props} />
-      <Router history={props.history}>
-        <Switch location={props.location}>
-          <Route exact path="/" component={() => <HomePage {...props} />} />
-          <Route path="/login" component={() => <Login {...props} />} />
-          <Route path="/signup" component={() => <Signup {...props} />} />
-          <PrivateRoute
-            exact
-            path="/profile/:username"
-            mainProps={{ ...props }} // * pass the main app props separately to handle it PrivateProps component
-            component={props => <Profile {...props} />}
-            // * The newly constructed props in PrivateRoute is then passed to protected components
-          />
-          <PrivateRoute
-            exact
-            path="/chat"
-            mainProps={{ ...props }}
-            component={props => <ChatBox {...props} />}
-            // * The newly constructed props in PrivateRoute is then passed to protected components
-          />
-          <Redirect to="/" />
-        </Switch>
-      </Router>
+      <div className="main-wrapper">
+        <SideBar {...props} />
+        <main>
+          <Router history={props.history}>
+            <Switch location={props.location}>
+              <Route exact path="/" component={() => <HomePage {...props} />} />
+              <Route path="/login" component={() => <Login {...props} />} />
+              <Route path="/signup" component={() => <Signup {...props} />} />
+              <PrivateRoute
+                exact
+                path="/profile/:username"
+                mainProps={{ ...props }} // * pass the main app props separately to handle it PrivateProps component
+                component={(props) => <Profile {...props} />}
+                // * The newly constructed props in PrivateRoute is then passed to protected components
+              />
+              <PrivateRoute
+                exact
+                path="/chat"
+                mainProps={{ ...props }}
+                component={(props) => <ChatBox {...props} />}
+                // * The newly constructed props in PrivateRoute is then passed to protected components
+              />
+              <Redirect to="/" />
+            </Switch>
+          </Router>
+        </main>
+      </div>
     </div>
   );
 }

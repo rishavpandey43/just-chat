@@ -115,7 +115,7 @@ class ChatBox extends Component {
     return (
       <div className="chat-wrapper">
         <div className="container">
-          <div className="main-wrapper">
+          <div className="page-wrapper">
             <Link to="/profile"> &larr; Go back to profile</Link>
             <div className="row">
               <div className="inbox col-12 col-sm-4">

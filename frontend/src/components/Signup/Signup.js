@@ -4,6 +4,8 @@ import { Link } from "react-router-dom";
 
 import "./signup.css";
 
+import displayFlash from "../../utils/flashEvent";
+
 import Loading from "../Loading/Loading";
 class Signup extends Component {
   constructor(props) {
@@ -15,13 +17,13 @@ class Signup extends Component {
         lastName: "",
         email: "",
         password: "",
-        rePassword: ""
+        rePassword: "",
       },
       loadingIsTrue: false,
       responseData: {
         message: "",
-        status: null
-      }
+        status: null,
+      },
     };
   }
 
@@ -31,13 +33,13 @@ class Signup extends Component {
     this.setState({ userDetail: tempUserDetail });
   };
 
-  signup = e => {
+  signup = (e) => {
     e.preventDefault();
     this.setState({
       responseData: {
         message: "",
-        status: null
-      }
+        status: null,
+      },
     });
     let isEmpty = true;
     for (const key in this.state.userDetail) {
@@ -53,33 +55,33 @@ class Signup extends Component {
         let responseData = {
           message:
             "username consist of whitespace, please avoid whitespace to continue.",
-          status: 422
+          status: 422,
         };
         this.setState({
           loadingIsTrue: false,
-          responseData
+          responseData,
         });
         return;
       }
       if (this.state.userDetail.password !== this.state.userDetail.rePassword) {
         let responseData = {
           message: "Both password should be same",
-          status: 422
+          status: 422,
         };
         this.setState({
           loadingIsTrue: false,
-          responseData
+          responseData,
         });
         return;
       }
       if (this.state.userDetail.password.length < 8) {
         let responseData = {
           message: "password length should be greater than or equal to 8",
-          status: 422
+          status: 422,
         };
         this.setState({
           loadingIsTrue: false,
-          responseData
+          responseData,
         });
         return;
       }
@@ -87,12 +89,12 @@ class Signup extends Component {
       this.setState({ loadingIsTrue: true });
       axios
         .post(process.env.REACT_APP_API_BASE_URL + "user/signup", newUser, {
-          headers: { "Content-Type": "application/json" }
+          headers: { "Content-Type": "application/json" },
         })
-        .then(res => {
+        .then((res) => {
           let responseData = {
             message: res.data.message,
-            status: res.status
+            status: res.status,
           };
           this.setState({
             loadingIsTrue: false,
@@ -103,180 +105,177 @@ class Signup extends Component {
               lastName: "",
               email: "",
               password: "",
-              rePassword: ""
-            }
+              rePassword: "",
+            },
           });
-          setTimeout(() => {
-            this.props.history.push("/login");
-          }, 1000);
+          displayFlash.emit("get-message", {
+            message: responseData.message,
+            type: "success",
+          });
         })
-        .catch(err => {
+        .catch((err) => {
           let responseData = {
             message: "Internal Server Error, please try again.",
-            status: 500
+            status: 500,
           };
-          console.log(err.response);
           if (err.response) {
             responseData = {
               message: err.response.data.message,
-              status: err.response.status
+              status: err.response.status,
             };
           }
           this.setState({
             loadingIsTrue: false,
-            responseData
+            responseData,
+          });
+          displayFlash.emit("get-message", {
+            message: responseData.message,
+            type: "danger",
           });
         });
     } else alert("Please fill all the details first to signup");
   };
   render() {
     return (
-      <div className="login-signup-wrapper">
+      <div className="login-signup">
         <div className="container">
-          <div className="main-wrapper">
-            <div className="wrapper">
-              <div className="card col-12 col-sm-6">
-                <div className="card-head">
-                  <h3>Create your account now</h3>
+          <div className="page-wrapper">
+            <div className="row">
+              <div className="col-12 col-sm-6 grid-sec">
+                <div className="img-container">
+                  <img
+                    src={require("../../assets/images/sign_up.png")}
+                    alt="main-illustrator"
+                    width="100%"
+                  />
                 </div>
-                <div className="card-body">
-                  <form>
-                    <div className="row">
-                      <div className="col-12 col-sm-6">
-                        <div className="form-group">
-                          <label>First name</label>
-                          <input
-                            type="text"
-                            className="form-control"
-                            placeholder="John"
-                            required
-                            value={this.state.userDetail.firstName}
-                            onChange={this.handleInputChange.bind(
-                              null,
-                              "firstName"
-                            )}
-                          />
-                        </div>
-                      </div>
-                      <div className="col-12 col-sm-6">
-                        <div className="form-group">
-                          <label>Last name</label>
-                          <input
-                            type="text"
-                            className="form-control"
-                            placeholder="Doe"
-                            required
-                            value={this.state.userDetail.lastName}
-                            onChange={this.handleInputChange.bind(
-                              null,
-                              "lastName"
-                            )}
-                          />
-                        </div>
-                      </div>
+              </div>
+              <div className="col-12 col-sm-6 grid-sec">
+                <div class="card">
+                  <div class="card-body">
+                    <div className="heading">
+                      <h3>Create an account for free</h3>
                     </div>
-                    <div className="row">
-                      <div className="col-12 col-sm-6">
-                        <div className="form-group">
-                          <label>User Name</label>
+                    <div className="form-div">
+                      <form onSubmit={this.signup.bind(null)}>
+                        <div className="row">
+                          <div className="col-12 col-sm-6">
+                            <div className="form-group">
+                              <label>First name</label>
+                              <input
+                                type="text"
+                                className="form-control"
+                                placeholder="John"
+                                required
+                                value={this.state.userDetail.firstName}
+                                onChange={this.handleInputChange.bind(
+                                  null,
+                                  "firstName"
+                                )}
+                              />
+                            </div>
+                          </div>
+                          <div className="col-12 col-sm-6">
+                            <div className="form-group">
+                              <label>Last name</label>
+                              <input
+                                type="text"
+                                className="form-control"
+                                placeholder="Doe"
+                                required
+                                value={this.state.userDetail.lastName}
+                                onChange={this.handleInputChange.bind(
+                                  null,
+                                  "lastName"
+                                )}
+                              />
+                            </div>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label>Username</label>
                           <input
                             type="text"
                             className="form-control"
                             placeholder="johndoe"
                             required
+                            name="username"
+                            minLength="5"
                             value={this.state.userDetail.username}
                             onChange={this.handleInputChange.bind(
                               null,
                               "username"
                             )}
                           />
-                          <small className="form-text text-muted">
-                            your username should be unique
-                          </small>
                         </div>
-                      </div>
-                      <div className="col-12 col-sm-6">
-                        <div className="form-group">
-                          <label>Email address</label>
+                        <div class="form-group">
+                          <label>Email</label>
                           <input
                             type="email"
                             className="form-control"
-                            placeholder="johndoe@demo.com"
+                            placeholder="johndoe@john.doe"
                             required
+                            name="email"
+                            minLength="5"
                             value={this.state.userDetail.email}
                             onChange={this.handleInputChange.bind(
                               null,
                               "email"
                             )}
                           />
-                          <small className="form-text text-muted">
-                            We'll never share your email with anyone else.
-                          </small>
                         </div>
+                        <div className="row">
+                          <div className="col-12 col-sm-6">
+                            <div className="form-group">
+                              <label>Choose a strong Password</label>
+                              <input
+                                type="password"
+                                className="form-control"
+                                required
+                                value={this.state.userDetail.password}
+                                onChange={this.handleInputChange.bind(
+                                  null,
+                                  "password"
+                                )}
+                              />
+                            </div>
+                          </div>
+                          <div className="col-12 col-sm-6">
+                            <div className="form-group">
+                              <label>Confirm your Password</label>
+                              <input
+                                type="password"
+                                className="form-control"
+                                required
+                                value={this.state.userDetail.rePassword}
+                                onChange={this.handleInputChange.bind(
+                                  null,
+                                  "rePassword"
+                                )}
+                              />
+                            </div>
+                          </div>
+                        </div>
+
+                        <small className="form-text text-muted mb-4">
+                          Already have a account,
+                          <Link to="/login" style={{ color: "blue" }}>
+                            Sign in
+                          </Link>
+                        </small>
+                        <div class="form-group">
+                          <button type="submit" className="btn">
+                            Signup
+                          </button>
+                        </div>
+                      </form>
+                      <div className="home-page-link">
+                        <span>
+                          <Link to="/"> &larr;Go back to Homepage</Link>
+                        </span>
                       </div>
                     </div>
-                    <div className="row">
-                      <div className="col-12 col-sm-6">
-                        <div className="form-group">
-                          <label>Choose a strong Password</label>
-                          <input
-                            type="password"
-                            className="form-control"
-                            required
-                            value={this.state.userDetail.password}
-                            onChange={this.handleInputChange.bind(
-                              null,
-                              "password"
-                            )}
-                          />
-                        </div>
-                      </div>
-                      <div className="col-12 col-sm-6">
-                        <div className="form-group">
-                          <label>Confirm your Password</label>
-                          <input
-                            type="password"
-                            className="form-control"
-                            required
-                            value={this.state.userDetail.rePassword}
-                            onChange={this.handleInputChange.bind(
-                              null,
-                              "rePassword"
-                            )}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                    <small className="form-text text-muted mb-4">
-                      Already have a account,
-                      <Link to="/login" style={{ color: "blue" }}>
-                        Sign in
-                      </Link>
-                    </small>
-                    <button
-                      type="submit"
-                      className="btn btn-primary"
-                      onClick={this.signup.bind(null)}
-                    >
-                      Sign Up
-                    </button>
-                    <Loading isTrue={this.state.loadingIsTrue} />
-                    <div>
-                      {this.state.responseData.status ? (
-                        this.state.responseData.status === 200 ? (
-                          <span className="text-success">
-                            {this.state.responseData.message}
-                          </span>
-                        ) : (
-                          <span className="text-danger">
-                            {this.state.responseData.message}
-                          </span>
-                        )
-                      ) : (
-                        ""
-                      )}
-                    </div>
-                  </form>
+                  </div>
                 </div>
               </div>
             </div>
@@ -288,3 +287,158 @@ class Signup extends Component {
 }
 
 export default Signup;
+
+{
+  /* <div className="login-signup-wrapper">
+  <div className="container">
+    <div className="page-wrapper">
+      <div className="wrapper">
+        <div className="card col-12 col-sm-6">
+          <div className="card-head">
+            <h3>Create your account now</h3>
+          </div>
+          <div className="card-body">
+            <form>
+              <div className="row">
+                <div className="col-12 col-sm-6">
+                  <div className="form-group">
+                    <label>First name</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="John"
+                      required
+                      value={this.state.userDetail.firstName}
+                      onChange={this.handleInputChange.bind(
+                        null,
+                        "firstName"
+                      )}
+                    />
+                  </div>
+                </div>
+                <div className="col-12 col-sm-6">
+                  <div className="form-group">
+                    <label>Last name</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="Doe"
+                      required
+                      value={this.state.userDetail.lastName}
+                      onChange={this.handleInputChange.bind(
+                        null,
+                        "lastName"
+                      )}
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="row">
+                <div className="col-12 col-sm-6">
+                  <div className="form-group">
+                    <label>User Name</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="johndoe"
+                      required
+                      value={this.state.userDetail.username}
+                      onChange={this.handleInputChange.bind(
+                        null,
+                        "username"
+                      )}
+                    />
+                    <small className="form-text text-muted">
+                      your username should be unique
+                    </small>
+                  </div>
+                </div>
+                <div className="col-12 col-sm-6">
+                  <div className="form-group">
+                    <label>Email address</label>
+                    <input
+                      type="email"
+                      className="form-control"
+                      placeholder="johndoe@demo.com"
+                      required
+                      value={this.state.userDetail.email}
+                      onChange={this.handleInputChange.bind(
+                        null,
+                        "email"
+                      )}
+                    />
+                    <small className="form-text text-muted">
+                      We'll never share your email with anyone else.
+                    </small>
+                  </div>
+                </div>
+              </div>
+              <div className="row">
+                <div className="col-12 col-sm-6">
+                  <div className="form-group">
+                    <label>Choose a strong Password</label>
+                    <input
+                      type="password"
+                      className="form-control"
+                      required
+                      value={this.state.userDetail.password}
+                      onChange={this.handleInputChange.bind(
+                        null,
+                        "password"
+                      )}
+                    />
+                  </div>
+                </div>
+                <div className="col-12 col-sm-6">
+                  <div className="form-group">
+                    <label>Confirm your Password</label>
+                    <input
+                      type="password"
+                      className="form-control"
+                      required
+                      value={this.state.userDetail.rePassword}
+                      onChange={this.handleInputChange.bind(
+                        null,
+                        "rePassword"
+                      )}
+                    />
+                  </div>
+                </div>
+              </div>
+              <small className="form-text text-muted mb-4">
+                Already have a account,
+                <Link to="/login" style={{ color: "blue" }}>
+                  Sign in
+                </Link>
+              </small>
+              <button
+                type="submit"
+                className="btn btn-primary"
+                onClick={this.signup.bind(null)}
+              >
+                Sign Up
+              </button>
+              <Loading isTrue={this.state.loadingIsTrue} />
+              <div>
+                {this.state.responseData.status ? (
+                  this.state.responseData.status === 200 ? (
+                    <span className="text-success">
+                      {this.state.responseData.message}
+                    </span>
+                  ) : (
+                    <span className="text-danger">
+                      {this.state.responseData.message}
+                    </span>
+                  )
+                ) : (
+                  ""
+                )}
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div> */
+}
