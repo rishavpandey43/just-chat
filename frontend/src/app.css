@@ -1,9 +1,18 @@
 .main-wrapper {
+  display: flex;
+}
+
+main {
+  width: calc(100vw - 200px);
+  padding: 0rem 1rem;
+}
+
+.page-wrapper {
   min-height: calc(100vh);
   display: flex;
 }
 
-.main-wrapper .grid-sec {
+.page-wrapper .grid-sec {
   justify-content: center;
   display: flex;
   flex-direction: column;

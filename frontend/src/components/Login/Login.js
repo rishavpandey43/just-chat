@@ -31,7 +31,7 @@ const Login = (props) => {
   return (
     <div className="login-signup">
       <div className="container">
-        <div className="main-wrapper">
+        <div className="page-wrapper">
           <div className="row">
             <div className="col-12 col-sm-6 grid-sec">
               <div className="img-container">

@@ -1,4 +1,50 @@
-.service-btn,
+.profile-wrapper {
+  width: 100%;
+}
+
+.search-bar-wrapper {
+  width: 60%;
+  margin: auto;
+  margin-top: 2rem;
+}
+
+.search-bar-wrapper .search-bar {
+  padding: 0.5rem;
+  border: 1px solid #c90bce;
+  border-radius: 1rem;
+  display: flex;
+  flex-direction: row;
+}
+
+.search-bar-wrapper .search-bar .search-input {
+  width: 90%;
+}
+
+.search-bar .search-input .input {
+  width: 100%;
+  padding: 0.5rem 1rem;
+  outline: none;
+  border: none;
+}
+
+.search-bar-wrapper .search-bar .search-btn {
+  width: 10%;
+}
+
+.search-bar .search-btn .btn:hover {
+  color: inherit !important;
+}
+
+.profile-wrapper .profile-card {
+  width: 100%;
+  padding: 1rem;
+  margin-top: 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid #eee;
+  box-shadow: 10px 25px 20px -21px rgba(0, 0, 0, 0.2);
+}
+
+/* .service-btn,
 .short-summary {
   display: flex;
   flex-direction: row;
@@ -25,4 +71,4 @@
 .card-footer {
   background-color: #fff;
   border: none;
-}
+} */
