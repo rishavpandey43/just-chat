@@ -27,6 +27,12 @@ class Signup extends Component {
     };
   }
 
+  componentDidMount() {
+    if (this.props.authDetail.isAuthenticated) {
+      this.props.history.push("/");
+    }
+  }
+
   handleInputChange = (target, e) => {
     const tempUserDetail = { ...this.state.userDetail };
     tempUserDetail[target] = e.target.value;
