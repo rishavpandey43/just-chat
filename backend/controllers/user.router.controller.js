@@ -125,6 +125,9 @@ const updateUserDetailController = (req, res, next) => {
         lastName: req.body.lastName,
         title: req.body.title,
         aboutMe: req.body.aboutMe,
+        dob: req.body.dob,
+        contactNum: req.body.contactNum,
+        address: req.body.address,
       },
     },
     { new: true }

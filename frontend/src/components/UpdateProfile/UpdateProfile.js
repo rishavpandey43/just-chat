@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import DatePicker from "react-datepicker";
+import moment from "moment";
+
+import "react-datepicker/dist/react-datepicker.css";
 
 import displayFlash from "../../utils/flashEvent";
 
@@ -29,8 +33,12 @@ const UpdateProfile = (props) => {
             lastName: response.data.user.lastName,
             title: response.data.user.title,
             aboutMe: response.data.user.aboutMe,
+            dob: moment(response.data.user.dob).toDate(),
+            contactNum: response.data.user.contactNum,
+            address: response.data.user.address,
             password: "",
           };
+          console.log(tempState.userDetail.dob);
           setState({ ...tempState });
         })
         .catch((error) => {});
@@ -65,6 +73,9 @@ const UpdateProfile = (props) => {
           lastName: response.data.user.lastName,
           title: response.data.user.title,
           aboutMe: response.data.user.aboutMe,
+          dob: moment(response.data.user.dob).toDate(),
+          contactNum: response.data.user.contactNum,
+          address: response.data.user.address,
           password: "",
         };
         setState({ ...tempState });
@@ -78,7 +89,7 @@ const UpdateProfile = (props) => {
         setState({ ...tempState });
         if (error.response) {
           displayFlash.emit("get-message", {
-            message: error.response.data.message,
+            message: error.response.data,
             type: "danger",
           });
         } else {
@@ -139,23 +150,6 @@ const UpdateProfile = (props) => {
                     </div>
                   </div>
                 </div>
-                {/* <div className="form-group">
-                  <label className="form-label">Username</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    placeholder="johndoe"
-                    required
-                    name="newUsername"
-                    minLength="5"
-                    value={state.userDetail.newUsername}
-                    onChange={(e) => {
-                      let tempState = { ...state };
-                      tempState.userDetail[e.target.name] = e.target.value;
-                      setState({ ...tempState });
-                    }}
-                  />
-                </div> */}
                 <div className="form-group">
                   <label className="form-label">Title</label>
                   <input
@@ -179,8 +173,9 @@ const UpdateProfile = (props) => {
                     cols="20"
                     rows="10"
                     name="aboutMe"
+                    minLength="50"
                     maxLength="400"
-                    placeholder="write under 400 words"
+                    placeholder="write under min 50 and max 400 words"
                     value={state.userDetail.aboutMe}
                     onChange={(e) => {
                       let tempState = { ...state };
@@ -188,6 +183,54 @@ const UpdateProfile = (props) => {
                       setState({ ...tempState });
                     }}
                   ></textarea>
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Date of Birth</label>
+                  <DatePicker
+                    dateFormat={moment(state.userDetail.dob).format(
+                      "DD/MM/YYYY"
+                    )}
+                    selected={state.userDetail.dob}
+                    onChange={(date) => {
+                      console.log(date);
+                      let tempState = { ...state };
+                      tempState.userDetail.dob = date;
+                      setState(tempState);
+                    }}
+                  />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Contact number</label>
+                  <input
+                    type="number"
+                    className="form-control"
+                    name="contactNum"
+                    required
+                    minLength="5"
+                    placeholder="+91-97XXXXXX88"
+                    value={state.userDetail.contactNum}
+                    onChange={(e) => {
+                      let tempState = { ...state };
+                      tempState.userDetail[e.target.name] = e.target.value;
+                      setState({ ...tempState });
+                    }}
+                  />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Current Address</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    name="address"
+                    required
+                    placeholder="New Delhi, India"
+                    value={state.userDetail.address}
+                    onChange={(e) => {
+                      let tempState = { ...state };
+                      tempState.userDetail[e.target.name] = e.target.value;
+                      setState({ ...tempState });
+                    }}
+                  />
                 </div>
                 <div className="form-group">
                   <label className="form-label">

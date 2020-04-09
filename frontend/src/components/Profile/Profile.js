@@ -1,6 +1,8 @@
 import React, { component, Component } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import moment from "moment";
+
 import { MdSearch } from "react-icons/md";
 import {
   FaRegAddressBook,
@@ -84,7 +86,7 @@ class Profile extends Component {
                     <div className="profile-detail">
                       <div className="name">
                         <h3>{`${this.state.userDetail.firstName} ${this.state.userDetail.lastName}`}</h3>
-                        <span>Tech Geek</span>
+                        <span>{`${this.state.userDetail.title}`}</span>
                       </div>
                       {this.state.userDetail._id ==
                       this.props.authDetail.userId ? (
@@ -124,7 +126,13 @@ class Profile extends Component {
             </div>
             <div className="main-page-card">
               <div className="personal-info-wrapper">
-                <div className="about">
+                <div
+                  className={`${
+                    this.state.userDetail.aboutMe
+                      ? "about-me d-block"
+                      : "about-me d-none"
+                  }`}
+                >
                   <div className="heading">
                     <h3>
                       <FaUser className="fa-colored-icon" />
@@ -132,13 +140,7 @@ class Profile extends Component {
                     </h3>
                   </div>
                   <div className="content">
-                    <p>
-                      Cupidatat ut qui dolor commodo ea esse reprehenderit non
-                      commodo. Ullamco pariatur cillum dolore officia
-                      adipisicing incididunt ex velit. Excepteur pariatur dolore
-                      aute aliqua ad veniam veniam. Ad Lorem cupidatat est ipsum
-                      ex commodo Lorem
-                    </p>
+                    <p>{this.state.userDetail.aboutMe}</p>
                   </div>
                 </div>
                 <div className="personal-info">
@@ -151,25 +153,35 @@ class Profile extends Component {
                         <span className="icon">
                           <FaRegCalendarAlt className="fa-colored-icon" />
                         </span>
-                        <span className="text">21/ 02/ 1999</span>
+                        <span className="text">
+                          {`${moment(this.state.userDetail.dob).format(
+                            "DD/MM/YYYY"
+                          )}`}
+                        </span>
                       </li>
                       <li className="info-list">
                         <span className="icon">
                           <FiPhone className="fa-colored-icon" />
                         </span>
-                        <span className="text">+91- 9771578320</span>
+                        <span className="text">
+                          {this.state.userDetail.contactNum}
+                        </span>
                       </li>
                       <li className="info-list">
                         <span className="icon">
                           <FiMail className="fa-colored-icon" />
                         </span>
-                        <span className="text">demo@demo.com</span>
+                        <span className="text">
+                          {this.state.userDetail.email}
+                        </span>
                       </li>
                       <li className="info-list">
                         <span className="icon">
                           <FaHome className="fa-colored-icon" />
                         </span>
-                        <span className="text">Jaipur, India</span>
+                        <span className="text">
+                          {this.state.userDetail.address}
+                        </span>
                       </li>
                     </ul>
                   </div>
