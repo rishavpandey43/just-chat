@@ -27,11 +27,13 @@ const PORT = process.env.PORT || 5000;
 const app = express();
 
 // server instance
-const server = http.createServer(app);
+const httpServer = http.createServer(app);
+
+httpServer.listen(PORT, () => console.log(`Server listening on port ${PORT}!`));
 
 /* **************************************************************** */
 // * BELOW IS THE CONFIGURATION OF SOCKET AND ALL IT"S ASSOCIATED FUNCTIONALITY
-const socket = io(server);
+const socket = io(httpServer);
 
 socket.on("connection", (socket) => {
   socket.on("join-group", (data) => {
@@ -130,7 +132,3 @@ app.use((err, req, res, next) => {
       : { message: "Internal Server Error" }
   );
 });
-
-server.listen(PORT, "0.0.0.0", () =>
-  console.log(`Server listening on port ${PORT}!`)
-);
