@@ -9,19 +9,7 @@ const baseUrl = process.env.REACT_APP_API_BASE_URL;
 const HomePage = (props) => {
   useEffect(() => {
     if (props.authDetail.isAuthenticated) {
-      axios
-        .get(baseUrl + "user/get-username", {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${props.authDetail.token}`,
-          },
-        })
-        .then((response) => {
-          props.history.push(`/profile/${response.data.username}`);
-        })
-        .catch((error) => {
-          props.logoutFetch();
-        });
+      props.history.push(`/profile/${props.authDetail.username}`);
     }
   }, []);
 

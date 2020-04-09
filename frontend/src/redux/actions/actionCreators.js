@@ -18,6 +18,7 @@ export const loginSuccess = (response) => {
     message: response.message,
     token: response.token,
     userId: response.userId,
+    username: response.username,
   };
 };
 
@@ -40,9 +41,11 @@ export const loginFetch = (formData) => (dispatch) => {
       if (formData.rememberMe) {
         localStorage.setItem("chat_auth_token", response.data.token);
         localStorage.setItem("chat_auth_userId", response.data.userId);
+        localStorage.setItem("chat_auth_username", response.data.username);
       } else {
         sessionStorage.setItem("chat_auth_token", response.data.token);
         sessionStorage.setItem("chat_auth_userId", response.data.userId);
+        sessionStorage.setItem("chat_auth_username", response.data.username);
       }
       dispatch(loginSuccess(response.data));
       displayFlash.emit("get-message", {
@@ -112,8 +115,10 @@ export const logoutFetch = () => (dispatch) => {
     .then((response) => {
       localStorage.removeItem("chat_auth_token");
       localStorage.removeItem("chat_auth_userId");
+      localStorage.removeItem("chat_auth_username");
       sessionStorage.removeItem("chat_auth_token");
       sessionStorage.removeItem("chat_auth_userId");
+      sessionStorage.removeItem("chat_auth_username");
       if (
         !localStorage.getItem("chat_auth_token") &&
         !sessionStorage.getItem("chat_auth_token")

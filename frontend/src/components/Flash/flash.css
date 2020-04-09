@@ -1,6 +1,6 @@
 .flash-wrapper {
-  position: absolute;
-  bottom: 10%;
+  position: fixed;
+  top: 10vh;
   right: 2%;
   min-width: 20%;
   max-width: 40%;

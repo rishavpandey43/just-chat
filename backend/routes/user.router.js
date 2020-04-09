@@ -42,7 +42,14 @@ userRouter
     "/get-user-detail",
     cors.corsWithOptions,
     authenticate.verifyUser,
-    userRouterController.userDetailController
+    userRouterController.getUserDetailController
+  )
+  .put(
+    "/update-user-detail",
+    cors.corsWithOptions,
+    authenticate.verifyUser,
+    passport.authenticate("local"),
+    userRouterController.updateUserDetailController
   );
 
 module.exports = userRouter;

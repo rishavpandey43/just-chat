@@ -7,7 +7,7 @@ import "./login.css";
 const Login = (props) => {
   useEffect(() => {
     if (props.authDetail.isAuthenticated) {
-      props.history.push("/");
+      props.history.push(`/profile/${props.authDetail.username}`);
     }
   }, []);
 
@@ -51,7 +51,7 @@ const Login = (props) => {
                   <div className="form-div">
                     <form onSubmit={handleSubmit}>
                       <div className="form-group">
-                        <label>Username</label>
+                        <label className="form-label">Username</label>
                         <input
                           type="text"
                           className="form-control"
@@ -69,7 +69,7 @@ const Login = (props) => {
                         />
                       </div>
                       <div className="form-group">
-                        <label>Password</label>
+                        <label className="form-label">Password</label>
                         <input
                           type="password"
                           className="form-control"

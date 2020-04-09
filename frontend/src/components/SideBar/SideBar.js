@@ -45,7 +45,7 @@ const SideBar = (props) => {
               <AiOutlineProfile />
             </span>
             <span className="content">
-              <Link to="/">Profile</Link>
+              <Link to={`/${props.authDetail.username}`}>Profile</Link>
             </span>
           </li>
           <li className="list">
@@ -105,7 +105,7 @@ const SideBar = (props) => {
                   <MdUpdate />
                 </span>
                 <span className="content">
-                  <Link to="/">Update Profile</Link>
+                  <Link to="/update-profile">Update Profile</Link>
                 </span>
               </li>
             </ul>

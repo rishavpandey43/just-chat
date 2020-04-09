@@ -157,8 +157,8 @@ class Signup extends Component {
                 </div>
               </div>
               <div className="col-12 col-sm-6 grid-sec">
-                <div class="card">
-                  <div class="card-body">
+                <div className="card">
+                  <div className="card-body">
                     <div className="heading">
                       <h3>Create an account for free</h3>
                     </div>
@@ -167,7 +167,7 @@ class Signup extends Component {
                         <div className="row">
                           <div className="col-12 col-sm-6">
                             <div className="form-group">
-                              <label>First name</label>
+                              <label className="form-label">First name</label>
                               <input
                                 type="text"
                                 className="form-control"
@@ -183,7 +183,7 @@ class Signup extends Component {
                           </div>
                           <div className="col-12 col-sm-6">
                             <div className="form-group">
-                              <label>Last name</label>
+                              <label className="form-label">Last name</label>
                               <input
                                 type="text"
                                 className="form-control"
@@ -198,8 +198,8 @@ class Signup extends Component {
                             </div>
                           </div>
                         </div>
-                        <div class="form-group">
-                          <label>Username</label>
+                        <div className="form-group">
+                          <label className="form-label">Username</label>
                           <input
                             type="text"
                             className="form-control"
@@ -214,8 +214,8 @@ class Signup extends Component {
                             )}
                           />
                         </div>
-                        <div class="form-group">
-                          <label>Email</label>
+                        <div className="form-group">
+                          <label className="form-label">Email</label>
                           <input
                             type="email"
                             className="form-control"
@@ -233,7 +233,9 @@ class Signup extends Component {
                         <div className="row">
                           <div className="col-12 col-sm-6">
                             <div className="form-group">
-                              <label>Choose a strong Password</label>
+                              <label className="form-label">
+                                Choose a strong Password
+                              </label>
                               <input
                                 type="password"
                                 className="form-control"
@@ -248,7 +250,9 @@ class Signup extends Component {
                           </div>
                           <div className="col-12 col-sm-6">
                             <div className="form-group">
-                              <label>Confirm your Password</label>
+                              <label className="form-label">
+                                Confirm your Password
+                              </label>
                               <input
                                 type="password"
                                 className="form-control"
@@ -269,7 +273,7 @@ class Signup extends Component {
                             Sign in
                           </Link>
                         </small>
-                        <div class="form-group">
+                        <div className="form-group">
                           <button type="submit" className="btn">
                             Signup
                           </button>
@@ -308,7 +312,7 @@ export default Signup;
               <div className="row">
                 <div className="col-12 col-sm-6">
                   <div className="form-group">
-                    <label>First name</label>
+                    <label className="form-label">First name</label>
                     <input
                       type="text"
                       className="form-control"
@@ -324,7 +328,7 @@ export default Signup;
                 </div>
                 <div className="col-12 col-sm-6">
                   <div className="form-group">
-                    <label>Last name</label>
+                    <label className="form-label">Last name</label>
                     <input
                       type="text"
                       className="form-control"
@@ -342,7 +346,7 @@ export default Signup;
               <div className="row">
                 <div className="col-12 col-sm-6">
                   <div className="form-group">
-                    <label>User Name</label>
+                    <label className="form-label">User Name</label>
                     <input
                       type="text"
                       className="form-control"
@@ -361,7 +365,7 @@ export default Signup;
                 </div>
                 <div className="col-12 col-sm-6">
                   <div className="form-group">
-                    <label>Email address</label>
+                    <label className="form-label">Email address</label>
                     <input
                       type="email"
                       className="form-control"
@@ -382,7 +386,7 @@ export default Signup;
               <div className="row">
                 <div className="col-12 col-sm-6">
                   <div className="form-group">
-                    <label>Choose a strong Password</label>
+                    <label className="form-label">Choose a strong Password</label>
                     <input
                       type="password"
                       className="form-control"
@@ -397,7 +401,7 @@ export default Signup;
                 </div>
                 <div className="col-12 col-sm-6">
                   <div className="form-group">
-                    <label>Confirm your Password</label>
+                    <label className="form-label">Confirm your Password</label>
                     <input
                       type="password"
                       className="form-control"

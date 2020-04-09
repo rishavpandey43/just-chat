@@ -14,6 +14,8 @@ import Signup from "./components/Signup/Signup";
 import PrivateRoute from "./components/PrivateRoute/PrivateRoute";
 import Profile from "./components/Profile/Profile";
 import ChatBox from "./components/ChatBox/ChatBox";
+import UpdateProfile from "./components/UpdateProfile/UpdateProfile";
+
 import Flash from "./components/Flash/Flash";
 
 export default function MainApp(props) {
@@ -46,6 +48,13 @@ export default function MainApp(props) {
                 path="/chat"
                 mainProps={{ ...props }}
                 component={(props) => <ChatBox {...props} />}
+                // * The newly constructed props in PrivateRoute is then passed to protected components
+              />
+              <PrivateRoute
+                exact
+                path="/update-profile/"
+                mainProps={{ ...props }}
+                component={(props) => <UpdateProfile {...props} />}
                 // * The newly constructed props in PrivateRoute is then passed to protected components
               />
               <Redirect to="/" />

@@ -35,16 +35,6 @@
   color: inherit !important;
 }
 
-.profile-wrapper .profile-card {
-  width: 100%;
-  padding: 1rem;
-  margin-top: 1rem;
-  border-radius: 0.5rem;
-  border: 1px solid #eee;
-  box-shadow: 10px 25px 20px -21px rgba(0, 0, 0, 0.2);
-  font-size: 1.2em;
-}
-
 .action-btn .col-6 {
   padding: 0px;
 }
@@ -74,32 +64,3 @@
 .personal-info .info-list {
   padding: 1rem 1rem;
 }
-
-/* .service-btn,
-.short-summary {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-}
-
-.service-btn div {
-  padding: 10px 20px;
-}
-
-.short-summary {
-  justify-content: start;
-}
-
-.profile-wrapper .user-name {
-  padding-left: 50px;
-}
-
-.detail-summery {
-  margin-top: 40px;
-}
-
-.card-footer {
-  background-color: #fff;
-  border: none;
-} */

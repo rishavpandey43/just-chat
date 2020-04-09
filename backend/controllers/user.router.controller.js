@@ -1,4 +1,6 @@
 const passport = require("passport");
+const bcrypt = require("bcryptjs");
+
 const User = require("../models/user.model"); // import User Schema
 
 const authenticate = require("../utils/authenticate");
@@ -9,7 +11,7 @@ const userSignupController = (req, res, next) => {
       username: req.body.username,
       email: req.body.email,
       firstName: req.body.firstName,
-      lastName: req.body.lastName
+      lastName: req.body.lastName,
     }),
     req.body.password,
     (err, user) => {
@@ -55,8 +57,8 @@ const userSignupController = (req, res, next) => {
                 username: user.username,
                 email: user.email,
                 firstName: user.firstName,
-                lastName: user.lastName
-              }
+                lastName: user.lastName,
+              },
             });
           });
         });
@@ -73,7 +75,8 @@ const userLoginController = (req, res, next) => {
   res.json({
     message: "You are successfully logged in!",
     token,
-    userId: req.user._id
+    userId: req.user._id,
+    username: req.user.username,
   });
 };
 
@@ -85,23 +88,10 @@ const userLogoutController = (req, res, next) => {
     res.setHeader("Content-Type", "application/json");
     res.json({ message: "You are successfully logged out!" });
   } else {
-    var err = new Error("You are not logged in!");
+    const err = new Error("You are not logged in!");
     err.status = 403;
     next(err);
   }
-};
-
-const getUserListController = (req, res, next) => {
-  // User.find({})
-  //   .then(
-  //     users => {
-  //       res.statusCode = 200;
-  //       res.setHeader("Content-Type", "application/json");
-  //       res.json(users);
-  //     },
-  //     err => next(err)
-  //   )
-  //   .catch(err => next(err));
 };
 
 const getUserNameController = (req, res, next) => {
@@ -110,11 +100,11 @@ const getUserNameController = (req, res, next) => {
   res.json({ username: req.user.username, userId: req.user._id });
 };
 
-const userDetailController = (req, res, next) => {
+const getUserDetailController = (req, res, next) => {
   User.findOne({ username: req.query.username })
-    .then(user => {
+    .then((user) => {
       if (!user) {
-        var err = new Error(`$user {req.query.username} doesn't exit`);
+        const err = new Error(`user ${req.query.username} doesn't exit`);
         err.status = 404;
         next(err);
       } else {
@@ -123,12 +113,36 @@ const userDetailController = (req, res, next) => {
         res.json({ user: user });
       }
     })
-    .catch(err => next(err));
+    .catch((err) => next(err));
+};
+
+const updateUserDetailController = (req, res, next) => {
+  User.findOneAndUpdate(
+    { _id: req.user._id },
+    {
+      $set: {
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        title: req.body.title,
+        aboutMe: req.body.aboutMe,
+      },
+    },
+    { new: true }
+  )
+    .then((user) => {
+      res.statusCode = 200;
+      res.setHeader("Content-Type", "application/json");
+      res.json({
+        message: "Your Profile has been updated successfully ",
+        user,
+      });
+    })
+    .catch((err) => next(err));
 };
 
 exports.userSignupController = userSignupController;
 exports.userLoginController = userLoginController;
 exports.userLogoutController = userLogoutController;
-exports.getUserListController = getUserListController;
 exports.getUserNameController = getUserNameController;
-exports.userDetailController = userDetailController;
+exports.getUserDetailController = getUserDetailController;
+exports.updateUserDetailController = updateUserDetailController;

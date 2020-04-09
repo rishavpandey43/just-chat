@@ -1,0 +1,8 @@
+.update-box {
+  width: 50%;
+}
+
+textarea.form-control {
+  border: 1px solid #e8ecf4;
+  resize: none;
+}

@@ -10,7 +10,8 @@ const Flash = () => {
   const [alertType, setAlertType] = useState("success");
 
   useEffect(() => {
-    displayFlash.on("get-message", data => {
+    displayFlash.on("get-message", (data) => {
+      console.log(data);
       setAlertType(data.type);
       setAlertMessage(data.message);
       setDisplay(true);

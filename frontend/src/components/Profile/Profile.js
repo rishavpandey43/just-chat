@@ -10,13 +10,45 @@ import {
 } from "react-icons/fa";
 import { FiPhone, FiMail } from "react-icons/fi";
 
+import displayFlash from "../../utils/flashEvent";
+
+import Loading from "../Loading/Loading";
+
 import "./profile.css";
+
+const baseUrl = process.env.REACT_APP_API_BASE_URL;
 
 class Profile extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      userDetail: null,
+    };
   }
+
+  componentDidMount() {
+    if (this.props.authDetail.isAuthenticated) {
+      axios
+        .get(baseUrl + "user/get-user-detail", {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${this.props.authDetail.token}`,
+          },
+          params: {
+            username: `${this.props.match.params.username}`,
+          },
+        })
+        .then((response) => {
+          const userDetail = {
+            ...response.data.user,
+          };
+
+          this.setState({ userDetail });
+        })
+        .catch((error) => {});
+    }
+  }
+
   render() {
     return (
       <div className="profile-wrapper">
@@ -39,100 +71,114 @@ class Profile extends Component {
             </div>
           </form>
         </div>
-        <div className="profile-card">
-          <div className="profile-wrapper">
-            <div className="row">
-              <div className="col-12 col-md-6">
-                <div className="profile-detail">
-                  <div className="name">
-                    <h3>Rishav Pandey</h3>
-                    <span>Tech Geek</span>
-                  </div>
-                  <div className="action-btn mt-5">
-                    <div className="add-friend">
-                      <button className="btn">Add Friend</button>
+        {!this.state.userDetail ? (
+          <div className="loading-wrapper text-center m-5">
+            <Loading isTrue={!this.state.userDetail} />
+          </div>
+        ) : (
+          <div>
+            <div className="main-page-card">
+              <div className="profile-wrapper">
+                <div className="row">
+                  <div className="col-12 col-md-6">
+                    <div className="profile-detail">
+                      <div className="name">
+                        <h3>{`${this.state.userDetail.firstName} ${this.state.userDetail.lastName}`}</h3>
+                        <span>Tech Geek</span>
+                      </div>
+                      {this.state.userDetail._id ==
+                      this.props.authDetail.userId ? (
+                        ""
+                      ) : (
+                        <div className="action-btn mt-5">
+                          <div className="add-friend">
+                            <button className="btn">Add Friend</button>
+                          </div>
+                          <div className="row mt-4">
+                            <div className="col-6">
+                              <div className="send-message">
+                                <button className="btn">Send Message</button>
+                              </div>
+                            </div>
+                            <div className="col-6">
+                              <div className="unfriend">
+                                <button className="btn"> Unfriend</button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      )}
                     </div>
-                    <div className="row mt-4">
-                      <div className="col-6">
-                        <div className="send-message">
-                          <button className="btn">Send Message</button>
-                        </div>
-                      </div>
-                      <div className="col-6">
-                        <div className="unfriend">
-                          <button className="btn"> Unfriend</button>
-                        </div>
-                      </div>
+                  </div>
+                  <div className="col-12 col-md-6">
+                    <div className="profile-photo">
+                      <img
+                        src={require("../../assets/images/profile_pic.png")}
+                        alt=""
+                        width="100%"
+                      />
                     </div>
                   </div>
                 </div>
               </div>
-              <div className="col-12 col-md-6">
-                <div className="profile-photo">
-                  <img
-                    src={require("../../assets/images/profile_pic.png")}
-                    alt=""
-                    width="100%"
-                  />
+            </div>
+            <div className="main-page-card">
+              <div className="personal-info-wrapper">
+                <div className="about">
+                  <div className="heading">
+                    <h3>
+                      <FaUser className="fa-colored-icon" />
+                      <span className="pl-3">About Me</span>
+                    </h3>
+                  </div>
+                  <div className="content">
+                    <p>
+                      Cupidatat ut qui dolor commodo ea esse reprehenderit non
+                      commodo. Ullamco pariatur cillum dolore officia
+                      adipisicing incididunt ex velit. Excepteur pariatur dolore
+                      aute aliqua ad veniam veniam. Ad Lorem cupidatat est ipsum
+                      ex commodo Lorem
+                    </p>
+                  </div>
+                </div>
+                <div className="personal-info">
+                  <div className="heading">
+                    <h3>Personal Information</h3>
+                  </div>
+                  <div className="content">
+                    <ul>
+                      <li className="info-list">
+                        <span className="icon">
+                          <FaRegCalendarAlt className="fa-colored-icon" />
+                        </span>
+                        <span className="text">21/ 02/ 1999</span>
+                      </li>
+                      <li className="info-list">
+                        <span className="icon">
+                          <FiPhone className="fa-colored-icon" />
+                        </span>
+                        <span className="text">+91- 9771578320</span>
+                      </li>
+                      <li className="info-list">
+                        <span className="icon">
+                          <FiMail className="fa-colored-icon" />
+                        </span>
+                        <span className="text">demo@demo.com</span>
+                      </li>
+                      <li className="info-list">
+                        <span className="icon">
+                          <FaHome className="fa-colored-icon" />
+                        </span>
+                        <span className="text">Jaipur, India</span>
+                      </li>
+                    </ul>
+                  </div>
+                  <div className="social-link"></div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-        <div className="profile-card">
-          <div className="personal-info-wrapper">
-            <div className="about">
-              <div className="heading">
-                <h3>
-                  <FaUser className="fa-colored-icon" />
-                  <span className="pl-3">About Me</span>
-                </h3>
-              </div>
-              <div className="content">
-                <p>
-                  Cupidatat ut qui dolor commodo ea esse reprehenderit non
-                  commodo. Ullamco pariatur cillum dolore officia adipisicing
-                  incididunt ex velit. Excepteur pariatur dolore aute aliqua ad
-                  veniam veniam. Ad Lorem cupidatat est ipsum ex commodo Lorem
-                </p>
-              </div>
-            </div>
-            <div className="personal-info">
-              <div className="heading">
-                <h3>Personal Information</h3>
-              </div>
-              <div className="content">
-                <ul>
-                  <li className="info-list">
-                    <span className="icon">
-                      <FaRegCalendarAlt className="fa-colored-icon" />
-                    </span>
-                    <span className="text">21/ 02/ 1999</span>
-                  </li>
-                  <li className="info-list">
-                    <span className="icon">
-                      <FiPhone className="fa-colored-icon" />
-                    </span>
-                    <span className="text">+91- 9771578320</span>
-                  </li>
-                  <li className="info-list">
-                    <span className="icon">
-                      <FiMail className="fa-colored-icon" />
-                    </span>
-                    <span className="text">demo@demo.com</span>
-                  </li>
-                  <li className="info-list">
-                    <span className="icon">
-                      <FaHome className="fa-colored-icon" />
-                    </span>
-                    <span className="text">Jaipur, India</span>
-                  </li>
-                </ul>
-              </div>
-              <div className="social-link"></div>
-            </div>
-          </div>
-        </div>
+        )}
       </div>
     );
   }
