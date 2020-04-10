@@ -123,7 +123,7 @@ app.use((err, req, res, next) => {
   res.statusCode = err.status || 500;
   res.setHeader("Content-Type", "application/json");
   res.json(
-    err.message && err.status
+    err.message
       ? { message: err.message }
       : { message: "Internal Server Error" }
   );

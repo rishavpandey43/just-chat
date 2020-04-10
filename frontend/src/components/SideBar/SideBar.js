@@ -78,7 +78,7 @@ const SideBar = (props) => {
               <AiOutlineSetting />
             </span>
             <span className="content">
-              <Link to="/">Setting</Link>
+              <span>Setting</span>
             </span>
             <span className="pl-4">
               <FaAngleRight
@@ -97,7 +97,7 @@ const SideBar = (props) => {
                   <FaEdit />
                 </span>
                 <span className="content">
-                  <Link to="/">Change Password</Link>
+                  <Link to="/change-password">Change Password</Link>
                 </span>
               </li>
               <li className="list">

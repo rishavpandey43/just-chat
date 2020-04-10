@@ -143,9 +143,31 @@ const updateUserDetailController = (req, res, next) => {
     .catch((err) => next(err));
 };
 
+const changePasswordController = (req, res, next) => {
+  User.findById(req.user._id)
+    .then((user) => {
+      user
+        .changePassword(req.body.currentPassword, req.body.newPassword)
+        .then((user) => {
+          res.statusCode = 200;
+          res.setHeader("Content-Type", "application/json");
+          res.json({
+            message: "Your Password has been updated successfully.",
+          });
+        })
+        .catch(() => {
+          const err = new Error(`password incorrect, try with valid password`);
+          err.status = 401;
+          next(err);
+        });
+    })
+    .catch((err) => next(err));
+};
+
 exports.userSignupController = userSignupController;
 exports.userLoginController = userLoginController;
 exports.userLogoutController = userLogoutController;
 exports.getUserNameController = getUserNameController;
 exports.getUserDetailController = getUserDetailController;
 exports.updateUserDetailController = updateUserDetailController;
+exports.changePasswordController = changePasswordController;

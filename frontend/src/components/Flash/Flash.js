@@ -11,7 +11,6 @@ const Flash = () => {
 
   useEffect(() => {
     displayFlash.on("get-message", (data) => {
-      console.log(data);
       setAlertType(data.type);
       setAlertMessage(data.message);
       setDisplay(true);

@@ -50,6 +50,12 @@ userRouter
     authenticate.verifyUser,
     passport.authenticate("local"),
     userRouterController.updateUserDetailController
+  )
+  .put(
+    "/change-password",
+    cors.corsWithOptions,
+    authenticate.verifyUser,
+    userRouterController.changePasswordController
   );
 
 module.exports = userRouter;

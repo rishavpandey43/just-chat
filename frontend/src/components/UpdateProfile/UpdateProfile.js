@@ -14,8 +14,16 @@ import "./updateProfile.css";
 const baseUrl = process.env.REACT_APP_API_BASE_URL;
 
 const UpdateProfile = (props) => {
+  const [state, setState] = useState({
+    userDetail: null,
+    updating: false,
+    notFetched: false,
+  });
+
   useEffect(() => {
     if (props.authDetail.isAuthenticated) {
+      let tempState = { ...state };
+      setState({ ...tempState });
       axios
         .get(baseUrl + "user/get-user-detail", {
           headers: {
@@ -27,7 +35,7 @@ const UpdateProfile = (props) => {
           },
         })
         .then((response) => {
-          let tempState = { ...state };
+          tempState.notFetched = false;
           tempState.userDetail = {
             firstName: response.data.user.firstName,
             lastName: response.data.user.lastName,
@@ -38,14 +46,18 @@ const UpdateProfile = (props) => {
             address: response.data.user.address,
             password: "",
           };
-          console.log(tempState.userDetail.dob);
           setState({ ...tempState });
         })
-        .catch((error) => {});
+        .catch((error) => {
+          tempState.notFetched = true;
+          setState({ ...tempState });
+          displayFlash.emit("get-message", {
+            message: `Network Error, Connection to server couldn't be established. Please try again.`,
+            type: "danger",
+          });
+        });
     }
   }, []);
-
-  const [state, setState] = useState({ userDetail: null, updating: false });
 
   const updateProfile = (e) => {
     e.preventDefault();
@@ -88,8 +100,11 @@ const UpdateProfile = (props) => {
         tempState.updating = false;
         setState({ ...tempState });
         if (error.response) {
+          console.log(error.response);
           displayFlash.emit("get-message", {
-            message: error.response.data,
+            message:
+              error.response.data.message ||
+              "password incorrect, try with valid password",
             type: "danger",
           });
         } else {
@@ -104,9 +119,12 @@ const UpdateProfile = (props) => {
   return (
     <div className="update-profile-wrapper">
       <div className="main-page-card">
-        {!state.userDetail ? (
+        {!state.userDetail || state.notFetched ? (
           <div className="loading-wrapper text-center m-5">
             <Loading isTrue={!state.userDetail} />
+            <div className={`${state.notFetched ? "mt-5 d-block" : "d-none"}`}>
+              <span>Unable to fetch detail, please try again</span>
+            </div>
           </div>
         ) : (
           <div className="update-box">

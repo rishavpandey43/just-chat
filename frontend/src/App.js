@@ -15,6 +15,7 @@ import PrivateRoute from "./components/PrivateRoute/PrivateRoute";
 import Profile from "./components/Profile/Profile";
 import ChatBox from "./components/ChatBox/ChatBox";
 import UpdateProfile from "./components/UpdateProfile/UpdateProfile";
+import ChangePassword from "./components/ChangePassword/ChangePassword";
 
 import Flash from "./components/Flash/Flash";
 
@@ -52,9 +53,16 @@ export default function MainApp(props) {
               />
               <PrivateRoute
                 exact
-                path="/update-profile/"
+                path="/update-profile"
                 mainProps={{ ...props }}
                 component={(props) => <UpdateProfile {...props} />}
+                // * The newly constructed props in PrivateRoute is then passed to protected components
+              />
+              <PrivateRoute
+                exact
+                path="/change-password"
+                mainProps={{ ...props }}
+                component={(props) => <ChangePassword {...props} />}
                 // * The newly constructed props in PrivateRoute is then passed to protected components
               />
               <Redirect to="/" />

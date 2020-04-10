@@ -25,11 +25,13 @@ class Profile extends Component {
     super(props);
     this.state = {
       userDetail: null,
+      notFetched: false,
     };
   }
 
   componentDidMount() {
     if (this.props.authDetail.isAuthenticated) {
+      this.setState({ notFetched: true });
       axios
         .get(baseUrl + "user/get-user-detail", {
           headers: {
@@ -45,14 +47,24 @@ class Profile extends Component {
             ...response.data.user,
           };
 
-          this.setState({ userDetail });
+          this.setState({ userDetail, notFetched: false });
         })
-        .catch((error) => {});
+        .catch((error) => {
+          this.setState({ notFetched: false });
+          displayFlash.emit("get-message", {
+            message: `Network Error, Connection to server couldn't be established. Please try again.`,
+            type: "danger",
+          });
+        });
     }
   }
 
   render() {
-    return (
+    return !this.state.userDetail || this.state.notFetched ? (
+      <div className="loading-wrapper text-center m-5">
+        <Loading isTrue={this.state.notFetched} />
+      </div>
+    ) : (
       <div className="profile-wrapper">
         <div className="search-bar-wrapper">
           <form>
@@ -73,124 +85,118 @@ class Profile extends Component {
             </div>
           </form>
         </div>
-        {!this.state.userDetail ? (
-          <div className="loading-wrapper text-center m-5">
-            <Loading isTrue={!this.state.userDetail} />
-          </div>
-        ) : (
-          <div>
-            <div className="main-page-card">
-              <div className="profile-wrapper">
-                <div className="row">
-                  <div className="col-12 col-md-6">
-                    <div className="profile-detail">
-                      <div className="name">
-                        <h3>{`${this.state.userDetail.firstName} ${this.state.userDetail.lastName}`}</h3>
-                        <span>{`${this.state.userDetail.title}`}</span>
-                      </div>
-                      {this.state.userDetail._id ==
-                      this.props.authDetail.userId ? (
-                        ""
-                      ) : (
-                        <div className="action-btn mt-5">
-                          <div className="add-friend">
-                            <button className="btn">Add Friend</button>
-                          </div>
-                          <div className="row mt-4">
-                            <div className="col-6">
-                              <div className="send-message">
-                                <button className="btn">Send Message</button>
-                              </div>
+        <div>
+          <div className="main-page-card">
+            <div className="profile-wrapper">
+              <div className="row">
+                <div className="col-12 col-md-6">
+                  <div className="profile-detail">
+                    <div className="name">
+                      <h3>{`${this.state.userDetail.firstName} ${this.state.userDetail.lastName}`}</h3>
+                      <span>{`${this.state.userDetail.title}`}</span>
+                    </div>
+                    {this.state.userDetail._id ==
+                    this.props.authDetail.userId ? (
+                      ""
+                    ) : (
+                      <div className="action-btn mt-5">
+                        <div className="add-friend">
+                          <button className="btn">Add Friend</button>
+                        </div>
+                        <div className="row mt-4">
+                          <div className="col-6">
+                            <div className="send-message">
+                              <button className="btn">Send Message</button>
                             </div>
-                            <div className="col-6">
-                              <div className="unfriend">
-                                <button className="btn"> Unfriend</button>
-                              </div>
+                          </div>
+                          <div className="col-6">
+                            <div className="unfriend">
+                              <button className="btn"> Unfriend</button>
                             </div>
                           </div>
                         </div>
-                      )}
-                    </div>
-                  </div>
-                  <div className="col-12 col-md-6">
-                    <div className="profile-photo">
-                      <img
-                        src={require("../../assets/images/profile_pic.png")}
-                        alt=""
-                        width="100%"
-                      />
-                    </div>
+                      </div>
+                    )}
                   </div>
                 </div>
-              </div>
-            </div>
-            <div className="main-page-card">
-              <div className="personal-info-wrapper">
-                <div
-                  className={`${
-                    this.state.userDetail.aboutMe
-                      ? "about-me d-block"
-                      : "about-me d-none"
-                  }`}
-                >
-                  <div className="heading">
-                    <h3>
-                      <FaUser className="fa-colored-icon" />
-                      <span className="pl-3">About Me</span>
-                    </h3>
+                <div className="col-12 col-md-6">
+                  <div className="profile-photo">
+                    <img
+                      src={require("../../assets/images/profile_pic.png")}
+                      alt=""
+                      width="100%"
+                    />
                   </div>
-                  <div className="content">
-                    <p>{this.state.userDetail.aboutMe}</p>
-                  </div>
-                </div>
-                <div className="personal-info">
-                  <div className="heading">
-                    <h3>Personal Information</h3>
-                  </div>
-                  <div className="content">
-                    <ul>
-                      <li className="info-list">
-                        <span className="icon">
-                          <FaRegCalendarAlt className="fa-colored-icon" />
-                        </span>
-                        <span className="text">
-                          {`${moment(this.state.userDetail.dob).format(
-                            "DD/MM/YYYY"
-                          )}`}
-                        </span>
-                      </li>
-                      <li className="info-list">
-                        <span className="icon">
-                          <FiPhone className="fa-colored-icon" />
-                        </span>
-                        <span className="text">
-                          {this.state.userDetail.contactNum}
-                        </span>
-                      </li>
-                      <li className="info-list">
-                        <span className="icon">
-                          <FiMail className="fa-colored-icon" />
-                        </span>
-                        <span className="text">
-                          {this.state.userDetail.email}
-                        </span>
-                      </li>
-                      <li className="info-list">
-                        <span className="icon">
-                          <FaHome className="fa-colored-icon" />
-                        </span>
-                        <span className="text">
-                          {this.state.userDetail.address}
-                        </span>
-                      </li>
-                    </ul>
-                  </div>
-                  <div className="social-link"></div>
                 </div>
               </div>
             </div>
           </div>
-        )}
+          <div className="main-page-card">
+            <div className="personal-info-wrapper">
+              <div
+                className={`${
+                  this.state.userDetail.aboutMe
+                    ? "about-me d-block"
+                    : "about-me d-none"
+                }`}
+              >
+                <div className="heading">
+                  <h3>
+                    <FaUser className="fa-colored-icon" />
+                    <span className="pl-3">About Me</span>
+                  </h3>
+                </div>
+                <div className="content">
+                  <p>{this.state.userDetail.aboutMe}</p>
+                </div>
+              </div>
+              <div className="personal-info">
+                <div className="heading">
+                  <h3>Personal Information</h3>
+                </div>
+                <div className="content">
+                  <ul>
+                    <li className="info-list">
+                      <span className="icon">
+                        <FaRegCalendarAlt className="fa-colored-icon" />
+                      </span>
+                      <span className="text">
+                        {`${moment(this.state.userDetail.dob).format(
+                          "DD/MM/YYYY"
+                        )}`}
+                      </span>
+                    </li>
+                    <li className="info-list">
+                      <span className="icon">
+                        <FiPhone className="fa-colored-icon" />
+                      </span>
+                      <span className="text">
+                        {this.state.userDetail.contactNum}
+                      </span>
+                    </li>
+                    <li className="info-list">
+                      <span className="icon">
+                        <FiMail className="fa-colored-icon" />
+                      </span>
+                      <span className="text">
+                        {this.state.userDetail.email}
+                      </span>
+                    </li>
+                    <li className="info-list">
+                      <span className="icon">
+                        <FaHome className="fa-colored-icon" />
+                      </span>
+                      <span className="text">
+                        {this.state.userDetail.address}
+                      </span>
+                    </li>
+                  </ul>
+                </div>
+                <div className="social-link"></div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
