@@ -14,6 +14,11 @@ const userSchema = new Schema(
     },
     firstName: { type: String, required: true, minlength: 4 },
     lastName: { type: String, required: true, minlength: 4 },
+    title: { type: String },
+    aboutMe: { type: String },
+    dob: { type: Date },
+    contactNum: { type: String },
+    address: { type: String },
   },
   {
     timestamps: true,

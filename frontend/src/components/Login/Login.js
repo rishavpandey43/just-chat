@@ -7,7 +7,9 @@ import "./login.css";
 const Login = (props) => {
   useEffect(() => {
     if (props.authDetail.isAuthenticated) {
-      props.history.push("/");
+      if (props.userDetail.user) {
+        props.history.push(`/profile/${props.userDetail.user.username}`);
+      }
     }
   }, []);
 
@@ -43,15 +45,15 @@ const Login = (props) => {
               </div>
             </div>
             <div className="col-12 col-sm-6 grid-sec">
-              <div class="card">
-                <div class="card-body">
+              <div className="card">
+                <div className="card-body">
                   <div className="heading">
                     <h3>Welcome Back :)</h3>
                   </div>
                   <div className="form-div">
                     <form onSubmit={handleSubmit}>
-                      <div class="form-group">
-                        <label>Username</label>
+                      <div className="form-group">
+                        <label className="form-label">Username</label>
                         <input
                           type="text"
                           className="form-control"
@@ -68,8 +70,8 @@ const Login = (props) => {
                           }}
                         />
                       </div>
-                      <div class="form-group">
-                        <label>Password</label>
+                      <div className="form-group">
+                        <label className="form-label">Password</label>
                         <input
                           type="password"
                           className="form-control"
@@ -84,8 +86,8 @@ const Login = (props) => {
                           }}
                         />
                       </div>
-                      <div class="form-group form-check">
-                        <label class="form-check-label">
+                      <div className="form-group form-check">
+                        <label className="form-check-label">
                           <input
                             type="checkbox"
                             className="form-check-input"
@@ -108,10 +110,11 @@ const Login = (props) => {
                           Sign up
                         </Link>
                       </small>
-                      <div class="form-group">
+                      <div className="form-group">
                         <button type="submit" className="btn">
                           Login
                         </button>
+                        <Loading isTrue={props.authDetail.isLoading} />
                       </div>
                     </form>
                     <div className="home-page-link">

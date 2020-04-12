@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import moment from "moment";
-import socketIOClient from "socket.io-client";
 
 import "./chatbox.css";
 
@@ -14,7 +13,7 @@ import displayFlash from "../../utils/flashEvent";
 
 const baseUrl = process.env.REACT_APP_API_BASE_URL;
 
-const socketInstance = socketIOClient(baseUrl);
+// const socketInstance = socketIOClient(baseUrl);
 class ChatBox extends Component {
   constructor(props) {
     super(props);
@@ -28,20 +27,20 @@ class ChatBox extends Component {
 
   componentDidMount() {
     this.fetchGroupList();
-    socketInstance.on("connect", () => {
-      this.setState({ socketInstance });
-    });
+    // socketInstance.on("connect", () => {
+    //   this.setState({ socketInstance });
+    // });
 
-    socketInstance.on("receive-message", (data) => {
-      this.fetchGroupList();
-      console.log(data);
-    });
+    // socketInstance.on("receive-message", (data) => {
+    //   this.fetchGroupList();
+    //   console.log(data);
+    // });
   }
 
   sendMessage = (data) => {
     let currentGroup = this.state.currentGroup;
     currentGroup.messages.push(data.message);
-    socketInstance.emit("send-message", data);
+    // socketInstance.emit("send-message", data);
   };
 
   fetchGroupList = () => {
@@ -105,10 +104,10 @@ class ChatBox extends Component {
       (group) => group.groupDetail.name === recipientName
     );
     this.setState({ currentGroup });
-    socketInstance.emit("join-group", {
-      groupId: currentGroup.groupDetail.groupId,
-      userId: this.props.authDetail.userId,
-    });
+    // socketInstance.emit("join-group", {
+    //   groupId: currentGroup.groupDetail.groupId,
+    //   userId: this.props.authDetail.userId,
+    // });
   };
 
   render() {

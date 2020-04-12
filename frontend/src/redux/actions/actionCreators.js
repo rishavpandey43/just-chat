@@ -45,6 +45,7 @@ export const loginFetch = (formData) => (dispatch) => {
         sessionStorage.setItem("chat_auth_userId", response.data.userId);
       }
       dispatch(loginSuccess(response.data));
+      dispatch(saveUserDetailFetch());
       displayFlash.emit("get-message", {
         message: response.data.message,
         type: "success",
@@ -103,8 +104,8 @@ export const logoutFetch = () => (dispatch) => {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${
-          localStorage.getItem("chat_auth_token") ||
-          sessionStorage.getItem("chat_auth_token")
+          sessionStorage.getItem("chat_auth_token") ||
+          localStorage.getItem("chat_auth_token")
         }`,
       },
       withCredentials: true,
@@ -158,5 +159,67 @@ export const logoutFetch = () => (dispatch) => {
           type: "danger",
         });
       }
+    });
+};
+
+export const saveUserDetailRequest = () => {
+  return {
+    type: actionTypes.SAVE_USER_DETAIL_REQUEST,
+  };
+};
+
+export const saveUserDetailSuccess = (response) => {
+  return {
+    type: actionTypes.SAVE_USER_DETAIL_SUCCESS,
+    user: response.data.user,
+    status: response.status,
+  };
+};
+
+export const saveUserDetailFailure = (response) => {
+  return {
+    type: actionTypes.SAVE_USER_DETAIL_FAILURE,
+    message: response.message,
+    status: response.status,
+  };
+};
+
+export const saveUserDetailFetch = () => (dispatch) => {
+  dispatch(saveUserDetailRequest());
+
+  axios
+    .get(baseUrl + "user/get-user-detail", {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${
+          localStorage.getItem("chat_auth_token") ||
+          sessionStorage.getItem("chat_auth_token")
+        }`,
+      },
+      params: {
+        username: "",
+      },
+    })
+    .then((response) => {
+      dispatch(saveUserDetailSuccess(response));
+    })
+    .catch((error) => {
+      console.log(error);
+      dispatch(
+        saveUserDetailFailure({
+          message: error.response
+            ? error.response.data.message || error.response.data
+            : "Unable to connect to server, please try again later",
+          status: error.response ? error.response.status || 503 : 503,
+        })
+      );
+      displayFlash.emit("get-message", {
+        message: `${
+          error.response
+            ? error.response.data.message || error.response.data
+            : "Unable to connect to server, please try again later"
+        }`,
+        type: "danger",
+      });
     });
 };

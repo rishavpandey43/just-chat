@@ -1,7 +1,5 @@
 // import required npm modules
 const express = require("express");
-const http = require("http");
-const io = require("socket.io");
 const morgan = require("morgan");
 const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
@@ -9,7 +7,6 @@ const session = require("express-session");
 const FileStore = require("session-file-store")(session);
 const dotenv = require("dotenv");
 var passport = require("passport");
-var authenticate = require("./utils/authenticate");
 
 // import required routes
 const userRouter = require("./routes/user.router");
@@ -27,65 +24,66 @@ const PORT = process.env.PORT || 5000;
 const app = express();
 
 // server instance
-const server = http.createServer(app);
+// const httpServer = http.createServer(app);
 
 /* **************************************************************** */
 // * BELOW IS THE CONFIGURATION OF SOCKET AND ALL IT"S ASSOCIATED FUNCTIONALITY
-const socket = io(server);
+// const socket = io(httpServer);
 
-socket.on("connection", (socket) => {
-  socket.on("join-group", (data) => {
-    socket.join(data.groupId);
-  });
+// socket.on("connection", (socket) => {
+//   socket.on("join-group", (data) => {
+//     socket.join(data.groupId);
+//   });
 
-  socket.on("send-message", ({ message, currentGroupId }) => {
-    const newMessage = new Message({
-      from: message.from,
-      content: message.content,
-    });
+//   socket.on("send-message", ({ message, currentGroupId }) => {
+//     const newMessage = new Message({
+//       from: message.from,
+//       content: message.content,
+//     });
 
-    newMessage
-      .save()
-      .then((message) => {
-        Group.findById(currentGroupId)
-          .then((group) => {
-            group.messages.push(message);
-            group
-              .save()
-              .then((group) => {
-                socket
-                  .to(currentGroupId)
-                  .emit("receive-message", { success: true });
-              })
-              .catch((err) => {
-                console.log(err);
-                socket
-                  .to(currentGroupId)
-                  .emit("receive-message", { success: false });
-              });
-          })
-          .catch((err) => {
-            console.log(err);
-            socket
-              .to(currentGroupId)
-              .emit("receive-message", { success: false });
-          });
-      })
-      .catch((err) => {
-        console.log(err);
-        socket.to(currentGroupId).emit("receive-message", { success: false });
-      });
-  });
-});
+//     newMessage
+//       .save()
+//       .then((message) => {
+//         Group.findById(currentGroupId)
+//           .then((group) => {
+//             group.messages.push(message);
+//             group
+//               .save()
+//               .then((group) => {
+//                 socket
+//                   .to(currentGroupId)
+//                   .emit("receive-message", { success: true });
+//               })
+//               .catch((err) => {
+//                 console.log(err);
+//                 socket
+//                   .to(currentGroupId)
+//                   .emit("receive-message", { success: false });
+//               });
+//           })
+//           .catch((err) => {
+//             console.log(err);
+//             socket
+//               .to(currentGroupId)
+//               .emit("receive-message", { success: false });
+//           });
+//       })
+//       .catch((err) => {
+//         console.log(err);
+//         socket.to(currentGroupId).emit("receive-message", { success: false });
+//       });
+//   });
+// });
 
 /* **************************************************************** */
 
 // connect server to mongoDB Atlas
 const URI = process.env.ATLAS_DB_URI;
 mongoose.connect(URI, {
-  useNewUrlParser: true,
   useCreateIndex: true,
+  useNewUrlParser: true,
   useUnifiedTopology: true,
+  useFindAndModify: false,
 });
 
 const connection = mongoose.connection;
@@ -121,16 +119,14 @@ app.use("/group", groupRouter);
 
 // error handler
 app.use((err, req, res, next) => {
-  console.log(err);
+  // console.log("Error- ", err);
   res.statusCode = err.status || 500;
   res.setHeader("Content-Type", "application/json");
   res.json(
-    err.message && err.status
+    err.message
       ? { message: err.message }
       : { message: "Internal Server Error" }
   );
 });
 
-server.listen(PORT, "0.0.0.0", () =>
-  console.log(`Server listening on port ${PORT}!`)
-);
+app.listen(PORT, () => console.log(`Server listening on port ${PORT}!`));

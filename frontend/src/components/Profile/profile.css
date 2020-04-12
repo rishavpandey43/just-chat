@@ -2,6 +2,11 @@
   width: 100%;
 }
 
+.not-found-error {
+  width: 50%;
+  margin: auto;
+}
+
 .search-bar-wrapper {
   width: 60%;
   margin: auto;
@@ -35,40 +40,32 @@
   color: inherit !important;
 }
 
-.profile-wrapper .profile-card {
-  width: 100%;
-  padding: 1rem;
-  margin-top: 1rem;
+.action-btn .col-6 {
+  padding: 0px;
+}
+
+.action-btn .btn {
+  padding: 0.3rem 1.5rem;
+  background-color: #c90bce;
+  color: #fff;
   border-radius: 0.5rem;
-  border: 1px solid #eee;
-  box-shadow: 10px 25px 20px -21px rgba(0, 0, 0, 0.2);
 }
 
-/* .service-btn,
-.short-summary {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
+.profile-photo {
+  width: 50%;
+  text-align: center;
+  margin: auto;
 }
 
-.service-btn div {
-  padding: 10px 20px;
+.personal-info-wrapper {
+  width: 70%;
 }
 
-.short-summary {
-  justify-content: start;
+.personal-info ul {
+  list-style: none;
+  padding: 0px;
 }
 
-.profile-wrapper .user-name {
-  padding-left: 50px;
+.personal-info .info-list {
+  padding: 1rem 1rem;
 }
-
-.detail-summery {
-  margin-top: 40px;
-}
-
-.card-footer {
-  background-color: #fff;
-  border: none;
-} */

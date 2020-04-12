@@ -1,0 +1,28 @@
+.update-box {
+  width: 50%;
+}
+
+textarea.form-control {
+  border: 1px solid #e8ecf4;
+  resize: none;
+}
+
+.react-datepicker-wrapper {
+  display: block;
+  border: none;
+}
+
+.react-datepicker-wrapper input {
+  border: none;
+  outline: none;
+  border-radius: 0;
+  border-bottom: 1px solid #e8ecf4;
+  color: #495057;
+  font-size: 0.8em;
+}
+
+.react-datepicker-wrapper input:focus {
+  border: none;
+  box-shadow: none;
+  border-bottom: 1px solid #c90bce;
+}

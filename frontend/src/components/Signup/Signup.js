@@ -27,6 +27,12 @@ class Signup extends Component {
     };
   }
 
+  componentDidMount() {
+    if (this.props.authDetail.isAuthenticated) {
+      this.props.history.push("/");
+    }
+  }
+
   handleInputChange = (target, e) => {
     const tempUserDetail = { ...this.state.userDetail };
     tempUserDetail[target] = e.target.value;
@@ -151,8 +157,8 @@ class Signup extends Component {
                 </div>
               </div>
               <div className="col-12 col-sm-6 grid-sec">
-                <div class="card">
-                  <div class="card-body">
+                <div className="card">
+                  <div className="card-body">
                     <div className="heading">
                       <h3>Create an account for free</h3>
                     </div>
@@ -161,7 +167,7 @@ class Signup extends Component {
                         <div className="row">
                           <div className="col-12 col-sm-6">
                             <div className="form-group">
-                              <label>First name</label>
+                              <label className="form-label">First name</label>
                               <input
                                 type="text"
                                 className="form-control"
@@ -177,7 +183,7 @@ class Signup extends Component {
                           </div>
                           <div className="col-12 col-sm-6">
                             <div className="form-group">
-                              <label>Last name</label>
+                              <label className="form-label">Last name</label>
                               <input
                                 type="text"
                                 className="form-control"
@@ -192,8 +198,8 @@ class Signup extends Component {
                             </div>
                           </div>
                         </div>
-                        <div class="form-group">
-                          <label>Username</label>
+                        <div className="form-group">
+                          <label className="form-label">Username</label>
                           <input
                             type="text"
                             className="form-control"
@@ -208,8 +214,8 @@ class Signup extends Component {
                             )}
                           />
                         </div>
-                        <div class="form-group">
-                          <label>Email</label>
+                        <div className="form-group">
+                          <label className="form-label">Email</label>
                           <input
                             type="email"
                             className="form-control"
@@ -227,7 +233,9 @@ class Signup extends Component {
                         <div className="row">
                           <div className="col-12 col-sm-6">
                             <div className="form-group">
-                              <label>Choose a strong Password</label>
+                              <label className="form-label">
+                                Choose a strong Password
+                              </label>
                               <input
                                 type="password"
                                 className="form-control"
@@ -242,7 +250,9 @@ class Signup extends Component {
                           </div>
                           <div className="col-12 col-sm-6">
                             <div className="form-group">
-                              <label>Confirm your Password</label>
+                              <label className="form-label">
+                                Confirm your Password
+                              </label>
                               <input
                                 type="password"
                                 className="form-control"
@@ -263,7 +273,7 @@ class Signup extends Component {
                             Sign in
                           </Link>
                         </small>
-                        <div class="form-group">
+                        <div className="form-group">
                           <button type="submit" className="btn">
                             Signup
                           </button>
@@ -287,158 +297,3 @@ class Signup extends Component {
 }
 
 export default Signup;
-
-{
-  /* <div className="login-signup-wrapper">
-  <div className="container">
-    <div className="page-wrapper">
-      <div className="wrapper">
-        <div className="card col-12 col-sm-6">
-          <div className="card-head">
-            <h3>Create your account now</h3>
-          </div>
-          <div className="card-body">
-            <form>
-              <div className="row">
-                <div className="col-12 col-sm-6">
-                  <div className="form-group">
-                    <label>First name</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      placeholder="John"
-                      required
-                      value={this.state.userDetail.firstName}
-                      onChange={this.handleInputChange.bind(
-                        null,
-                        "firstName"
-                      )}
-                    />
-                  </div>
-                </div>
-                <div className="col-12 col-sm-6">
-                  <div className="form-group">
-                    <label>Last name</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      placeholder="Doe"
-                      required
-                      value={this.state.userDetail.lastName}
-                      onChange={this.handleInputChange.bind(
-                        null,
-                        "lastName"
-                      )}
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className="row">
-                <div className="col-12 col-sm-6">
-                  <div className="form-group">
-                    <label>User Name</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      placeholder="johndoe"
-                      required
-                      value={this.state.userDetail.username}
-                      onChange={this.handleInputChange.bind(
-                        null,
-                        "username"
-                      )}
-                    />
-                    <small className="form-text text-muted">
-                      your username should be unique
-                    </small>
-                  </div>
-                </div>
-                <div className="col-12 col-sm-6">
-                  <div className="form-group">
-                    <label>Email address</label>
-                    <input
-                      type="email"
-                      className="form-control"
-                      placeholder="johndoe@demo.com"
-                      required
-                      value={this.state.userDetail.email}
-                      onChange={this.handleInputChange.bind(
-                        null,
-                        "email"
-                      )}
-                    />
-                    <small className="form-text text-muted">
-                      We'll never share your email with anyone else.
-                    </small>
-                  </div>
-                </div>
-              </div>
-              <div className="row">
-                <div className="col-12 col-sm-6">
-                  <div className="form-group">
-                    <label>Choose a strong Password</label>
-                    <input
-                      type="password"
-                      className="form-control"
-                      required
-                      value={this.state.userDetail.password}
-                      onChange={this.handleInputChange.bind(
-                        null,
-                        "password"
-                      )}
-                    />
-                  </div>
-                </div>
-                <div className="col-12 col-sm-6">
-                  <div className="form-group">
-                    <label>Confirm your Password</label>
-                    <input
-                      type="password"
-                      className="form-control"
-                      required
-                      value={this.state.userDetail.rePassword}
-                      onChange={this.handleInputChange.bind(
-                        null,
-                        "rePassword"
-                      )}
-                    />
-                  </div>
-                </div>
-              </div>
-              <small className="form-text text-muted mb-4">
-                Already have a account,
-                <Link to="/login" style={{ color: "blue" }}>
-                  Sign in
-                </Link>
-              </small>
-              <button
-                type="submit"
-                className="btn btn-primary"
-                onClick={this.signup.bind(null)}
-              >
-                Sign Up
-              </button>
-              <Loading isTrue={this.state.loadingIsTrue} />
-              <div>
-                {this.state.responseData.status ? (
-                  this.state.responseData.status === 200 ? (
-                    <span className="text-success">
-                      {this.state.responseData.message}
-                    </span>
-                  ) : (
-                    <span className="text-danger">
-                      {this.state.responseData.message}
-                    </span>
-                  )
-                ) : (
-                  ""
-                )}
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  </div> */
-}
