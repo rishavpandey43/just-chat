@@ -45,6 +45,7 @@ export const loginFetch = (formData) => (dispatch) => {
         sessionStorage.setItem("chat_auth_userId", response.data.userId);
       }
       dispatch(loginSuccess(response.data));
+      dispatch(saveUserDetailFetch());
       displayFlash.emit("get-message", {
         message: response.data.message,
         type: "success",
