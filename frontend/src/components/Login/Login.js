@@ -7,7 +7,9 @@ import "./login.css";
 const Login = (props) => {
   useEffect(() => {
     if (props.authDetail.isAuthenticated) {
-      props.history.push(`/profile/${props.authDetail.username}`);
+      if (props.userDetail.user) {
+        props.history.push(`/profile/${props.userDetail.user.username}`);
+      }
     }
   }, []);
 
@@ -112,6 +114,7 @@ const Login = (props) => {
                         <button type="submit" className="btn">
                           Login
                         </button>
+                        <Loading isTrue={props.authDetail.isLoading} />
                       </div>
                     </form>
                     <div className="home-page-link">

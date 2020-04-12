@@ -1,19 +1,28 @@
 import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
-import axios from "axios";
 
 import "./homepage.css";
 
-const baseUrl = process.env.REACT_APP_API_BASE_URL;
+import Loading from "../Loading/Loading";
 
 const HomePage = (props) => {
   useEffect(() => {
     if (props.authDetail.isAuthenticated) {
-      props.history.push(`/profile/${props.authDetail.username}`);
+      if (props.userDetail.user) {
+        props.history.push(`/profile/${props.userDetail.user.username}`);
+      }
     }
   }, []);
 
-  return (
+  return props.authDetail.isAuthenticated ? (
+    props.userDetail.isLoading ? (
+      <div className="loading-wrapper text-center m-5">
+        <Loading isTrue={props.userDetail.isLoading} />
+      </div>
+    ) : (
+      ""
+    )
+  ) : (
     <div className="home-page">
       <div className="container">
         <div className="page-wrapper">

@@ -55,6 +55,12 @@ body {
   position: relative;
 }
 
+.no-internet-error {
+  text-align: center;
+  width: 50%;
+  margin: auto;
+}
+
 .fa-colored-icon {
   color: #c90bce;
 }

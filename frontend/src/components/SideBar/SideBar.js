@@ -5,8 +5,11 @@ import { GiHamburgerMenu } from "react-icons/gi";
 import { FiUsers, FiLogOut } from "react-icons/fi";
 import { FaEdit, FaAngleRight } from "react-icons/fa";
 import { MdUpdate } from "react-icons/md";
+import { IoMdNotificationsOutline } from "react-icons/io";
 import { TiMessages } from "react-icons/ti";
 import { AiOutlineSetting, AiOutlineProfile } from "react-icons/ai";
+
+import Loading from "../Loading/Loading";
 
 import "./sideBar.css";
 
@@ -36,7 +39,11 @@ const SideBar = (props) => {
             />
           </div>
           <div className="name mt-2">
-            <span>Rishav Pandey</span>
+            {props.userDetail.user ? (
+              <span>{`${props.userDetail.user.firstName} ${props.userDetail.user.lastName}`}</span>
+            ) : (
+              <Loading isTrue={true} />
+            )}
           </div>
         </div>
         <ul className="sidebar-list">
@@ -46,6 +53,14 @@ const SideBar = (props) => {
             </span>
             <span className="content">
               <Link to={`/${props.authDetail.username}`}>Profile</Link>
+            </span>
+          </li>
+          <li className="list">
+            <span className="icon">
+              <IoMdNotificationsOutline />
+            </span>
+            <span className="content">
+              <Link to={`/${props.authDetail.username}`}>Notifications</Link>
             </span>
           </li>
           <li className="list">

@@ -21,10 +21,6 @@ const initialState = {
     localStorage.getItem("chat_auth_userId") ||
     sessionStorage.getItem("chat_auth_userId") ||
     null,
-  username:
-    localStorage.getItem("chat_auth_username") ||
-    sessionStorage.getItem("chat_auth_username") ||
-    null,
 };
 
 const authDetail = (state = initialState, action) => {
@@ -44,7 +40,6 @@ const authDetail = (state = initialState, action) => {
         successMessage: action.message,
         token: action.token,
         userId: action.userId,
-        username: action.username,
       };
     case actionTypes.LOGIN_FAILURE:
       return {

@@ -119,7 +119,7 @@ app.use("/group", groupRouter);
 
 // error handler
 app.use((err, req, res, next) => {
-  console.log("Error- ", err);
+  // console.log("Error- ", err);
   res.statusCode = err.status || 500;
   res.setHeader("Content-Type", "application/json");
   res.json(

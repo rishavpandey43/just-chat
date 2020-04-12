@@ -101,10 +101,17 @@ const getUserNameController = (req, res, next) => {
 };
 
 const getUserDetailController = (req, res, next) => {
-  User.findOne({ username: req.query.username })
+  User.findOne({
+    username:
+      req.query.username !== "" ? req.query.username : req.user.username,
+  })
     .then((user) => {
       if (!user) {
-        const err = new Error(`user ${req.query.username} doesn't exit`);
+        const err = new Error(
+          `user ${
+            req.query.username !== "" ? req.query.username : req.user.username
+          } not found, please search with valid username`
+        );
         err.status = 404;
         next(err);
       } else {
