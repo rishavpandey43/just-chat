@@ -30,6 +30,12 @@ const userDetail = (state = initialState, action) => {
         errMessage: action.message,
         responseStatus: action.status,
       };
+    case actionTypes.REMOVE_USER_DETAIL:
+      return {
+        ...state,
+        isLoading: false,
+        user: null,
+      };
     default:
       return state;
   }

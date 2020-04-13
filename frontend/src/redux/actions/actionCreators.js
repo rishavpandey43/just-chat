@@ -124,6 +124,7 @@ export const logoutFetch = () => (dispatch) => {
           message: response.data.message,
           type: "success",
         });
+        dispatch(removeUserDetail());
       } else {
         dispatch(
           logoutFailure({
@@ -204,7 +205,6 @@ export const saveUserDetailFetch = () => (dispatch) => {
       dispatch(saveUserDetailSuccess(response));
     })
     .catch((error) => {
-      console.log(error);
       dispatch(
         saveUserDetailFailure({
           message: error.response
@@ -222,4 +222,10 @@ export const saveUserDetailFetch = () => (dispatch) => {
         type: "danger",
       });
     });
+};
+
+export const removeUserDetail = () => {
+  return {
+    type: actionTypes.REMOVE_USER_DETAIL,
+  };
 };

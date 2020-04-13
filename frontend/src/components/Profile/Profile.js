@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-import { FaRegCalendarAlt, FaHome, FaUser } from "react-icons/fa";
+import { FaHome, FaUser } from "react-icons/fa";
 import { FiPhone, FiMail } from "react-icons/fi";
 
 import Loading from "../Loading/Loading";

@@ -6,7 +6,6 @@ import "./signup.css";
 
 import displayFlash from "../../utils/flashEvent";
 
-import Loading from "../Loading/Loading";
 class Signup extends Component {
   constructor(props) {
     super(props);

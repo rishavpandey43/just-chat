@@ -11,7 +11,7 @@ const Login = (props) => {
         props.history.push(`/profile/${props.userDetail.user.username}`);
       }
     }
-  }, []);
+  }, [props.authDetail.isAuthenticated, props.history, props.userDetail.user]);
 
   const [state, setState] = useState({
     credentials: {
@@ -30,7 +30,13 @@ const Login = (props) => {
     props.loginFetch(formData);
   };
 
-  return (
+  return props.authDetail.isAuthenticated && !props.userDetail.user ? (
+    <div style={{ width: "40%", margin: "4rem auto", textAlign: "center" }}>
+      <Loading
+        isTrue={props.authDetail.isAuthenticated && !props.userDetail.user}
+      />
+    </div>
+  ) : (
     <div className="login-signup">
       <div className="container">
         <div className="page-wrapper">

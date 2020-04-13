@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 
 import "react-datepicker/dist/react-datepicker.css";
@@ -17,7 +17,47 @@ const UpdateProfile = (props) => {
     updating: false,
   });
 
-  const updateProfile = (e) => {};
+  const updateProfile = (e) => {
+    e.preventDefault();
+    let data = {
+      username: state.userDetail.username,
+      firstName: state.userDetail.firstName,
+      lastName: state.userDetail.lastName,
+      title: state.userDetail.title,
+      aboutMe: state.userDetail.aboutMe,
+      contactNum: state.userDetail.contactNum,
+      address: state.userDetail.address,
+      password: state.userDetail.password,
+    };
+
+    axios
+      .put(baseUrl + "user/update-user-detail", JSON.stringify(data), {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${
+            localStorage.getItem("chat_auth_token") ||
+            sessionStorage.getItem("chat_auth_token")
+          }`,
+        },
+      })
+      .then((response) => {
+        props.saveUserDetailFetch();
+        displayFlash.emit("get-message", {
+          message: response.data.message,
+          type: "success",
+        });
+      })
+      .catch((error) => {
+        displayFlash.emit("get-message", {
+          message: `${
+            error.response
+              ? error.response.data.message || error.response.data
+              : "Unable to connect to server, please try again later"
+          }`,
+          type: "danger",
+        });
+      });
+  };
 
   return props.userDetail.isLoading || !state.userDetail ? (
     <div className="loading-wrapper text-center m-5">
@@ -28,7 +68,7 @@ const UpdateProfile = (props) => {
       <div className="main-page-card">
         <div className="update-box">
           <div className="form-div">
-            <form>
+            <form onSubmit={updateProfile}>
               <div className="row">
                 <div className="col-12 col-sm-6">
                   <div className="form-group">
@@ -40,6 +80,11 @@ const UpdateProfile = (props) => {
                       required
                       name="firstName"
                       value={state.userDetail.firstName}
+                      onChange={(e) => {
+                        let tempState = { ...state };
+                        tempState.userDetail[e.target.name] = e.target.value;
+                        setState({ ...state });
+                      }}
                     />
                   </div>
                 </div>
@@ -53,6 +98,11 @@ const UpdateProfile = (props) => {
                       required
                       name="lastName"
                       value={state.userDetail.lastName}
+                      onChange={(e) => {
+                        let tempState = { ...state };
+                        tempState.userDetail[e.target.name] = e.target.value;
+                        setState({ ...state });
+                      }}
                     />
                   </div>
                 </div>
@@ -66,6 +116,11 @@ const UpdateProfile = (props) => {
                   name="title"
                   minLength="5"
                   value={state.userDetail.title}
+                  onChange={(e) => {
+                    let tempState = { ...state };
+                    tempState.userDetail[e.target.name] = e.target.value;
+                    setState({ ...state });
+                  }}
                 />
               </div>
               <div className="form-group">
@@ -79,6 +134,11 @@ const UpdateProfile = (props) => {
                   maxLength="400"
                   placeholder="write under min 50 and max 400 words"
                   value={state.userDetail.aboutMe}
+                  onChange={(e) => {
+                    let tempState = { ...state };
+                    tempState.userDetail[e.target.name] = e.target.value;
+                    setState({ ...state });
+                  }}
                 ></textarea>
               </div>
               <div className="form-group">
@@ -88,9 +148,13 @@ const UpdateProfile = (props) => {
                   className="form-control"
                   name="contactNum"
                   required
-                  minLength="5"
-                  placeholder="+91-97XXXXXX88"
+                  placeholder="97XXXXXX88"
                   value={state.userDetail.contactNum}
+                  onChange={(e) => {
+                    let tempState = { ...state };
+                    tempState.userDetail[e.target.name] = e.target.value;
+                    setState({ ...state });
+                  }}
                 />
               </div>
               <div className="form-group">
@@ -102,6 +166,11 @@ const UpdateProfile = (props) => {
                   required
                   placeholder="New Delhi, India"
                   value={state.userDetail.address}
+                  onChange={(e) => {
+                    let tempState = { ...state };
+                    tempState.userDetail[e.target.name] = e.target.value;
+                    setState({ ...state });
+                  }}
                 />
               </div>
               <div className="form-group">
@@ -114,6 +183,12 @@ const UpdateProfile = (props) => {
                   name="password"
                   required
                   minLength="5"
+                  value={state.userDetail.password || ""}
+                  onChange={(e) => {
+                    let tempState = { ...state };
+                    tempState.userDetail[e.target.name] = e.target.value;
+                    setState({ ...state });
+                  }}
                 />
               </div>
               <div className="form-group">

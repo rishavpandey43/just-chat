@@ -3,8 +3,6 @@ import ScrollToBottom from "react-scroll-to-bottom";
 
 import "./message.css";
 
-import Loading from "../../Loading/Loading";
-
 import Message from "./Message/Message";
 import MessageInput from "./MessageInput/MessageInput";
 
@@ -45,7 +43,6 @@ const Messages = (props) => {
       <h3>Select the conversation to view message.</h3>
     </div>
   );
-  return;
 };
 
 export default Messages;
