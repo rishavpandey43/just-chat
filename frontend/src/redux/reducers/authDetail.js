@@ -20,7 +20,7 @@ const initialState = {
   userId:
     localStorage.getItem("chat_auth_userId") ||
     sessionStorage.getItem("chat_auth_userId") ||
-    null
+    null,
 };
 
 const authDetail = (state = initialState, action) => {
@@ -29,7 +29,7 @@ const authDetail = (state = initialState, action) => {
       return {
         ...state,
         isLoading: true,
-        isAuthenticated: false
+        isAuthenticated: false,
       };
     case actionTypes.LOGIN_SUCCESS:
       return {
@@ -38,19 +38,20 @@ const authDetail = (state = initialState, action) => {
         isAuthenticated: true,
         errMessage: "",
         successMessage: action.message,
-        token: action.token
+        token: action.token,
+        userId: action.userId,
       };
     case actionTypes.LOGIN_FAILURE:
       return {
         ...state,
         isLoading: false,
         isAuthenticated: false,
-        errMessage: action.message
+        errMessage: action.message,
       };
     case actionTypes.LOGOUT_REQUEST:
       return {
         ...state,
-        isLoading: true
+        isLoading: true,
       };
     case actionTypes.LOGOUT_SUCCESS:
       return {
@@ -59,19 +60,16 @@ const authDetail = (state = initialState, action) => {
         isAuthenticated: false,
         errMessage: "",
         successMessage: action.message,
-        token: action.userId
+        token: null,
+        userId: null,
+        username: "",
       };
     case actionTypes.LOGOUT_FAILURE:
       return {
         ...state,
         isLoading: false,
         errMessage: action.message,
-        successMessage: ""
-      };
-    case actionTypes.SAVE_LOGGED_USER_ID:
-      return {
-        ...state,
-        userId: action.userId
+        successMessage: "",
       };
     default:
       return state;

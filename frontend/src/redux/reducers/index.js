@@ -1,11 +1,11 @@
 import { combineReducers } from "redux";
 
 import authDetail from "./authDetail";
-import groupListDetail from "./groupListDetail";
+import userDetail from "./userDetail";
 
 const rootReducer = combineReducers({
   authDetail,
-  groupListDetail
+  userDetail,
 });
 
 export default rootReducer;

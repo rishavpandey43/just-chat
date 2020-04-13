@@ -1,5 +1,33 @@
 .main-wrapper {
-  min-height: calc(100vh - 56px);
+  display: flex;
+}
+
+.sidebar-active {
+  padding: 1rem 2rem;
+  width: calc(100vw - 200px);
+  position: absolute;
+  top: 0px;
+  left: 180px;
+  overflow-x: auto;
+}
+
+.sidebar-inactive {
+  width: 100vw;
+}
+
+.page-wrapper {
+  min-height: calc(100vh);
+  display: flex;
+}
+
+.page-wrapper .grid-sec {
+  justify-content: center;
+  display: flex;
+  flex-direction: column;
+}
+
+.cursor-pointer {
+  cursor: pointer;
 }
 
 a {
@@ -18,15 +46,80 @@ button:focus {
   outline: none;
 }
 
-.login-signup-wrapper {
-  background-color: lightblue;
-}
-
-.login-signup-wrapper .card {
-  margin: 0px auto;
-}
-
 .btn {
   font-size: 1.2em;
   box-shadow: none;
+}
+
+body {
+  position: relative;
+}
+
+.no-internet-error {
+  text-align: center;
+  width: 50%;
+  margin: auto;
+}
+
+.fa-colored-icon {
+  color: #c90bce;
+}
+
+.fa-1-5x {
+  font-size: 1.5em;
+}
+
+.row {
+  margin: 0px;
+}
+
+.form-label {
+  font-weight: 500;
+  font-style: italic;
+}
+
+.form-control {
+  border: none;
+  outline: none;
+  border-radius: 0;
+  border-bottom: 1px solid #e8ecf4;
+}
+
+.form-control:focus {
+  border: none;
+  box-shadow: none;
+  border-bottom: 1px solid #c90bce;
+}
+
+.form-div .btn {
+  background-color: #c90bce;
+  color: #fff;
+  border-radius: 2rem;
+  padding: 0.4rem 2rem;
+}
+
+.form-div .btn:focus {
+  box-shadow: none;
+}
+
+.form-div .col-12 {
+  padding: 0px;
+}
+
+.form-div .col-12:nth-child(1) {
+  padding-right: 10px;
+}
+
+.form-div .col-12:nth-child(2) {
+  padding-left: 10px;
+}
+
+.main-page-card {
+  width: 100%;
+  padding: 1rem;
+  margin-top: 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid #eee;
+  box-shadow: 10px 25px 20px -21px rgba(0, 0, 0, 0.2);
+  font-size: 1.2em;
 }

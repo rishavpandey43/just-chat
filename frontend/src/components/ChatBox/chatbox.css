@@ -1,7 +1,15 @@
-.chat-wrapper .main-wrapper {
+.chat-wrapper .page-wrapper {
   border: 1px solid #aaa;
 }
 
 .inbox {
   border-right: 1px solid #000;
+}
+
+.empty-chat-div {
+  display: flex;
+  height: 100%;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
 }

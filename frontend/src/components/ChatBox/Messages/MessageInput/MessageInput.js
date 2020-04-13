@@ -1,34 +1,51 @@
-import React from "react";
+import React, { useState } from "react";
 
-import "./messageinput.css";
+import "./messageInput.css";
 
-const MessageInput = () => (
-  <div className="input-wrapper">
-    <form>
-      <div className="form-wrapper">
-        <div className="input-box">
-          <input
-            className="input"
-            type="text"
-            placeholder="Type a message..."
-            // value={message}
-            // onChange={({ target: { value } }) => setMessage(value)}
-            // onKeyPress={event => (event.key === "Enter" ? sendMessage(event) : null)}
-          />
-        </div>
-        <div className="send-btn">
-          <button className="sendButton">
-            <img
-              src={require("../../../../assets/images/send.png")}
-              alt="send-icon"
-              width="25px"
-              height="25px"
+const MessageInput = (props) => {
+  const [messageInput, setMessageInput] = useState("");
+
+  const sendMessage = (e) => {
+    e.preventDefault();
+    let data = {
+      message: {
+        content: messageInput,
+        from: props.currentUserId,
+      },
+      currentGroupId: props.currentGroupId,
+    };
+    props.sendMessage(data);
+    setMessageInput("");
+  };
+
+  return (
+    <div className="input-wrapper">
+      <form onSubmit={sendMessage}>
+        <div className="form-wrapper">
+          <div className="input-box">
+            <input
+              className="input"
+              type="text"
+              required
+              placeholder="Type a message..."
+              value={messageInput}
+              onChange={({ target: { value } }) => setMessageInput(value)}
             />
-          </button>
+          </div>
+          <div className="send-btn">
+            <button className="sendButton" type="submit">
+              <img
+                src={require("../../../../assets/images/send.png")}
+                alt="send-icon"
+                width="25px"
+                height="25px"
+              />
+            </button>
+          </div>
         </div>
-      </div>
-    </form>
-  </div>
-);
+      </form>
+    </div>
+  );
+};
 
 export default MessageInput;

@@ -1,23 +1,71 @@
-.service-btn,
-.short-summary {
+.profile-wrapper {
+  width: 100%;
+}
+
+.not-found-error {
+  width: 50%;
+  margin: auto;
+}
+
+.search-bar-wrapper {
+  width: 60%;
+  margin: auto;
+  margin-top: 2rem;
+}
+
+.search-bar-wrapper .search-bar {
+  padding: 0.5rem;
+  border: 1px solid #c90bce;
+  border-radius: 1rem;
   display: flex;
   flex-direction: row;
-  align-items: center;
-  justify-content: center;
 }
 
-.service-btn div {
-  padding: 10px 20px;
+.search-bar-wrapper .search-bar .search-input {
+  width: 90%;
 }
 
-.short-summary {
-  justify-content: start;
+.search-bar .search-input .input {
+  width: 100%;
+  padding: 0.5rem 1rem;
+  outline: none;
+  border: none;
 }
 
-.profile-wrapper .user-name {
-  padding-left: 50px;
+.search-bar-wrapper .search-bar .search-btn {
+  width: 10%;
 }
 
-.detail-summery {
-  margin-top: 40px;
+.search-bar .search-btn .btn:hover {
+  color: inherit !important;
+}
+
+.action-btn .col-6 {
+  padding: 0px;
+}
+
+.action-btn .btn {
+  padding: 0.3rem 1.5rem;
+  background-color: #c90bce;
+  color: #fff;
+  border-radius: 0.5rem;
+}
+
+.profile-photo {
+  width: 50%;
+  text-align: center;
+  margin: auto;
+}
+
+.personal-info-wrapper {
+  width: 70%;
+}
+
+.personal-info ul {
+  list-style: none;
+  padding: 0px;
+}
+
+.personal-info .info-list {
+  padding: 1rem 1rem;
 }

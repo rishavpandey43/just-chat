@@ -1,5 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
+
+import { FaRegCalendarAlt, FaHome, FaUser } from "react-icons/fa";
+import { FiPhone, FiMail } from "react-icons/fi";
 
 import Loading from "../Loading/Loading";
 
@@ -7,234 +10,174 @@ import "./profile.css";
 
 const baseUrl = process.env.REACT_APP_API_BASE_URL;
 
-const Profile = props => {
+const Profile = (props) => {
+  const [state, setState] = useState({
+    userDetail: null,
+    isLoading: false,
+    errMessage: "",
+  });
+
   useEffect(() => {
-    if (props.authDetail.isAuthenticated) {
-      axios
-        .get(baseUrl + "user/get-user-detail", {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${props.authDetail.token}`
-          },
-          params: {
-            username: `${props.match.params.username}`
-          }
-        })
-        .then(response => {
-          const userDetail = {
-            userId: response.data.user._id,
-            username: response.data.user.username,
-            email: response.data.user.email,
-            firstName: response.data.user.firstName,
-            lastName: response.data.user.lastName
-          };
-          let tempState = { ...state };
-          tempState.userDetail = { ...userDetail };
-          setState(tempState);
-        })
-        .catch(error => {});
+    let tempState = { ...state };
+    if (props.userDetail.user) {
+      if (props.userDetail.user.username !== props.match.params.username) {
+        tempState.isLoading = true;
+        setState({ ...tempState });
+        axios
+          .get(baseUrl + "user/get-user-detail", {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${props.authDetail.token}`,
+            },
+            params: {
+              username: `${props.match.params.username}`,
+            },
+          })
+          .then((response) => {
+            tempState.userDetail = { ...response.data.user };
+            tempState.isLoading = false;
+            setState({ ...tempState });
+          })
+          .catch((error) => {
+            tempState.userDetail = null;
+            tempState.errMessage = error.response.data.message || "";
+            tempState.isLoading = false;
+            setState({ ...tempState });
+          });
+      } else {
+        tempState.userDetail = { ...props.userDetail.user };
+        setState({ ...tempState });
+      }
     }
   }, []);
 
-  const [state, setState] = useState({
-    authUserId: props.authDetail.userId,
-    userDetail: null,
-    userService: 0,
-    groupName: ""
-  });
-
-  const createGroup = e => {
-    let tempState = { ...state };
-    tempState.userService = 0;
-    setState(tempState);
-  };
-
-  const joinGroup = e => {
-    let tempState = { ...state };
-    tempState.userService = 1;
-    setState(tempState);
-  };
-
-  const handleSubmit = e => {
-    e.preventDefault();
-  };
-
-  return !state.userDetail ? (
-    <div className="container">
-      <div style={{ margin: "auto", width: "80px", marginTop: "50px" }}>
-        <Loading isTrue={!state.userDetail} />
+  return props.userDetail.isLoading || state.isLoading ? (
+    <div className="loading-wrapper text-center m-5">
+      <Loading isTrue={props.userDetail.isLoading || state.isLoading} />
+    </div>
+  ) : !state.userDetail ? (
+    <div className="profile-wrapper">
+      <div className="not-found-error">
+        <img
+          src={require("../../assets/images/profile_not_found.png")}
+          alt="not found"
+          width="100%"
+        />
+        <h3>{state.errMessage}</h3>
       </div>
     </div>
   ) : (
     <div className="profile-wrapper">
-      <div className="container">
-        <div className="main-wrapper">
+      <div className="main-page-card">
+        <div className="general-info-wrapper">
           <div className="row">
-            <div className="col-12 col-sm-6">
-              <div className="profile-container">
-                <div className="card">
-                  <div className="card-head">
-                    <h3>
-                      {state.userDetail
-                        ? state.authUserId === state.userDetail.userId
-                          ? `Your Profile`
-                          : `${state.userDetail.firstName} ${state.userDetail.lastName}'s Profile`
-                        : "Your Profile"}
-                    </h3>
-                  </div>
-                  <div className="card-body">
-                    <div className="short-summary">
-                      <div className="user-img">
-                        <img
-                          src={require("../../assets/images/user.png")}
-                          alt="user-img"
-                          width="100px"
-                          height="100px"
-                        />
-                      </div>
-                      <div className="user-name">
-                        <h3>
-                          {state.userDetail
-                            ? `${state.userDetail.firstName} ${state.userDetail.lastName}`
-                            : ``}
-                        </h3>
-                      </div>
-                    </div>
-                    <div className="detail-summery">
-                      <div className="heading">
-                        <h3>About</h3>
-                      </div>
-                      <div className="content">
-                        <div className="row">
-                          <div className="col-12 col-sm-6">
-                            <div className="label">
-                              <label>Username:</label>
-                            </div>
-                          </div>
-                          <div className="col-12 col-sm-6">
-                            <div className="value">
-                              {state.userDetail
-                                ? `${state.userDetail.username}`
-                                : ``}
-                            </div>
-                          </div>
-                        </div>
-                        <div className="row">
-                          <div className="col-12 col-sm-6">
-                            <div className="label">
-                              <label>Name:</label>
-                            </div>
-                          </div>
-                          <div className="col-12 col-sm-6">
-                            <div className="value">
-                              {state.userDetail
-                                ? `${state.userDetail.firstName} ${state.userDetail.lastName}`
-                                : ``}
-                            </div>
-                          </div>
-                        </div>
-                        <div className="row">
-                          <div className="col-12 col-sm-6">
-                            <div className="label">
-                              <label>Email:</label>
-                            </div>
-                          </div>
-                          <div className="col-12 col-sm-6">
-                            <div className="value">
-                              {state.userDetail
-                                ? `${state.userDetail.email}`
-                                : ``}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+            <div className="col-12 col-md-6">
+              <div className="profile-detail">
+                <div className="name">
+                  <h3>{`${state.userDetail.firstName} ${state.userDetail.lastName}`}</h3>
+                  <span>{`${state.userDetail.title}`}</span>
                 </div>
+                {state.userDetail._id === props.authDetail.userId ? (
+                  ""
+                ) : (
+                  <div className="action-btn mt-5">
+                    <div className="add-friend">
+                      <button className="btn">Add Friend</button>
+                    </div>
+                    <div className="row mt-4">
+                      <div className="col-6">
+                        <div className="send-message">
+                          <button className="btn">Send Message</button>
+                        </div>
+                      </div>
+                      <div className="col-6">
+                        <div className="unfriend">
+                          <button className="btn"> Unfriend</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
-            <div className="col-12 col-sm-6">
-              <div
-                className={`service-container ${
-                  state.authUserId === state.userDetail.userId
-                    ? "d-block"
-                    : "d-none"
-                }`}
-              >
-                <div className="card">
-                  <div className="card-head">
-                    <h3>Say Hello!</h3>
-                  </div>
-                  <div className="card-body">
-                    <div className="service-btn">
-                      <div className="create-room-btn">
-                        <button
-                          className="btn btn-primary"
-                          onClick={createGroup}
-                        >
-                          Create Group
-                        </button>
-                      </div>
-                      <div className="join-room-btn">
-                        <button
-                          className="btn btn-secondary"
-                          onClick={joinGroup}
-                        >
-                          Join Group
-                        </button>
-                      </div>
-                    </div>
-                    <div className="service">
-                      <div className="create-group-form">
-                        <form></form>
-                      </div>
-                      <div className="join-group-form">
-                        <form onSubmit={handleSubmit}>
-                          <div className="form-group">
-                            <label>Group Name</label>
-                            <input
-                              type="text"
-                              className="form-control"
-                              name="groupName"
-                              value={state.groupName}
-                              required
-                              placeholder="group name should be min length of 5"
-                              minLength="5"
-                              onChange={e => {
-                                let tempState = { ...state };
-                                tempState.groupName = e.target.value;
-                                setState(tempState);
-                              }}
-                            />
-                          </div>
-                          <button
-                            type="submit"
-                            className={`btn btn-success ${
-                              state.userService === 0 ? "d-block" : "d-none"
-                            }`}
-                          >
-                            Create Group
-                          </button>
-                          <button
-                            type="submit"
-                            className={`btn btn-success ${
-                              state.userService === 1 ? "d-block" : "d-none"
-                            }`}
-                          >
-                            Join Group
-                          </button>
-                        </form>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+            <div className="col-12 col-md-6">
+              <div className="profile-photo">
+                <img
+                  src={require("../../assets/images/profile_pic.png")}
+                  alt=""
+                  width="100%"
+                />
               </div>
             </div>
+          </div>
+        </div>
+      </div>
+      <div className="main-page-card">
+        <div className="personal-info-wrapper">
+          <div
+            className={`${
+              state.userDetail.aboutMe ? "about-me d-block" : "about-me d-none"
+            }`}
+          >
+            <div className="heading">
+              <h3>
+                <FaUser className="fa-colored-icon" />
+                <span className="pl-3">About Me</span>
+              </h3>
+            </div>
+            <div className="content">
+              <p>{state.userDetail.aboutMe}</p>
+            </div>
+          </div>
+          <div className="personal-info">
+            <div className="heading">
+              <h3>Personal Information</h3>
+            </div>
+            <div className="content">
+              <ul>
+                <li className="info-list">
+                  <span className="icon">
+                    <FiPhone className="fa-colored-icon" />
+                  </span>
+                  <span className="text">{state.userDetail.contactNum}</span>
+                </li>
+                <li className="info-list">
+                  <span className="icon">
+                    <FiMail className="fa-colored-icon" />
+                  </span>
+                  <span className="text">{state.userDetail.email}</span>
+                </li>
+                <li className="info-list">
+                  <span className="icon">
+                    <FaHome className="fa-colored-icon" />
+                  </span>
+                  <span className="text">{state.userDetail.address}</span>
+                </li>
+              </ul>
+            </div>
+            <div className="social-link"></div>
           </div>
         </div>
       </div>
     </div>
   );
 };
+
+{
+  /* <div className="search-bar-wrapper">
+  <form>
+    <div className="search-bar">
+      <div className="search-input">
+        <input type="text" className="input" placeholder="search" required />
+      </div>
+      <div className="search-btn">
+        <button className="btn">
+          <MdSearch />
+        </button>
+      </div>
+    </div>
+  </form>
+</div>; */
+}
 
 export default Profile;

@@ -9,7 +9,7 @@ import App from "../App";
 function mapStateToProps(state) {
   return {
     authDetail: state.authDetail,
-    groupListDetail: state.groupListDetail
+    userDetail: state.userDetail,
   };
 }
 

@@ -1,8 +1,7 @@
 .message-wrapper {
   display: flex;
   flex-direction: row;
-  /* align-items: center; */
-  /* flex-direction: row-reverse; */
+  padding-right: 25px;
 }
 
 .user-img {
@@ -15,13 +14,22 @@
   text-align: center;
 }
 
+.wrapper {
+  text-align: center;
+  padding: 0px;
+}
+
+.user-text {
+  width: 100%;
+}
+
 .text {
   margin: 10px 15px;
   padding: 10px 15px;
-  border: 1px solid #aaaa;
+  /* border: 1px solid #aaaa; */
   border-radius: 5px;
   min-height: 40px;
-  max-width: 70%;
+  width: 100%;
   margin-top: 20px;
 }
 

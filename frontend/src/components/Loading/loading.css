@@ -18,8 +18,8 @@
   height: 40px;
   margin: 1px;
   border-radius: 50%;
-  border: 5px solid #f5871f;
-  border-color: #f5871f transparent #f5871f transparent;
+  border: 5px solid #c90bce;
+  border-color: #c90bce transparent #c90bce transparent;
   animation: lds-dual-ring 1s linear infinite;
 }
 @keyframes lds-dual-ring {
@@ -43,7 +43,7 @@
   width: 11px;
   height: 11px;
   border-radius: 50%;
-  background: #f5871f;
+  background: #c90bce;
   animation-timing-function: cubic-bezier(0, 1, 1, 0);
 }
 .lds-ellipsis div:nth-child(1) {
