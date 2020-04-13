@@ -12,7 +12,7 @@ const baseUrl = process.env.REACT_APP_API_BASE_URL;
 
 const Profile = (props) => {
   const [state, setState] = useState({
-    userDetail: null,
+    userDetail: { ...props.userDetail.user },
     isLoading: false,
     errMessage: "",
   });
