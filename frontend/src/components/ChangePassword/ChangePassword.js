@@ -9,7 +9,7 @@ import "./changePassword.css";
 
 const baseUrl = process.env.REACT_APP_API_BASE_URL;
 
-const ChangePassword = () => {
+const ChangePassword = (props) => {
   const [state, setState] = useState({
     currentPassword: "",
     newPassword: "",
@@ -79,7 +79,28 @@ const ChangePassword = () => {
       });
   };
 
-  return (
+  return props.user.isFetching ? (
+    <div className="loading-wrapper text-center m-5">
+      <Loading isTrue={props.user.isFetching} />
+    </div>
+  ) : props.user.responseStatus === 503 ? (
+    <div className="profile-wrapper">
+      <div className="main-wrapper-error">
+        <img
+          src={require("../../assets/images/server_down.png")}
+          alt="not found"
+          width="100%"
+        />
+        <h3 className="text-center">{props.user.errMessage}</h3>
+        <button
+          className="main-theme-btn"
+          onClick={props.getuserFetch.bind(null)}
+        >
+          Refresh
+        </button>
+      </div>
+    </div>
+  ) : !props.user ? null : (
     <div className="change-password-wrapper">
       <div className="main-page-card">
         <div className="heading">
@@ -136,7 +157,7 @@ const ChangePassword = () => {
               />
             </div>
             <div className="form-group">
-              <button type="submit" className="btn">
+              <button type="submit" className="main-theme-btn">
                 Update New Password
               </button>
               <Loading isTrue={state.updating} />

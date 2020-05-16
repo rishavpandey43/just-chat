@@ -1,4 +1,4 @@
-import * as actionTypes from "../actions/actionTypes";
+import * as actionTypes from "../actions/types/actionTypes";
 
 // The auth reducer. The starting state sets authentication
 // based on a token being in local storage. In a real app,
@@ -23,7 +23,7 @@ const initialState = {
     null,
 };
 
-const authDetail = (state = initialState, action) => {
+const auth = (state = initialState, action) => {
   switch (action.type) {
     case actionTypes.LOGIN_REQUEST:
       return {
@@ -76,4 +76,4 @@ const authDetail = (state = initialState, action) => {
   }
 };
 
-export default authDetail;
+export default auth;

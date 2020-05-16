@@ -6,12 +6,11 @@ import "./signup.css";
 
 import displayFlash from "../../utils/flashEvent";
 
-import Loading from "../Loading/Loading";
 class Signup extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      userDetail: {
+      user: {
         username: "",
         firstName: "",
         lastName: "",
@@ -28,15 +27,15 @@ class Signup extends Component {
   }
 
   componentDidMount() {
-    if (this.props.authDetail.isAuthenticated) {
+    if (this.props.auth.isAuthenticated) {
       this.props.history.push("/");
     }
   }
 
   handleInputChange = (target, e) => {
-    const tempUserDetail = { ...this.state.userDetail };
-    tempUserDetail[target] = e.target.value;
-    this.setState({ userDetail: tempUserDetail });
+    const tempuser = { ...this.state.user };
+    tempuser[target] = e.target.value;
+    this.setState({ user: tempuser });
   };
 
   signup = (e) => {
@@ -48,16 +47,16 @@ class Signup extends Component {
       },
     });
     let isEmpty = true;
-    for (const key in this.state.userDetail) {
-      if (this.state.userDetail[key] === "") {
+    for (const key in this.state.user) {
+      if (this.state.user[key] === "") {
         isEmpty = true;
         break;
       } else isEmpty = false;
     }
     if (!isEmpty) {
       // CHECK VALIDATION OF USER DETAILS
-      const newUser = JSON.stringify({ ...this.state.userDetail });
-      if (/\s/g.test(this.state.userDetail.username)) {
+      const newUser = JSON.stringify({ ...this.state.user });
+      if (/\s/g.test(this.state.user.username)) {
         let responseData = {
           message:
             "username consist of whitespace, please avoid whitespace to continue.",
@@ -69,7 +68,7 @@ class Signup extends Component {
         });
         return;
       }
-      if (this.state.userDetail.password !== this.state.userDetail.rePassword) {
+      if (this.state.user.password !== this.state.user.rePassword) {
         let responseData = {
           message: "Both password should be same",
           status: 422,
@@ -80,7 +79,7 @@ class Signup extends Component {
         });
         return;
       }
-      if (this.state.userDetail.password.length < 8) {
+      if (this.state.user.password.length < 8) {
         let responseData = {
           message: "password length should be greater than or equal to 8",
           status: 422,
@@ -105,7 +104,7 @@ class Signup extends Component {
           this.setState({
             loadingIsTrue: false,
             responseData,
-            userDetail: {
+            user: {
               username: "",
               firstName: "",
               lastName: "",
@@ -173,7 +172,7 @@ class Signup extends Component {
                                 className="form-control"
                                 placeholder="John"
                                 required
-                                value={this.state.userDetail.firstName}
+                                value={this.state.user.firstName}
                                 onChange={this.handleInputChange.bind(
                                   null,
                                   "firstName"
@@ -189,7 +188,7 @@ class Signup extends Component {
                                 className="form-control"
                                 placeholder="Doe"
                                 required
-                                value={this.state.userDetail.lastName}
+                                value={this.state.user.lastName}
                                 onChange={this.handleInputChange.bind(
                                   null,
                                   "lastName"
@@ -207,7 +206,7 @@ class Signup extends Component {
                             required
                             name="username"
                             minLength="5"
-                            value={this.state.userDetail.username}
+                            value={this.state.user.username}
                             onChange={this.handleInputChange.bind(
                               null,
                               "username"
@@ -223,7 +222,7 @@ class Signup extends Component {
                             required
                             name="email"
                             minLength="5"
-                            value={this.state.userDetail.email}
+                            value={this.state.user.email}
                             onChange={this.handleInputChange.bind(
                               null,
                               "email"
@@ -240,7 +239,7 @@ class Signup extends Component {
                                 type="password"
                                 className="form-control"
                                 required
-                                value={this.state.userDetail.password}
+                                value={this.state.user.password}
                                 onChange={this.handleInputChange.bind(
                                   null,
                                   "password"
@@ -257,7 +256,7 @@ class Signup extends Component {
                                 type="password"
                                 className="form-control"
                                 required
-                                value={this.state.userDetail.rePassword}
+                                value={this.state.user.rePassword}
                                 onChange={this.handleInputChange.bind(
                                   null,
                                   "rePassword"
@@ -274,7 +273,7 @@ class Signup extends Component {
                           </Link>
                         </small>
                         <div className="form-group">
-                          <button type="submit" className="btn">
+                          <button type="submit" className="main-theme-btn">
                             Signup
                           </button>
                         </div>

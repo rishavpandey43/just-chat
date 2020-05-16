@@ -1,34 +1,109 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Component } from "react";
 import axios from "axios";
-
 import "react-datepicker/dist/react-datepicker.css";
-
-import displayFlash from "../../utils/flashEvent";
 
 import Loading from "../Loading/Loading";
 
 import "./updateProfile.css";
 
-const baseUrl = process.env.REACT_APP_API_BASE_URL;
+import { baseUrl } from "../../utils/constant";
+import displayFlash from "../../utils/flashEvent";
 
 const UpdateProfile = (props) => {
   const [state, setState] = useState({
-    userDetail: props.userDetail.user || null,
-    updating: false,
+    user: null,
+    isUpdating: false,
   });
 
-  const updateProfile = (e) => {};
+  useEffect(() => {
+    setState({
+      user: props.user.user ? { ...props.user.user } : null,
+      isUpdating: false,
+    });
+  }, []);
 
-  return props.userDetail.isLoading || !state.userDetail ? (
+  const updateProfile = (e) => {
+    setState({
+      user: { ...state.user },
+      isUpdating: true,
+    });
+    e.preventDefault();
+    let data = {
+      username: state.user.username,
+      firstName: state.user.firstName,
+      lastName: state.user.lastName,
+      title: state.user.title,
+      aboutMe: state.user.aboutMe,
+      contactNum: state.user.contactNum,
+      address: state.user.address,
+      password: state.user.password,
+    };
+    axios
+      .put(baseUrl + "/user/update-user-detail", JSON.stringify(data), {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${
+            localStorage.getItem("chat_auth_token") ||
+            sessionStorage.getItem("chat_auth_token")
+          }`,
+        },
+      })
+      .then((response) => {
+        props.getuserFetch();
+        displayFlash.emit("get-message", {
+          message: response.data.message,
+          type: "success",
+        });
+        setState({
+          user: { ...state.user },
+          isUpdating: false,
+        });
+      })
+      .catch((error) => {
+        displayFlash.emit("get-message", {
+          message: `${
+            error.response
+              ? error.response.data.message || error.response.data
+              : "Unable to connect to server, please try again later"
+          }`,
+          type: "danger",
+        });
+        setState({
+          user: props.user.user ? { ...props.user.user } : null,
+          isUpdating: false,
+        });
+      });
+  };
+  return props.user.isFetching ? (
     <div className="loading-wrapper text-center m-5">
-      <Loading isTrue={props.userDetail.isLoading} />
+      <Loading isTrue={props.user.isFetching} />
     </div>
-  ) : (
+  ) : props.user.responseStatus === 503 ? (
+    <div className="profile-wrapper">
+      <div className="main-wrapper-error">
+        <img
+          src={require("../../assets/images/server_down.png")}
+          alt="not found"
+          width="100%"
+        />
+        <h3 className="text-center">{state.errMessage}</h3>
+        <button
+          className="main-theme-btn"
+          onClick={props.getuserFetch.bind(null)}
+        >
+          Refresh
+        </button>
+      </div>
+    </div>
+  ) : !state.user ? null : (
     <div className="update-profile-wrapper">
       <div className="main-page-card">
+        <div className="mb-5">
+          <h1>Update Your Profile</h1>
+        </div>
         <div className="update-box">
           <div className="form-div">
-            <form>
+            <form onSubmit={updateProfile.bind(null)}>
               <div className="row">
                 <div className="col-12 col-sm-6">
                   <div className="form-group">
@@ -39,7 +114,12 @@ const UpdateProfile = (props) => {
                       placeholder="John"
                       required
                       name="firstName"
-                      value={state.userDetail.firstName}
+                      value={state.user.firstName}
+                      onChange={(e) => {
+                        let tempState = { ...state };
+                        tempState.user[e.target.name] = e.target.value;
+                        setState({ ...state });
+                      }}
                     />
                   </div>
                 </div>
@@ -52,7 +132,12 @@ const UpdateProfile = (props) => {
                       placeholder="Doe"
                       required
                       name="lastName"
-                      value={state.userDetail.lastName}
+                      value={state.user.lastName}
+                      onChange={(e) => {
+                        let tempState = { ...state };
+                        tempState.user[e.target.name] = e.target.value;
+                        setState({ ...state });
+                      }}
                     />
                   </div>
                 </div>
@@ -65,7 +150,12 @@ const UpdateProfile = (props) => {
                   placeholder="Software Engineer"
                   name="title"
                   minLength="5"
-                  value={state.userDetail.title}
+                  value={state.user.title}
+                  onChange={(e) => {
+                    let tempState = { ...state };
+                    tempState.user[e.target.name] = e.target.value;
+                    setState({ ...state });
+                  }}
                 />
               </div>
               <div className="form-group">
@@ -78,7 +168,12 @@ const UpdateProfile = (props) => {
                   minLength="50"
                   maxLength="400"
                   placeholder="write under min 50 and max 400 words"
-                  value={state.userDetail.aboutMe}
+                  value={state.user.aboutMe}
+                  onChange={(e) => {
+                    let tempState = { ...state };
+                    tempState.user[e.target.name] = e.target.value;
+                    setState({ ...state });
+                  }}
                 ></textarea>
               </div>
               <div className="form-group">
@@ -88,9 +183,13 @@ const UpdateProfile = (props) => {
                   className="form-control"
                   name="contactNum"
                   required
-                  minLength="5"
-                  placeholder="+91-97XXXXXX88"
-                  value={state.userDetail.contactNum}
+                  placeholder="97XXXXXX88"
+                  value={state.user.contactNum}
+                  onChange={(e) => {
+                    let tempState = { ...state };
+                    tempState.user[e.target.name] = e.target.value;
+                    setState({ ...state });
+                  }}
                 />
               </div>
               <div className="form-group">
@@ -101,7 +200,12 @@ const UpdateProfile = (props) => {
                   name="address"
                   required
                   placeholder="New Delhi, India"
-                  value={state.userDetail.address}
+                  value={state.user.address}
+                  onChange={(e) => {
+                    let tempState = { ...state };
+                    tempState.user[e.target.name] = e.target.value;
+                    setState({ ...state });
+                  }}
                 />
               </div>
               <div className="form-group">
@@ -114,13 +218,19 @@ const UpdateProfile = (props) => {
                   name="password"
                   required
                   minLength="5"
+                  value={state.user.password || ""}
+                  onChange={(e) => {
+                    let tempState = { ...state };
+                    tempState.user[e.target.name] = e.target.value;
+                    setState({ ...state });
+                  }}
                 />
               </div>
               <div className="form-group">
-                <button type="submit" className="btn">
+                <button type="submit" className="main-theme-btn">
                   Update Profile
                 </button>
-                <Loading isTrue={state.updating} />
+                <Loading isTrue={state.isUpdating} />
               </div>
             </form>
           </div>

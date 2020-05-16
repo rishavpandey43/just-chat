@@ -3,8 +3,8 @@ const express = require("express");
 const passport = require("passport");
 
 // import authentication files
-const authenticate = require("../utils/authenticate");
-const cors = require("../utils/cors.js");
+const authenticate = require("../middlewares/authenticate");
+const cors = require("../middlewares/cors.js");
 
 const userRouterController = require("../controllers/user.router.controller");
 
@@ -42,14 +42,14 @@ userRouter
     "/get-user-detail",
     cors.corsWithOptions,
     authenticate.verifyUser,
-    userRouterController.getUserDetailController
+    userRouterController.getuserController
   )
   .put(
     "/update-user-detail",
     cors.corsWithOptions,
     authenticate.verifyUser,
     passport.authenticate("local"),
-    userRouterController.updateUserDetailController
+    userRouterController.updateuserController
   )
   .put(
     "/change-password",

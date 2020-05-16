@@ -3,9 +3,9 @@ const bcrypt = require("bcryptjs");
 
 const User = require("../models/user.model"); // import User Schema
 
-const authenticate = require("../utils/authenticate");
+const authenticate = require("../middlewares/authenticate");
 
-const userSignupController = (req, res, next) => {
+exports.userSignupController = (req, res, next) => {
   User.register(
     new User({
       username: req.body.username,
@@ -67,7 +67,7 @@ const userSignupController = (req, res, next) => {
   );
 };
 
-const userLoginController = (req, res, next) => {
+exports.userLoginController = (req, res, next) => {
   // on successful authentication, passport save user detail as req.user.
   const token = authenticate.getToken({ _id: req.user._id });
   res.statusCode = 200;
@@ -80,7 +80,7 @@ const userLoginController = (req, res, next) => {
   });
 };
 
-const userLogoutController = (req, res, next) => {
+exports.userLogoutController = (req, res, next) => {
   if (req.user) {
     req.session.destroy();
     res.clearCookie("SESSION_ID"); // clean up!
@@ -94,13 +94,13 @@ const userLogoutController = (req, res, next) => {
   }
 };
 
-const getUserNameController = (req, res, next) => {
+exports.getUserNameController = (req, res, next) => {
   res.statusCode = 200;
   res.setHeader("Content-Type", "application/json");
   res.json({ username: req.user.username, userId: req.user._id });
 };
 
-const getUserDetailController = (req, res, next) => {
+exports.getuserController = (req, res, next) => {
   User.findOne({
     username:
       req.query.username !== "" ? req.query.username : req.user.username,
@@ -123,7 +123,7 @@ const getUserDetailController = (req, res, next) => {
     .catch((err) => next(err));
 };
 
-const updateUserDetailController = (req, res, next) => {
+exports.updateuserController = (req, res, next) => {
   User.findOneAndUpdate(
     { _id: req.user._id },
     {
@@ -150,7 +150,7 @@ const updateUserDetailController = (req, res, next) => {
     .catch((err) => next(err));
 };
 
-const changePasswordController = (req, res, next) => {
+exports.changePasswordController = (req, res, next) => {
   User.findById(req.user._id)
     .then((user) => {
       user
@@ -170,11 +170,3 @@ const changePasswordController = (req, res, next) => {
     })
     .catch((err) => next(err));
 };
-
-exports.userSignupController = userSignupController;
-exports.userLoginController = userLoginController;
-exports.userLogoutController = userLogoutController;
-exports.getUserNameController = getUserNameController;
-exports.getUserDetailController = getUserDetailController;
-exports.updateUserDetailController = updateUserDetailController;
-exports.changePasswordController = changePasswordController;

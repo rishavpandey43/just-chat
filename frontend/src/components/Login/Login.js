@@ -6,12 +6,12 @@ import Loading from "../Loading/Loading";
 import "./login.css";
 const Login = (props) => {
   useEffect(() => {
-    if (props.authDetail.isAuthenticated) {
-      if (props.userDetail.user) {
-        props.history.push(`/profile/${props.userDetail.user.username}`);
+    if (props.auth.isAuthenticated) {
+      if (props.user.user) {
+        props.history.push(`/profile/${props.user.user.username}`);
       }
     }
-  }, []);
+  }, [props.auth.isAuthenticated, props.history, props.user.user]);
 
   const [state, setState] = useState({
     credentials: {
@@ -30,7 +30,11 @@ const Login = (props) => {
     props.loginFetch(formData);
   };
 
-  return (
+  return props.auth.isAuthenticated && !props.user.user ? (
+    <div style={{ width: "40%", margin: "4rem auto", textAlign: "center" }}>
+      <Loading isTrue={props.auth.isAuthenticated && !props.user.user} />
+    </div>
+  ) : (
     <div className="login-signup">
       <div className="container">
         <div className="page-wrapper">
@@ -111,10 +115,10 @@ const Login = (props) => {
                         </Link>
                       </small>
                       <div className="form-group">
-                        <button type="submit" className="btn">
+                        <button type="submit" className="main-theme-btn">
                           Login
                         </button>
-                        <Loading isTrue={props.authDetail.isLoading} />
+                        <Loading isTrue={props.auth.isLoading} />
                       </div>
                     </form>
                     <div className="home-page-link">
