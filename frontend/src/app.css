@@ -55,7 +55,7 @@ body {
   position: relative;
 }
 
-.no-internet-error {
+.main-wrapper-error {
   text-align: center;
   width: 50%;
   margin: auto;
@@ -71,6 +71,7 @@ body {
 
 .row {
   margin: 0px;
+  flex: 1;
 }
 
 .form-label {
@@ -91,14 +92,15 @@ body {
   border-bottom: 1px solid #c90bce;
 }
 
-.form-div .btn {
+.main-theme-btn {
+  border: 1px solid #c90bce;
   background-color: #c90bce;
   color: #fff;
   border-radius: 2rem;
   padding: 0.4rem 2rem;
 }
 
-.form-div .btn:focus {
+.main-theme-btn:focus {
   box-shadow: none;
 }
 

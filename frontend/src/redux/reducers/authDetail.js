@@ -1,4 +1,4 @@
-import * as actionTypes from "../actions/actionTypes";
+import * as actionTypes from "../actions/types/actionTypes";
 
 // The auth reducer. The starting state sets authentication
 // based on a token being in local storage. In a real app,

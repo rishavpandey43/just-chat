@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 import { FaHome, FaUser } from "react-icons/fa";
 import { FiPhone, FiMail } from "react-icons/fi";
@@ -8,13 +9,13 @@ import Loading from "../Loading/Loading";
 
 import "./profile.css";
 
-const baseUrl = process.env.REACT_APP_API_BASE_URL;
+import { baseUrl } from "../../utils/constant";
 
 const Profile = (props) => {
   const [state, setState] = useState({
-    userDetail: { ...props.userDetail.user },
+    userDetail: props.userDetail.user ? { ...props.userDetail.user } : null,
     isLoading: false,
-    errMessage: "",
+    errMessage: props.userDetail.errMessage,
   });
 
   useEffect(() => {
@@ -24,7 +25,7 @@ const Profile = (props) => {
         tempState.isLoading = true;
         setState({ ...tempState });
         axios
-          .get(baseUrl + "user/get-user-detail", {
+          .get(baseUrl + "/user/get-user-detail", {
             headers: {
               "Content-Type": "application/json",
               Authorization: `Bearer ${props.authDetail.token}`,
@@ -40,30 +41,50 @@ const Profile = (props) => {
           })
           .catch((error) => {
             tempState.userDetail = null;
-            tempState.errMessage = error.response.data.message || "";
+            tempState.errMessage = error.response
+              ? error.response.data.errMessage || error.response.statusText
+              : "Some error occured, please try again";
             tempState.isLoading = false;
             setState({ ...tempState });
           });
       } else {
-        tempState.userDetail = { ...props.userDetail.user };
+        tempState.userDetail = props.userDetail.user
+          ? { ...props.userDetail.user }
+          : null;
         setState({ ...tempState });
       }
     }
   }, []);
-
-  return props.userDetail.isLoading || state.isLoading ? (
+  return props.userDetail.isFetching || state.isLoading ? (
     <div className="loading-wrapper text-center m-5">
-      <Loading isTrue={props.userDetail.isLoading || state.isLoading} />
+      <Loading isTrue={props.userDetail.isFetching || state.isLoading} />
+    </div>
+  ) : props.userDetail.responseStatus === 503 ? (
+    <div className="profile-wrapper">
+      <div className="main-wrapper-error">
+        <img
+          src={require("../../assets/images/server_down.png")}
+          alt="not found"
+          width="100%"
+        />
+        <h3 className="text-center">{state.errMessage}</h3>
+        <button
+          className="main-theme-btn"
+          onClick={props.getUserDetailFetch.bind(null)}
+        >
+          Refresh
+        </button>
+      </div>
     </div>
   ) : !state.userDetail ? (
     <div className="profile-wrapper">
-      <div className="not-found-error">
+      <div className="main-wrapper-error">
         <img
           src={require("../../assets/images/profile_not_found.png")}
           alt="not found"
           width="100%"
         />
-        <h3>{state.errMessage}</h3>
+        <h3 className="text-center">{state.errMessage}</h3>
       </div>
     </div>
   ) : (
@@ -74,7 +95,13 @@ const Profile = (props) => {
             <div className="col-12 col-md-6">
               <div className="profile-detail">
                 <div className="name">
-                  <h3>{`${state.userDetail.firstName} ${state.userDetail.lastName}`}</h3>
+                  <h3>{`${state.userDetail.firstName} ${
+                    state.userDetail.lastName
+                  } ${
+                    state.userDetail._id === props.authDetail.userId
+                      ? "(You)"
+                      : ""
+                  }`}</h3>
                   <span>{`${state.userDetail.title}`}</span>
                 </div>
                 {state.userDetail._id === props.authDetail.userId ? (

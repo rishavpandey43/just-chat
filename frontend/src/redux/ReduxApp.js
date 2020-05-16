@@ -2,7 +2,8 @@ import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
 
-import * as actionCreators from "./actions/actionCreators";
+import * as AuthActions from "./actions/creators/AuthActions";
+import * as UserAction from "./actions/creators/UserAction";
 
 import App from "../App";
 
@@ -14,7 +15,13 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators(actionCreators, dispatch);
+  return bindActionCreators(
+    {
+      ...AuthActions,
+      ...UserAction,
+    },
+    dispatch
+  );
 }
 
 const ReduxApp = withRouter(connect(mapStateToProps, mapDispatchToProps)(App));

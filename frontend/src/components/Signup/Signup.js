@@ -273,7 +273,7 @@ class Signup extends Component {
                           </Link>
                         </small>
                         <div className="form-group">
-                          <button type="submit" className="btn">
+                          <button type="submit" className="main-theme-btn">
                             Signup
                           </button>
                         </div>

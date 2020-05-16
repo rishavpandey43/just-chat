@@ -1,10 +1,13 @@
-import * as actionTypes from "./actionTypes";
-
+// * Import required modules/dependencies
 import axios from "axios";
 
-import displayFlash from "../../utils/flashEvent";
+// * Import all store related stuffs
+import * as actionTypes from "../types/actionTypes";
+import { getUserDetailFetch, removeUserDetail } from "./UserAction";
 
-const baseUrl = process.env.REACT_APP_API_BASE_URL;
+// * Import utilites
+import displayFlash from "../../../utils/flashEvent";
+import { baseUrl } from "../../../utils/constant";
 
 export const loginRequest = () => {
   return {
@@ -32,7 +35,7 @@ export const loginFetch = (formData) => (dispatch) => {
   dispatch(loginRequest());
 
   axios
-    .post(baseUrl + "user/login", JSON.stringify(formData.credentials), {
+    .post(baseUrl + "/user/login", JSON.stringify(formData.credentials), {
       headers: { "Content-Type": "application/json" },
       withCredentials: true,
     })
@@ -45,21 +48,26 @@ export const loginFetch = (formData) => (dispatch) => {
         sessionStorage.setItem("chat_auth_userId", response.data.userId);
       }
       dispatch(loginSuccess(response.data));
-      dispatch(saveUserDetailFetch());
+      dispatch(getUserDetailFetch());
       displayFlash.emit("get-message", {
         message: response.data.message,
         type: "success",
       });
     })
     .catch((error) => {
+      console.log(error.response);
       if (error.response) {
         dispatch(
           loginFailure({
-            message: `${error.response.data}, please enter correct detail to continue`,
+            message: `${
+              error.response.statusText || error.response.data
+            }, please enter correct detail to continue`,
           })
         );
         displayFlash.emit("get-message", {
-          message: `${error.response.data}, please enter correct detail to continue`,
+          message: `${
+            error.response.statusText || error.response.data.message
+          }, please enter correct detail to continue`,
           type: "danger",
         });
       } else {
@@ -100,7 +108,7 @@ export const logoutFailure = (response) => {
 export const logoutFetch = () => (dispatch) => {
   dispatch(logoutRequest());
   axios
-    .get(baseUrl + "user/logout", {
+    .get(baseUrl + "/user/logout", {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${
@@ -141,11 +149,11 @@ export const logoutFetch = () => (dispatch) => {
       if (error.response) {
         dispatch(
           loginFailure({
-            message: error.response.data,
+            message: error.response.statusText || error.response.data.message,
           })
         );
         displayFlash.emit("get-message", {
-          message: error.response.data.message,
+          message: error.response.statusText || error.response.data.message,
           type: "danger",
         });
       } else {
@@ -161,71 +169,4 @@ export const logoutFetch = () => (dispatch) => {
         });
       }
     });
-};
-
-export const saveUserDetailRequest = () => {
-  return {
-    type: actionTypes.SAVE_USER_DETAIL_REQUEST,
-  };
-};
-
-export const saveUserDetailSuccess = (response) => {
-  return {
-    type: actionTypes.SAVE_USER_DETAIL_SUCCESS,
-    user: response.data.user,
-    status: response.status,
-  };
-};
-
-export const saveUserDetailFailure = (response) => {
-  return {
-    type: actionTypes.SAVE_USER_DETAIL_FAILURE,
-    message: response.message,
-    status: response.status,
-  };
-};
-
-export const saveUserDetailFetch = () => (dispatch) => {
-  dispatch(saveUserDetailRequest());
-
-  axios
-    .get(baseUrl + "user/get-user-detail", {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${
-          localStorage.getItem("chat_auth_token") ||
-          sessionStorage.getItem("chat_auth_token")
-        }`,
-      },
-      params: {
-        username: "",
-      },
-    })
-    .then((response) => {
-      dispatch(saveUserDetailSuccess(response));
-    })
-    .catch((error) => {
-      dispatch(
-        saveUserDetailFailure({
-          message: error.response
-            ? error.response.data.message || error.response.data
-            : "Unable to connect to server, please try again later",
-          status: error.response ? error.response.status || 503 : 503,
-        })
-      );
-      displayFlash.emit("get-message", {
-        message: `${
-          error.response
-            ? error.response.data.message || error.response.data
-            : "Unable to connect to server, please try again later"
-        }`,
-        type: "danger",
-      });
-    });
-};
-
-export const removeUserDetail = () => {
-  return {
-    type: actionTypes.REMOVE_USER_DETAIL,
-  };
 };

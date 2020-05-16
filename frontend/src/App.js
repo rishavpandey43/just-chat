@@ -22,80 +22,59 @@ import Flash from "./components/Flash/Flash";
 export default function MainApp(props) {
   useEffect(() => {
     if (props.authDetail.isAuthenticated) {
-      props.saveUserDetailFetch();
+      props.getUserDetailFetch();
     }
   }, []);
   return (
     <div style={{ position: "relative" }}>
       <Flash />
-      {props.authDetail.isAuthenticated &&
-      props.userDetail.responseStatus === 503 ? (
-        <div className="no-internet-error">
-          <div className="">
-            <img
-              src={require("./assets/images/no_internet.png")}
-              alt="no internet"
-              width="100%"
-            />
-            <h3>
-              Service unavailable, please try again or check your internet
-              connection
-            </h3>
-          </div>
-        </div>
-      ) : (
-        <div className="main-wrapper">
-          <SideBar {...props} />
-          <main
-            className={`${
-              props.authDetail.isAuthenticated
-                ? "sidebar-active"
-                : "sidebar-inactive"
-            }`}
-          >
-            <Router history={props.history}>
-              <Switch location={props.location}>
-                <Route
-                  exact
-                  path="/"
-                  component={() => <HomePage {...props} />}
-                />
-                <Route path="/login" component={() => <Login {...props} />} />
-                <Route path="/signup" component={() => <Signup {...props} />} />
-                <PrivateRoute
-                  exact
-                  path="/profile/:username"
-                  mainProps={{ ...props }} // * pass the main app props separately to handle it PrivateProps component
-                  component={(props) => <Profile {...props} />}
-                  // * The newly constructed props in PrivateRoute is then passed to protected components
-                />
-                <PrivateRoute
-                  exact
-                  path="/chat"
-                  mainProps={{ ...props }} // * pass the main app props separately to handle it PrivateProps component
-                  component={(props) => <ChatBox {...props} />}
-                  // * The newly constructed props in PrivateRoute is then passed to protected components
-                />
-                <PrivateRoute
-                  exact
-                  path="/update-profile"
-                  mainProps={{ ...props }} // * pass the main app props separately to handle it PrivateProps component
-                  component={(props) => <UpdateProfile {...props} />}
-                  // * The newly constructed props in PrivateRoute is then passed to protected components
-                />
-                <PrivateRoute
-                  exact
-                  path="/change-password"
-                  mainProps={{ ...props }}
-                  component={(props) => <ChangePassword {...props} />}
-                  // * The newly constructed props in PrivateRoute is then passed to protected components
-                />
-                <Redirect to="/" />
-              </Switch>
-            </Router>
-          </main>
-        </div>
-      )}
+      <div className="main-wrapper">
+        <SideBar {...props} />
+        <main
+          className={`${
+            props.authDetail.isAuthenticated
+              ? "sidebar-active"
+              : "sidebar-inactive"
+          }`}
+        >
+          <Router history={props.history}>
+            <Switch location={props.location}>
+              <Route exact path="/" component={() => <HomePage {...props} />} />
+              <Route path="/login" component={() => <Login {...props} />} />
+              <Route path="/signup" component={() => <Signup {...props} />} />
+              <PrivateRoute
+                exact
+                path="/profile/:username"
+                mainProps={{ ...props }} // * pass the main app props separately to handle it PrivateProps component
+                component={(props) => <Profile {...props} />}
+                // * The newly constructed props in PrivateRoute is then passed to protected components
+              />
+              <PrivateRoute
+                exact
+                path="/chat"
+                mainProps={{ ...props }} // * pass the main app props separately to handle it PrivateProps component
+                component={(props) => <ChatBox {...props} />}
+                // * The newly constructed props in PrivateRoute is then passed to protected components
+              />
+              <PrivateRoute
+                exact
+                path="/update-profile"
+                mainProps={{ ...props }} // * pass the main app props separately to handle it PrivateProps component
+                component={(props) => <UpdateProfile {...props} />}
+                // * The newly constructed props in PrivateRoute is then passed to protected components
+              />
+              <PrivateRoute
+                exact
+                path="/change-password"
+                mainProps={{ ...props }}
+                component={(props) => <ChangePassword {...props} />}
+                // * The newly constructed props in PrivateRoute is then passed to protected components
+              />
+              <Redirect to="/" />
+            </Switch>
+          </Router>
+        </main>
+      </div>
     </div>
   );
 }

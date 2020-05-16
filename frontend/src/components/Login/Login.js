@@ -117,7 +117,7 @@ const Login = (props) => {
                         </Link>
                       </small>
                       <div className="form-group">
-                        <button type="submit" className="btn">
+                        <button type="submit" className="main-theme-btn">
                           Login
                         </button>
                         <Loading isTrue={props.authDetail.isLoading} />

@@ -1,7 +1,8 @@
-import * as actionTypes from "../actions/actionTypes";
+import * as actionTypes from "../actions/types/actionTypes";
 
 const initialState = {
-  isLoading: false,
+  isFetching: false,
+  isUpdating: false,
   errMessage: null,
   user: null,
   responseStatus: null,
@@ -9,32 +10,51 @@ const initialState = {
 
 const userDetail = (state = initialState, action) => {
   switch (action.type) {
-    case actionTypes.SAVE_USER_DETAIL_REQUEST:
+    case actionTypes.GET_USER_DETAIL_REQUEST:
       return {
         ...state,
-        isLoading: true,
+        isFetching: true,
       };
-    case actionTypes.SAVE_USER_DETAIL_SUCCESS:
+    case actionTypes.GET_USER_DETAIL_SUCCESS:
       return {
         ...state,
-        isLoading: false,
+        isFetching: false,
         user: action.user,
         successMessage: action.message,
         responseStatus: action.status,
       };
-    case actionTypes.SAVE_USER_DETAIL_FAILURE:
+    case actionTypes.GET_USER_DETAIL_FAILURE:
       return {
         ...state,
-        isLoading: false,
-        user: null,
+        isFetching: false,
         errMessage: action.message,
         responseStatus: action.status,
       };
     case actionTypes.REMOVE_USER_DETAIL:
       return {
         ...state,
-        isLoading: false,
+        isFetching: false,
         user: null,
+      };
+    case actionTypes.UPDATE_USER_DETAIL_REQUEST:
+      return {
+        ...state,
+        isUpdating: true,
+      };
+    case actionTypes.UPDATE_USER_DETAIL_SUCCESS:
+      return {
+        ...state,
+        isUpdating: false,
+        user: action.newUser,
+        successMessage: action.message,
+        responseStatus: action.status,
+      };
+    case actionTypes.UPDATE_USER_DETAIL_FAILURE:
+      return {
+        ...state,
+        isUpdating: false,
+        errMessage: action.message,
+        responseStatus: action.status,
       };
     default:
       return state;
