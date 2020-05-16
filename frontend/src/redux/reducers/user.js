@@ -8,7 +8,7 @@ const initialState = {
   responseStatus: null,
 };
 
-const userDetail = (state = initialState, action) => {
+const user = (state = initialState, action) => {
   switch (action.type) {
     case actionTypes.GET_USER_DETAIL_REQUEST:
       return {
@@ -61,4 +61,4 @@ const userDetail = (state = initialState, action) => {
   }
 };
 
-export default userDetail;
+export default user;

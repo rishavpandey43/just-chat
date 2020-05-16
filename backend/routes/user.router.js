@@ -42,14 +42,14 @@ userRouter
     "/get-user-detail",
     cors.corsWithOptions,
     authenticate.verifyUser,
-    userRouterController.getUserDetailController
+    userRouterController.getuserController
   )
   .put(
     "/update-user-detail",
     cors.corsWithOptions,
     authenticate.verifyUser,
     passport.authenticate("local"),
-    userRouterController.updateUserDetailController
+    userRouterController.updateuserController
   )
   .put(
     "/change-password",

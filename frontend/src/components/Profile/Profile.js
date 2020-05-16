@@ -13,34 +13,34 @@ import { baseUrl } from "../../utils/constant";
 
 const Profile = (props) => {
   const [state, setState] = useState({
-    userDetail: props.userDetail.user ? { ...props.userDetail.user } : null,
+    user: props.user.user ? { ...props.user.user } : null,
     isLoading: false,
-    errMessage: props.userDetail.errMessage,
+    errMessage: props.user.errMessage,
   });
 
   useEffect(() => {
     let tempState = { ...state };
-    if (props.userDetail.user) {
-      if (props.userDetail.user.username !== props.match.params.username) {
+    if (props.user.user) {
+      if (props.user.user.username !== props.match.params.username) {
         tempState.isLoading = true;
         setState({ ...tempState });
         axios
           .get(baseUrl + "/user/get-user-detail", {
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${props.authDetail.token}`,
+              Authorization: `Bearer ${props.auth.token}`,
             },
             params: {
               username: `${props.match.params.username}`,
             },
           })
           .then((response) => {
-            tempState.userDetail = { ...response.data.user };
+            tempState.user = { ...response.data.user };
             tempState.isLoading = false;
             setState({ ...tempState });
           })
           .catch((error) => {
-            tempState.userDetail = null;
+            tempState.user = null;
             tempState.errMessage = error.response
               ? error.response.data.errMessage || error.response.statusText
               : "Some error occured, please try again";
@@ -48,18 +48,16 @@ const Profile = (props) => {
             setState({ ...tempState });
           });
       } else {
-        tempState.userDetail = props.userDetail.user
-          ? { ...props.userDetail.user }
-          : null;
+        tempState.user = props.user.user ? { ...props.user.user } : null;
         setState({ ...tempState });
       }
     }
   }, []);
-  return props.userDetail.isFetching || state.isLoading ? (
+  return props.user.isFetching || state.isLoading ? (
     <div className="loading-wrapper text-center m-5">
-      <Loading isTrue={props.userDetail.isFetching || state.isLoading} />
+      <Loading isTrue={props.user.isFetching || state.isLoading} />
     </div>
-  ) : props.userDetail.responseStatus === 503 ? (
+  ) : props.user.responseStatus === 503 ? (
     <div className="profile-wrapper">
       <div className="main-wrapper-error">
         <img
@@ -70,13 +68,13 @@ const Profile = (props) => {
         <h3 className="text-center">{state.errMessage}</h3>
         <button
           className="main-theme-btn"
-          onClick={props.getUserDetailFetch.bind(null)}
+          onClick={props.getuserFetch.bind(null)}
         >
           Refresh
         </button>
       </div>
     </div>
-  ) : !state.userDetail ? (
+  ) : !state.user ? (
     <div className="profile-wrapper">
       <div className="main-wrapper-error">
         <img
@@ -95,16 +93,12 @@ const Profile = (props) => {
             <div className="col-12 col-md-6">
               <div className="profile-detail">
                 <div className="name">
-                  <h3>{`${state.userDetail.firstName} ${
-                    state.userDetail.lastName
-                  } ${
-                    state.userDetail._id === props.authDetail.userId
-                      ? "(You)"
-                      : ""
+                  <h3>{`${state.user.firstName} ${state.user.lastName} ${
+                    state.user._id === props.auth.userId ? "(You)" : ""
                   }`}</h3>
-                  <span>{`${state.userDetail.title}`}</span>
+                  <span>{`${state.user.title}`}</span>
                 </div>
-                {state.userDetail._id === props.authDetail.userId ? (
+                {state.user._id === props.auth.userId ? (
                   ""
                 ) : (
                   <div className="action-btn mt-5">
@@ -143,7 +137,7 @@ const Profile = (props) => {
         <div className="personal-info-wrapper">
           <div
             className={`${
-              state.userDetail.aboutMe ? "about-me d-block" : "about-me d-none"
+              state.user.aboutMe ? "about-me d-block" : "about-me d-none"
             }`}
           >
             <div className="heading">
@@ -153,7 +147,7 @@ const Profile = (props) => {
               </h3>
             </div>
             <div className="content">
-              <p>{state.userDetail.aboutMe}</p>
+              <p>{state.user.aboutMe}</p>
             </div>
           </div>
           <div className="personal-info">
@@ -166,19 +160,19 @@ const Profile = (props) => {
                   <span className="icon">
                     <FiPhone className="fa-colored-icon" />
                   </span>
-                  <span className="text">{state.userDetail.contactNum}</span>
+                  <span className="text">{state.user.contactNum}</span>
                 </li>
                 <li className="info-list">
                   <span className="icon">
                     <FiMail className="fa-colored-icon" />
                   </span>
-                  <span className="text">{state.userDetail.email}</span>
+                  <span className="text">{state.user.email}</span>
                 </li>
                 <li className="info-list">
                   <span className="icon">
                     <FaHome className="fa-colored-icon" />
                   </span>
-                  <span className="text">{state.userDetail.address}</span>
+                  <span className="text">{state.user.address}</span>
                 </li>
               </ul>
             </div>

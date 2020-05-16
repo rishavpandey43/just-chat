@@ -1,219 +1,243 @@
 import React, { useState, useEffect, Component } from "react";
-
+import axios from "axios";
 import "react-datepicker/dist/react-datepicker.css";
 
 import Loading from "../Loading/Loading";
 
 import "./updateProfile.css";
 
-class UpdateProfile extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      userDetail: null,
-    };
-  }
+import { baseUrl } from "../../utils/constant";
+import displayFlash from "../../utils/flashEvent";
 
-  componentDidMount() {
-    console.log("componentDidMount");
-    this.setState({
-      userDetail: this.props.userDetail.user
-        ? { ...this.props.userDetail.user }
-        : null,
+const UpdateProfile = (props) => {
+  const [state, setState] = useState({
+    user: null,
+    isUpdating: false,
+  });
+
+  useEffect(() => {
+    setState({
+      user: props.user.user ? { ...props.user.user } : null,
+      isUpdating: false,
     });
-  }
+  }, []);
 
-  // const [state, setState] = useState({
-  //   userDetail: this.props.userDetail.user ? { ...this.props.userDetail.user } : null,
-  // });
-
-  // useEffect(() => {
-  //   console.log(this.props.userDetail.user ? this.props.userDetail.user.updatedAt : null);
-  //   // this.setState({ userDetail: { ...this.props.userDetail.user } });
-  // }, [this.props.authDetail.token]);
-
-  updateProfile = (e) => {
+  const updateProfile = (e) => {
+    setState({
+      user: { ...state.user },
+      isUpdating: true,
+    });
     e.preventDefault();
     let data = {
-      username: this.state.userDetail.username,
-      firstName: this.state.userDetail.firstName,
-      lastName: this.state.userDetail.lastName,
-      title: this.state.userDetail.title,
-      aboutMe: this.state.userDetail.aboutMe,
-      contactNum: this.state.userDetail.contactNum,
-      address: this.state.userDetail.address,
-      password: this.state.userDetail.password,
+      username: state.user.username,
+      firstName: state.user.firstName,
+      lastName: state.user.lastName,
+      title: state.user.title,
+      aboutMe: state.user.aboutMe,
+      contactNum: state.user.contactNum,
+      address: state.user.address,
+      password: state.user.password,
     };
-    this.props.updateUserDetailFetch(data);
+    axios
+      .put(baseUrl + "/user/update-user-detail", JSON.stringify(data), {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${
+            localStorage.getItem("chat_auth_token") ||
+            sessionStorage.getItem("chat_auth_token")
+          }`,
+        },
+      })
+      .then((response) => {
+        props.getuserFetch();
+        displayFlash.emit("get-message", {
+          message: response.data.message,
+          type: "success",
+        });
+        setState({
+          user: { ...state.user },
+          isUpdating: false,
+        });
+      })
+      .catch((error) => {
+        displayFlash.emit("get-message", {
+          message: `${
+            error.response
+              ? error.response.data.message || error.response.data
+              : "Unable to connect to server, please try again later"
+          }`,
+          type: "danger",
+        });
+        setState({
+          user: props.user.user ? { ...props.user.user } : null,
+          isUpdating: false,
+        });
+      });
   };
-
-  render() {
-    console.log(this.state.userDetail);
-    return this.props.userDetail.isFetching ? (
-      <div className="loading-wrapper text-center m-5">
-        <Loading isTrue={this.props.userDetail.isFetching} />
+  return props.user.isFetching ? (
+    <div className="loading-wrapper text-center m-5">
+      <Loading isTrue={props.user.isFetching} />
+    </div>
+  ) : props.user.responseStatus === 503 ? (
+    <div className="profile-wrapper">
+      <div className="main-wrapper-error">
+        <img
+          src={require("../../assets/images/server_down.png")}
+          alt="not found"
+          width="100%"
+        />
+        <h3 className="text-center">{state.errMessage}</h3>
+        <button
+          className="main-theme-btn"
+          onClick={props.getuserFetch.bind(null)}
+        >
+          Refresh
+        </button>
       </div>
-    ) : this.props.userDetail.responseStatus === 503 ? (
-      <div className="profile-wrapper">
-        <div className="main-wrapper-error">
-          <img
-            src={require("../../assets/images/server_down.png")}
-            alt="not found"
-            width="100%"
-          />
-          <h3 className="text-center">{this.state.errMessage}</h3>
-          <button
-            className="main-theme-btn"
-            onClick={this.props.getUserDetailFetch.bind(null)}
-          >
-            Refresh
-          </button>
+    </div>
+  ) : !state.user ? null : (
+    <div className="update-profile-wrapper">
+      <div className="main-page-card">
+        <div className="mb-5">
+          <h1>Update Your Profile</h1>
         </div>
-      </div>
-    ) : !this.state.userDetail ? null : (
-      <div className="update-profile-wrapper">
-        <div className="main-page-card">
-          <div className="mb-5">
-            <h1>Update Your Profile</h1>
-          </div>
-          <div className="update-box">
-            <div className="form-div">
-              <form onSubmit={this.updateProfile.bind(null)}>
-                <div className="row">
-                  <div className="col-12 col-sm-6">
-                    <div className="form-group">
-                      <label className="form-label">First name</label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        placeholder="John"
-                        required
-                        name="firstName"
-                        value={this.state.userDetail.firstName}
-                        onChange={(e) => {
-                          let tempState = { ...this.state };
-                          tempState.userDetail[e.target.name] = e.target.value;
-                          this.setState({ ...this.state });
-                        }}
-                      />
-                    </div>
-                  </div>
-                  <div className="col-12 col-sm-6">
-                    <div className="form-group">
-                      <label className="form-label">Last name</label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        placeholder="Doe"
-                        required
-                        name="lastName"
-                        value={this.state.userDetail.lastName}
-                        onChange={(e) => {
-                          let tempState = { ...this.state };
-                          tempState.userDetail[e.target.name] = e.target.value;
-                          this.setState({ ...this.state });
-                        }}
-                      />
-                    </div>
+        <div className="update-box">
+          <div className="form-div">
+            <form onSubmit={updateProfile.bind(null)}>
+              <div className="row">
+                <div className="col-12 col-sm-6">
+                  <div className="form-group">
+                    <label className="form-label">First name</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="John"
+                      required
+                      name="firstName"
+                      value={state.user.firstName}
+                      onChange={(e) => {
+                        let tempState = { ...state };
+                        tempState.user[e.target.name] = e.target.value;
+                        setState({ ...state });
+                      }}
+                    />
                   </div>
                 </div>
-                <div className="form-group">
-                  <label className="form-label">Title</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    placeholder="Software Engineer"
-                    name="title"
-                    minLength="5"
-                    value={this.state.userDetail.title}
-                    onChange={(e) => {
-                      let tempState = { ...this.state };
-                      tempState.userDetail[e.target.name] = e.target.value;
-                      this.setState({ ...this.state });
-                    }}
-                  />
+                <div className="col-12 col-sm-6">
+                  <div className="form-group">
+                    <label className="form-label">Last name</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="Doe"
+                      required
+                      name="lastName"
+                      value={state.user.lastName}
+                      onChange={(e) => {
+                        let tempState = { ...state };
+                        tempState.user[e.target.name] = e.target.value;
+                        setState({ ...state });
+                      }}
+                    />
+                  </div>
                 </div>
-                <div className="form-group">
-                  <label className="form-label">About Me</label>
-                  <textarea
-                    className="form-control"
-                    cols="20"
-                    rows="10"
-                    name="aboutMe"
-                    minLength="50"
-                    maxLength="400"
-                    placeholder="write under min 50 and max 400 words"
-                    value={this.state.userDetail.aboutMe}
-                    onChange={(e) => {
-                      let tempState = { ...this.state };
-                      tempState.userDetail[e.target.name] = e.target.value;
-                      this.setState({ ...this.state });
-                    }}
-                  ></textarea>
-                </div>
-                <div className="form-group">
-                  <label className="form-label">Contact number</label>
-                  <input
-                    type="number"
-                    className="form-control"
-                    name="contactNum"
-                    required
-                    placeholder="97XXXXXX88"
-                    value={this.state.userDetail.contactNum}
-                    onChange={(e) => {
-                      let tempState = { ...this.state };
-                      tempState.userDetail[e.target.name] = e.target.value;
-                      this.setState({ ...this.state });
-                    }}
-                  />
-                </div>
-                <div className="form-group">
-                  <label className="form-label">Current Address</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    name="address"
-                    required
-                    placeholder="New Delhi, India"
-                    value={this.state.userDetail.address}
-                    onChange={(e) => {
-                      let tempState = { ...this.state };
-                      tempState.userDetail[e.target.name] = e.target.value;
-                      this.setState({ ...this.state });
-                    }}
-                  />
-                </div>
-                <div className="form-group">
-                  <label className="form-label">
-                    Enter the password to proceed
-                  </label>
-                  <input
-                    type="password"
-                    className="form-control"
-                    name="password"
-                    required
-                    minLength="5"
-                    value={this.state.userDetail.password || ""}
-                    onChange={(e) => {
-                      let tempState = { ...this.state };
-                      tempState.userDetail[e.target.name] = e.target.value;
-                      this.setState({ ...this.state });
-                    }}
-                  />
-                </div>
-                <div className="form-group">
-                  <button type="submit" className="main-theme-btn">
-                    Update Profile
-                  </button>
-                  <Loading isTrue={this.props.userDetail.isUpdating} />
-                </div>
-              </form>
-            </div>
+              </div>
+              <div className="form-group">
+                <label className="form-label">Title</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Software Engineer"
+                  name="title"
+                  minLength="5"
+                  value={state.user.title}
+                  onChange={(e) => {
+                    let tempState = { ...state };
+                    tempState.user[e.target.name] = e.target.value;
+                    setState({ ...state });
+                  }}
+                />
+              </div>
+              <div className="form-group">
+                <label className="form-label">About Me</label>
+                <textarea
+                  className="form-control"
+                  cols="20"
+                  rows="10"
+                  name="aboutMe"
+                  minLength="50"
+                  maxLength="400"
+                  placeholder="write under min 50 and max 400 words"
+                  value={state.user.aboutMe}
+                  onChange={(e) => {
+                    let tempState = { ...state };
+                    tempState.user[e.target.name] = e.target.value;
+                    setState({ ...state });
+                  }}
+                ></textarea>
+              </div>
+              <div className="form-group">
+                <label className="form-label">Contact number</label>
+                <input
+                  type="number"
+                  className="form-control"
+                  name="contactNum"
+                  required
+                  placeholder="97XXXXXX88"
+                  value={state.user.contactNum}
+                  onChange={(e) => {
+                    let tempState = { ...state };
+                    tempState.user[e.target.name] = e.target.value;
+                    setState({ ...state });
+                  }}
+                />
+              </div>
+              <div className="form-group">
+                <label className="form-label">Current Address</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  name="address"
+                  required
+                  placeholder="New Delhi, India"
+                  value={state.user.address}
+                  onChange={(e) => {
+                    let tempState = { ...state };
+                    tempState.user[e.target.name] = e.target.value;
+                    setState({ ...state });
+                  }}
+                />
+              </div>
+              <div className="form-group">
+                <label className="form-label">
+                  Enter the password to proceed
+                </label>
+                <input
+                  type="password"
+                  className="form-control"
+                  name="password"
+                  required
+                  minLength="5"
+                  value={state.user.password || ""}
+                  onChange={(e) => {
+                    let tempState = { ...state };
+                    tempState.user[e.target.name] = e.target.value;
+                    setState({ ...state });
+                  }}
+                />
+              </div>
+              <div className="form-group">
+                <button type="submit" className="main-theme-btn">
+                  Update Profile
+                </button>
+                <Loading isTrue={state.isUpdating} />
+              </div>
+            </form>
           </div>
         </div>
       </div>
-    );
-  }
-}
+    </div>
+  );
+};
 
 export default UpdateProfile;

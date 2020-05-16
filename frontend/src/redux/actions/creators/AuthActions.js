@@ -3,7 +3,7 @@ import axios from "axios";
 
 // * Import all store related stuffs
 import * as actionTypes from "../types/actionTypes";
-import { getUserDetailFetch, removeUserDetail } from "./UserAction";
+import { getuserFetch, removeuser } from "./UserAction";
 
 // * Import utilites
 import displayFlash from "../../../utils/flashEvent";
@@ -48,7 +48,7 @@ export const loginFetch = (formData) => (dispatch) => {
         sessionStorage.setItem("chat_auth_userId", response.data.userId);
       }
       dispatch(loginSuccess(response.data));
-      dispatch(getUserDetailFetch());
+      dispatch(getuserFetch());
       displayFlash.emit("get-message", {
         message: response.data.message,
         type: "success",
@@ -132,7 +132,7 @@ export const logoutFetch = () => (dispatch) => {
           message: response.data.message,
           type: "success",
         });
-        dispatch(removeUserDetail());
+        dispatch(removeuser());
       } else {
         dispatch(
           logoutFailure({

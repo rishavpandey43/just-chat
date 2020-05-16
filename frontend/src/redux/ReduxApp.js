@@ -9,8 +9,8 @@ import App from "../App";
 
 function mapStateToProps(state) {
   return {
-    authDetail: state.authDetail,
-    userDetail: state.userDetail,
+    auth: state.auth,
+    user: state.user,
   };
 }
 

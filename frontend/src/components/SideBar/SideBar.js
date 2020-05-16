@@ -20,14 +20,14 @@ const SideBar = (props) => {
   return (
     <aside
       className={`${
-        props.authDetail.isAuthenticated ? "aside d-block" : "aside d-none"
+        props.auth.isAuthenticated ? "aside d-block" : "aside d-none"
       }`}
     >
-      {props.userDetail.isFetching ? (
+      {props.user.isFetching ? (
         <div className="loading-wrapper text-center m-5">
-          <Loading isTrue={props.userDetail.isFetching} />
+          <Loading isTrue={props.user.isFetching} />
         </div>
-      ) : !props.userDetail.user ? (
+      ) : !props.user.user ? (
         ""
       ) : (
         <div className="sidebar-wrapper">
@@ -46,7 +46,7 @@ const SideBar = (props) => {
                 />
               </div>
               <div className="name mt-2">
-                <span>{`${props.userDetail.user.firstName} ${props.userDetail.user.lastName}`}</span>
+                <span>{`${props.user.user.firstName} ${props.user.user.lastName}`}</span>
               </div>
             </div>
             <ul className="sidebar-list">
@@ -55,7 +55,7 @@ const SideBar = (props) => {
                   <AiOutlineProfile />
                 </span>
                 <span className="content">
-                  <Link to={`/${props.userDetail.user.username}`}>Profile</Link>
+                  <Link to={`/${props.user.user.username}`}>Profile</Link>
                 </span>
               </li>
               <li className="list">
@@ -63,9 +63,7 @@ const SideBar = (props) => {
                   <IoMdNotificationsOutline />
                 </span>
                 <span className="content">
-                  <Link to={`/${props.authDetail.username}`}>
-                    Notifications
-                  </Link>
+                  <Link to={`/${props.auth.username}`}>Notifications</Link>
                 </span>
               </li>
               <li className="list">

@@ -100,7 +100,7 @@ exports.getUserNameController = (req, res, next) => {
   res.json({ username: req.user.username, userId: req.user._id });
 };
 
-exports.getUserDetailController = (req, res, next) => {
+exports.getuserController = (req, res, next) => {
   User.findOne({
     username:
       req.query.username !== "" ? req.query.username : req.user.username,
@@ -123,7 +123,7 @@ exports.getUserDetailController = (req, res, next) => {
     .catch((err) => next(err));
 };
 
-exports.updateUserDetailController = (req, res, next) => {
+exports.updateuserController = (req, res, next) => {
   User.findOneAndUpdate(
     { _id: req.user._id },
     {
