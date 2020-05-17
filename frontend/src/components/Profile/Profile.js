@@ -1,15 +1,15 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { Link } from 'react-router-dom';
 
-import { FaHome, FaUser } from "react-icons/fa";
-import { FiPhone, FiMail } from "react-icons/fi";
+import { FaHome, FaUser } from 'react-icons/fa';
+import { FiPhone, FiMail } from 'react-icons/fi';
 
-import Loading from "../Loading/Loading";
+import Loading from '../Loading/Loading';
 
-import "./profile.css";
+import './profile.css';
 
-import { baseUrl } from "../../utils/constant";
+import { baseUrl } from '../../utils/constant';
 
 const Profile = (props) => {
   const [state, setState] = useState({
@@ -25,9 +25,9 @@ const Profile = (props) => {
         tempState.isLoading = true;
         setState({ ...tempState });
         axios
-          .get(baseUrl + "/user/get-user-detail", {
+          .get(baseUrl + '/user/get-user-detail', {
             headers: {
-              "Content-Type": "application/json",
+              'Content-Type': 'application/json',
               Authorization: `Bearer ${props.auth.token}`,
             },
             params: {
@@ -43,7 +43,7 @@ const Profile = (props) => {
             tempState.user = null;
             tempState.errMessage = error.response
               ? error.response.data.errMessage || error.response.statusText
-              : "Some error occured, please try again";
+              : 'Some error occured, please try again';
             tempState.isLoading = false;
             setState({ ...tempState });
           });
@@ -53,6 +53,7 @@ const Profile = (props) => {
       }
     }
   }, []);
+
   return props.user.isFetching || state.isLoading ? (
     <div className="loading-wrapper text-center m-5">
       <Loading isTrue={props.user.isFetching || state.isLoading} />
@@ -61,7 +62,7 @@ const Profile = (props) => {
     <div className="profile-wrapper">
       <div className="main-wrapper-error">
         <img
-          src={require("../../assets/images/server_down.png")}
+          src={require('../../assets/images/server_down.png')}
           alt="not found"
           width="100%"
         />
@@ -78,7 +79,7 @@ const Profile = (props) => {
     <div className="profile-wrapper">
       <div className="main-wrapper-error">
         <img
-          src={require("../../assets/images/profile_not_found.png")}
+          src={require('../../assets/images/profile_not_found.png')}
           alt="not found"
           width="100%"
         />
@@ -94,12 +95,12 @@ const Profile = (props) => {
               <div className="profile-detail">
                 <div className="name">
                   <h3>{`${state.user.firstName} ${state.user.lastName} ${
-                    state.user._id === props.auth.userId ? "(You)" : ""
+                    state.user._id === props.auth.userId ? '(You)' : ''
                   }`}</h3>
-                  <span>{`${state.user.title}`}</span>
+                  <span>{state.user.title}</span>
                 </div>
                 {state.user._id === props.auth.userId ? (
-                  ""
+                  ''
                 ) : (
                   <div className="action-btn mt-5">
                     <div className="add-friend">
@@ -124,7 +125,7 @@ const Profile = (props) => {
             <div className="col-12 col-md-6">
               <div className="profile-photo">
                 <img
-                  src={require("../../assets/images/profile_pic.png")}
+                  src={require('../../assets/images/profile_pic.png')}
                   alt=""
                   width="100%"
                 />
@@ -136,9 +137,7 @@ const Profile = (props) => {
       <div className="main-page-card">
         <div className="personal-info-wrapper">
           <div
-            className={`${
-              state.user.aboutMe ? "about-me d-block" : "about-me d-none"
-            }`}
+            className={`about-me ${state.user.aboutMe ? 'd-block' : 'd-none'}`}
           >
             <div className="heading">
               <h3>
@@ -156,19 +155,31 @@ const Profile = (props) => {
             </div>
             <div className="content">
               <ul>
-                <li className="info-list">
+                <li
+                  className={`info-list ${
+                    state.user.contactNum ? 'd-block' : 'd-none'
+                  }`}
+                >
                   <span className="icon">
                     <FiPhone className="fa-colored-icon" />
                   </span>
                   <span className="text">{state.user.contactNum}</span>
                 </li>
-                <li className="info-list">
+                <li
+                  className={`info-list ${
+                    state.user.email ? 'd-block' : 'd-none'
+                  }`}
+                >
                   <span className="icon">
                     <FiMail className="fa-colored-icon" />
                   </span>
                   <span className="text">{state.user.email}</span>
                 </li>
-                <li className="info-list">
+                <li
+                  className={`info-list ${
+                    state.user.address ? 'd-block' : 'd-none'
+                  }`}
+                >
                   <span className="icon">
                     <FaHome className="fa-colored-icon" />
                   </span>

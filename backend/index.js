@@ -1,21 +1,21 @@
 // import required npm modules
-const express = require("express");
-const http = require("http");
-const morgan = require("morgan");
-const mongoose = require("mongoose");
-const cookieParser = require("cookie-parser");
-const session = require("express-session");
-const fileStore = require("session-file-store")(session);
-const dotenv = require("dotenv");
-const passport = require("passport");
+const express = require('express');
+const http = require('http');
+const morgan = require('morgan');
+const mongoose = require('mongoose');
+const cookieParser = require('cookie-parser');
+const session = require('express-session');
+const fileStore = require('session-file-store')(session);
+const dotenv = require('dotenv');
+const passport = require('passport');
 
 // import required routes
-const userRouter = require("./routes/user.router");
-const groupRouter = require("./routes/group.router");
+const userRouter = require('./routes/user.router');
+const groupRouter = require('./routes/group.router');
 
-const User = require("./models/user.model");
-const Group = require("./models/group.model");
-const Message = require("./models/message.model");
+const User = require('./models/user.model');
+const Group = require('./models/group.model');
+const Message = require('./models/message.model');
 
 // configure dotenv to access environment variables
 dotenv.config();
@@ -41,8 +41,8 @@ function normalizePort(val) {
 const app = express();
 
 // * Get port from environment and store in Express.
-const PORT = normalizePort(process.env.PORT || "5000");
-app.set("port", PORT);
+const PORT = normalizePort(process.env.PORT || '5000');
+app.set('port', PORT);
 
 // * Create HTTP server.
 const server = http.createServer(app);
@@ -108,21 +108,21 @@ mongoose.connect(URI, {
 });
 
 const connection = mongoose.connection;
-connection.once("open", () => {
-  console.log("Mongoose database connection established successfully");
+connection.once('open', () => {
+  console.log('Mongoose database connection established successfully');
 });
 
-connection.on("error", function (err) {
-  console.log("Mongoose default connection error: " + err);
+connection.on('error', function (err) {
+  console.log('Mongoose default connection error: ' + err);
 });
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(morgan("tiny"));
+app.use(morgan('tiny'));
 app.use(cookieParser(process.env.COOKIE_SECRET_KEY));
 app.use(
   session({
-    name: "SESSION_ID",
+    name: 'SESSION_ID',
     resave: false,
     saveUninitialized: false,
     secret: process.env.SESSION_SECRET,
@@ -135,18 +135,19 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use("/user", userRouter);
-app.use("/group", groupRouter);
+app.use('/user', userRouter);
+app.use('/group', groupRouter);
 
 // error handler
 app.use((err, req, res, next) => {
-  // console.log("Error- ", err);
+  console.log('Error- ', err);
+  // console.log(err.message);
   res.statusCode = err.status || 500;
-  res.statusText = err.statusText || "Internal Server Error";
-  res.setHeader("Content-Type", "application/json");
+  res.statusText = err.statusText || 'Internal Server Error';
+  res.setHeader('Content-Type', 'application/json');
   res.json({
     errMessage:
-      err.message || "Server is unable to process request, Please try again",
+      err.message || 'Server is unable to process request, Please try again',
   });
 });
 
