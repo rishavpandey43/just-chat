@@ -17,7 +17,7 @@ const userSchema = new Schema(
     title: { type: String },
     aboutMe: { type: String },
     dob: { type: Date },
-    contactNum: { type: String },
+    phone: { type: Number },
     address: { type: String },
     verified: { type: Boolean, required: true },
   },

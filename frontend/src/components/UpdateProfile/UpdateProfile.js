@@ -34,7 +34,7 @@ const UpdateProfile = (props) => {
       lastName: state.user.lastName,
       title: state.user.title,
       aboutMe: state.user.aboutMe,
-      contactNum: state.user.contactNum,
+      // phone: state.user.phone,
       address: state.user.address,
       password: state.user.password,
     };
@@ -174,21 +174,21 @@ const UpdateProfile = (props) => {
                   }}
                 ></textarea>
               </div>
-              <div className="form-group">
+              {/* <div className="form-group">
                 <label className="form-label">Contact number</label>
                 <input
                   type="number"
                   className="form-control"
-                  name="contactNum"
+                  name="phone"
                   placeholder="97XXXXXX88"
-                  value={state.user.contactNum}
+                  value={state.user.phone}
                   onChange={(e) => {
                     let tempState = { ...state };
                     tempState.user[e.target.name] = e.target.value;
                     setState({ ...state });
                   }}
                 />
-              </div>
+              </div> */}
               <div className="form-group">
                 <label className="form-label">Current Address</label>
                 <input
