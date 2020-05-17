@@ -1,26 +1,29 @@
-import React, { Component } from "react";
-import axios from "axios";
-import { Link } from "react-router-dom";
+import React, { Component } from 'react';
+import axios from 'axios';
+import { Link } from 'react-router-dom';
 
-import "./signup.css";
+import Loading from '../Loading/Loading';
 
-import displayFlash from "../../utils/flashEvent";
+import './signup.css';
+
+import { baseUrl } from '../../utils/constant';
+import displayFlash from '../../utils/flashEvent';
 
 class Signup extends Component {
   constructor(props) {
     super(props);
     this.state = {
       user: {
-        username: "",
-        firstName: "",
-        lastName: "",
-        email: "",
-        password: "",
-        rePassword: "",
+        username: '',
+        firstName: '',
+        lastName: '',
+        email: '',
+        password: '',
+        rePassword: '',
       },
-      loadingIsTrue: false,
+      isLoading: false,
       responseData: {
-        message: "",
+        message: '',
         status: null,
       },
     };
@@ -28,7 +31,7 @@ class Signup extends Component {
 
   componentDidMount() {
     if (this.props.auth.isAuthenticated) {
-      this.props.history.push("/");
+      this.props.history.push('/');
     }
   }
 
@@ -42,13 +45,13 @@ class Signup extends Component {
     e.preventDefault();
     this.setState({
       responseData: {
-        message: "",
+        message: '',
         status: null,
       },
     });
     let isEmpty = true;
     for (const key in this.state.user) {
-      if (this.state.user[key] === "") {
+      if (this.state.user[key] === '') {
         isEmpty = true;
         break;
       } else isEmpty = false;
@@ -59,42 +62,42 @@ class Signup extends Component {
       if (/\s/g.test(this.state.user.username)) {
         let responseData = {
           message:
-            "username consist of whitespace, please avoid whitespace to continue.",
+            'username consist of whitespace, please avoid whitespace to continue.',
           status: 422,
         };
         this.setState({
-          loadingIsTrue: false,
+          isLoading: false,
           responseData,
         });
         return;
       }
       if (this.state.user.password !== this.state.user.rePassword) {
         let responseData = {
-          message: "Both password should be same",
+          message: 'Both password should be same',
           status: 422,
         };
         this.setState({
-          loadingIsTrue: false,
+          isLoading: false,
           responseData,
         });
         return;
       }
       if (this.state.user.password.length < 8) {
         let responseData = {
-          message: "password length should be greater than or equal to 8",
+          message: 'password length should be greater than or equal to 8',
           status: 422,
         };
         this.setState({
-          loadingIsTrue: false,
+          isLoading: false,
           responseData,
         });
         return;
       }
 
-      this.setState({ loadingIsTrue: true });
+      this.setState({ isLoading: true });
       axios
-        .post(process.env.REACT_APP_API_BASE_URL + "user/signup", newUser, {
-          headers: { "Content-Type": "application/json" },
+        .post(baseUrl + '/user/signup', newUser, {
+          headers: { 'Content-Type': 'application/json' },
         })
         .then((res) => {
           let responseData = {
@@ -102,43 +105,43 @@ class Signup extends Component {
             status: res.status,
           };
           this.setState({
-            loadingIsTrue: false,
+            isLoading: false,
             responseData,
             user: {
-              username: "",
-              firstName: "",
-              lastName: "",
-              email: "",
-              password: "",
-              rePassword: "",
+              username: '',
+              firstName: '',
+              lastName: '',
+              email: '',
+              password: '',
+              rePassword: '',
             },
           });
-          displayFlash.emit("get-message", {
+          displayFlash.emit('get-message', {
             message: responseData.message,
-            type: "success",
+            type: 'success',
           });
         })
         .catch((err) => {
           let responseData = {
-            message: "Internal Server Error, please try again.",
+            message: 'Internal Server Error, please try again.',
             status: 500,
           };
           if (err.response) {
             responseData = {
-              message: err.response.data.message,
+              message: err.response.data.errMessage,
               status: err.response.status,
             };
           }
           this.setState({
-            loadingIsTrue: false,
+            isLoading: false,
             responseData,
           });
-          displayFlash.emit("get-message", {
+          displayFlash.emit('get-message', {
             message: responseData.message,
-            type: "danger",
+            type: 'danger',
           });
         });
-    } else alert("Please fill all the details first to signup");
+    } else alert('Please fill all the details first to signup');
   };
   render() {
     return (
@@ -149,7 +152,7 @@ class Signup extends Component {
               <div className="col-12 col-sm-6 grid-sec">
                 <div className="img-container">
                   <img
-                    src={require("../../assets/images/sign_up.png")}
+                    src={require('../../assets/images/sign_up.png')}
                     alt="main-illustrator"
                     width="100%"
                   />
@@ -175,7 +178,7 @@ class Signup extends Component {
                                 value={this.state.user.firstName}
                                 onChange={this.handleInputChange.bind(
                                   null,
-                                  "firstName"
+                                  'firstName'
                                 )}
                               />
                             </div>
@@ -191,7 +194,7 @@ class Signup extends Component {
                                 value={this.state.user.lastName}
                                 onChange={this.handleInputChange.bind(
                                   null,
-                                  "lastName"
+                                  'lastName'
                                 )}
                               />
                             </div>
@@ -209,7 +212,7 @@ class Signup extends Component {
                             value={this.state.user.username}
                             onChange={this.handleInputChange.bind(
                               null,
-                              "username"
+                              'username'
                             )}
                           />
                         </div>
@@ -225,7 +228,7 @@ class Signup extends Component {
                             value={this.state.user.email}
                             onChange={this.handleInputChange.bind(
                               null,
-                              "email"
+                              'email'
                             )}
                           />
                         </div>
@@ -242,7 +245,7 @@ class Signup extends Component {
                                 value={this.state.user.password}
                                 onChange={this.handleInputChange.bind(
                                   null,
-                                  "password"
+                                  'password'
                                 )}
                               />
                             </div>
@@ -259,7 +262,7 @@ class Signup extends Component {
                                 value={this.state.user.rePassword}
                                 onChange={this.handleInputChange.bind(
                                   null,
-                                  "rePassword"
+                                  'rePassword'
                                 )}
                               />
                             </div>
@@ -268,7 +271,7 @@ class Signup extends Component {
 
                         <small className="form-text text-muted mb-4">
                           Already have a account,
-                          <Link to="/login" style={{ color: "blue" }}>
+                          <Link to="/login" style={{ color: 'blue' }}>
                             Sign in
                           </Link>
                         </small>
@@ -276,6 +279,7 @@ class Signup extends Component {
                           <button type="submit" className="main-theme-btn">
                             Signup
                           </button>
+                          <Loading isTrue={this.state.isLoading} />
                         </div>
                       </form>
                       <div className="home-page-link">
