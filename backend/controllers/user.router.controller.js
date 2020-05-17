@@ -11,8 +11,8 @@ const authenticate = require('../middlewares/authenticate');
 var smtpTransport = nodemailer.createTransport({
   service: 'Gmail',
   auth: {
-    user: 'correspond.rishav@gmail.com',
-    pass: 'nugmgxasnngznwwb',
+    user: 'justchat0007@gmail.com',
+    pass: 'kzaymwdrhnbdoaqz',
   },
 });
 

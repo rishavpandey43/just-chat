@@ -1,13 +1,13 @@
-import React, { useState, useEffect, Component } from "react";
-import axios from "axios";
-import "react-datepicker/dist/react-datepicker.css";
+import React, { useState, useEffect, Component } from 'react';
+import axios from 'axios';
+import 'react-datepicker/dist/react-datepicker.css';
 
-import Loading from "../Loading/Loading";
+import Loading from '../Loading/Loading';
 
-import "./updateProfile.css";
+import './updateProfile.css';
 
-import { baseUrl } from "../../utils/constant";
-import displayFlash from "../../utils/flashEvent";
+import { baseUrl } from '../../utils/constant';
+import displayFlash from '../../utils/flashEvent';
 
 const UpdateProfile = (props) => {
   const [state, setState] = useState({
@@ -39,20 +39,20 @@ const UpdateProfile = (props) => {
       password: state.user.password,
     };
     axios
-      .put(baseUrl + "/user/update-user-detail", JSON.stringify(data), {
+      .put(baseUrl + '/user/update-user-detail', JSON.stringify(data), {
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
           Authorization: `Bearer ${
-            localStorage.getItem("chat_auth_token") ||
-            sessionStorage.getItem("chat_auth_token")
+            localStorage.getItem('chat_auth_token') ||
+            sessionStorage.getItem('chat_auth_token')
           }`,
         },
       })
       .then((response) => {
         props.getuserFetch();
-        displayFlash.emit("get-message", {
+        displayFlash.emit('get-message', {
           message: response.data.message,
-          type: "success",
+          type: 'success',
         });
         setState({
           user: { ...state.user },
@@ -60,13 +60,13 @@ const UpdateProfile = (props) => {
         });
       })
       .catch((error) => {
-        displayFlash.emit("get-message", {
+        displayFlash.emit('get-message', {
           message: `${
             error.response
               ? error.response.data.message || error.response.data
-              : "Unable to connect to server, please try again later"
+              : 'Unable to connect to server, please try again later'
           }`,
-          type: "danger",
+          type: 'danger',
         });
         setState({
           user: props.user.user ? { ...props.user.user } : null,
@@ -82,7 +82,7 @@ const UpdateProfile = (props) => {
     <div className="profile-wrapper">
       <div className="main-wrapper-error">
         <img
-          src={require("../../assets/images/server_down.png")}
+          src={require('../../assets/images/server_down.png')}
           alt="not found"
           width="100%"
         />
@@ -112,7 +112,6 @@ const UpdateProfile = (props) => {
                       type="text"
                       className="form-control"
                       placeholder="John"
-                      required
                       name="firstName"
                       value={state.user.firstName}
                       onChange={(e) => {
@@ -130,7 +129,6 @@ const UpdateProfile = (props) => {
                       type="text"
                       className="form-control"
                       placeholder="Doe"
-                      required
                       name="lastName"
                       value={state.user.lastName}
                       onChange={(e) => {
@@ -182,7 +180,6 @@ const UpdateProfile = (props) => {
                   type="number"
                   className="form-control"
                   name="contactNum"
-                  required
                   placeholder="97XXXXXX88"
                   value={state.user.contactNum}
                   onChange={(e) => {
@@ -198,7 +195,6 @@ const UpdateProfile = (props) => {
                   type="text"
                   className="form-control"
                   name="address"
-                  required
                   placeholder="New Delhi, India"
                   value={state.user.address}
                   onChange={(e) => {
@@ -218,7 +214,7 @@ const UpdateProfile = (props) => {
                   name="password"
                   required
                   minLength="5"
-                  value={state.user.password || ""}
+                  value={state.user.password || ''}
                   onChange={(e) => {
                     let tempState = { ...state };
                     tempState.user[e.target.name] = e.target.value;
