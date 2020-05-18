@@ -1,17 +1,17 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 
-import { GiHamburgerMenu } from "react-icons/gi";
-import { FiUsers, FiLogOut } from "react-icons/fi";
-import { FaEdit, FaAngleRight } from "react-icons/fa";
-import { MdUpdate } from "react-icons/md";
-import { IoMdNotificationsOutline } from "react-icons/io";
-import { TiMessages } from "react-icons/ti";
-import { AiOutlineSetting, AiOutlineProfile } from "react-icons/ai";
+import { GiHamburgerMenu } from 'react-icons/gi';
+import { FiUsers, FiLogOut } from 'react-icons/fi';
+import { FaEdit, FaAngleRight } from 'react-icons/fa';
+import { MdUpdate } from 'react-icons/md';
+import { IoMdNotificationsOutline } from 'react-icons/io';
+import { TiMessages } from 'react-icons/ti';
+import { AiOutlineSetting, AiOutlineProfile } from 'react-icons/ai';
 
-import Loading from "../Loading/Loading";
+import Loading from '../Loading/Loading';
 
-import "./sideBar.css";
+import './sideBar.css';
 
 const SideBar = (props) => {
   const [state, setState] = useState({
@@ -20,7 +20,7 @@ const SideBar = (props) => {
   return (
     <aside
       className={`${
-        props.auth.isAuthenticated ? "aside d-block" : "aside d-none"
+        props.auth.isAuthenticated ? 'aside d-block' : 'aside d-none'
       }`}
     >
       {props.user.isFetching ? (
@@ -28,7 +28,7 @@ const SideBar = (props) => {
           <Loading isTrue={props.user.isFetching} />
         </div>
       ) : !props.user.user ? (
-        ""
+        ''
       ) : (
         <div className="sidebar-wrapper">
           <div className="sidebar-btn">
@@ -40,7 +40,7 @@ const SideBar = (props) => {
             <div className="profile-detail">
               <div className="image">
                 <img
-                  src={require("../../assets/images/user.png")}
+                  src={require('../../assets/images/user.png')}
                   alt="user-name"
                   width="100%"
                 />
@@ -51,39 +51,50 @@ const SideBar = (props) => {
             </div>
             <ul className="sidebar-list">
               <li className="list">
-                <span className="icon">
-                  <AiOutlineProfile />
-                </span>
-                <span className="content">
-                  <Link to={`/${props.user.user.username}`}>Profile</Link>
-                </span>
+                <Link to={`/${props.user.user.username}`}>
+                  <span className="icon">
+                    <AiOutlineProfile />
+                  </span>
+                  <span className="content">Profile</span>
+                </Link>
               </li>
               <li className="list">
-                <span className="icon">
-                  <IoMdNotificationsOutline />
-                </span>
-                <span className="content">
-                  <Link to={`/${props.auth.username}`}>Notifications</Link>
-                </span>
+                <Link to={`/${props.auth.username}`}>
+                  <span className="icon">
+                    <IoMdNotificationsOutline />
+                  </span>
+                  <span className="content">Notifications</span>
+                </Link>
               </li>
               <li className="list">
-                <span className="icon">
-                  <FiUsers />
-                </span>
-                <span className="content">
-                  <Link to="/">Friends</Link>
-                </span>
+                <Link to="/">
+                  <span className="icon">
+                    <FiUsers />
+                  </span>
+                  <span className="content">Friends</span>
+                </Link>
               </li>
               <li className="list">
-                <span className="icon">
-                  <TiMessages />
-                </span>
-                <span className="content">
-                  <Link to="/">Messages</Link>
-                </span>
+                <Link to="/">
+                  <span className="icon">
+                    <TiMessages />
+                  </span>
+                  <span className="content">Messages</span>
+                </Link>
               </li>
               <li
                 className="list"
+                tabIndex="0"
+                onKeyPress={(event) => {
+                  console.log(event.which, event.keycode);
+                  if (event.which === 13) {
+                    let tempState = { ...state };
+                    tempState.displaySettingOption = tempState.displaySettingOption
+                      ? false
+                      : true;
+                    setState(tempState);
+                  } else return;
+                }}
                 onClick={() => {
                   let tempState = { ...state };
                   tempState.displaySettingOption = tempState.displaySettingOption
@@ -101,14 +112,14 @@ const SideBar = (props) => {
                 <span className="pl-4">
                   <FaAngleRight
                     className={`${
-                      state.displaySettingOption ? "rotate-90" : ""
+                      state.displaySettingOption ? 'rotate-90' : ''
                     }`}
                   />
                 </span>
               </li>
               <div
                 className={`setting-option mt-3 ${
-                  state.displaySettingOption ? "d-block" : "d-none"
+                  state.displaySettingOption ? 'd-block' : 'd-none'
                 }`}
               >
                 <ul className="sidebar-list">
@@ -134,7 +145,12 @@ const SideBar = (props) => {
           </div>
 
           <div className="logout">
-            <button onClick={props.logoutFetch} className="logout-btn btn">
+            <button
+              role="button"
+              tabIndex="0"
+              onClick={props.logoutFetch}
+              className="logout-btn btn"
+            >
               <FiLogOut />
             </button>
           </div>
