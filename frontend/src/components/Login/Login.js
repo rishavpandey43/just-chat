@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 
-import Loading from "../Loading/Loading";
+import Loading from '../Loading/Loading';
 
-import "./login.css";
+import './login.css';
 const Login = (props) => {
   useEffect(() => {
     if (props.auth.isAuthenticated) {
@@ -15,13 +15,13 @@ const Login = (props) => {
 
   const [state, setState] = useState({
     credentials: {
-      username: "",
-      password: "",
+      username: '',
+      password: '',
     },
     rememberMe: false,
   });
 
-  const handleSubmit = (e) => {
+  const _login = (e) => {
     e.preventDefault();
     const formData = {
       credentials: { ...state.credentials },
@@ -31,7 +31,7 @@ const Login = (props) => {
   };
 
   return props.auth.isAuthenticated && !props.user.user ? (
-    <div style={{ width: "40%", margin: "4rem auto", textAlign: "center" }}>
+    <div style={{ width: '40%', margin: '4rem auto', textAlign: 'center' }}>
       <Loading isTrue={props.auth.isAuthenticated && !props.user.user} />
     </div>
   ) : (
@@ -42,7 +42,7 @@ const Login = (props) => {
             <div className="col-12 col-sm-6 grid-sec">
               <div className="img-container">
                 <img
-                  src={require("../../assets/images/sign_in.png")}
+                  src={require('../../assets/images/sign_in.png')}
                   alt="main-illustrator"
                   width="100%"
                 />
@@ -55,7 +55,7 @@ const Login = (props) => {
                     <h3>Welcome Back :)</h3>
                   </div>
                   <div className="form-div">
-                    <form onSubmit={handleSubmit}>
+                    <form onSubmit={_login}>
                       <div className="form-group">
                         <label className="form-label">Username</label>
                         <input
@@ -110,7 +110,7 @@ const Login = (props) => {
                       </div>
                       <small className="form-text text-muted mb-4">
                         Not having a account,
-                        <Link to="/signup" style={{ color: "blue" }}>
+                        <Link to="/signup" style={{ color: 'blue' }}>
                           Sign up
                         </Link>
                       </small>

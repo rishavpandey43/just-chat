@@ -1,18 +1,20 @@
-const passport = require('passport');
-const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
+const dotenv = require('dotenv');
 
 const User = require('../models/user.model'); // import User Schema
 const Token = require('../models/token.model');
 
 const authenticate = require('../middlewares/authenticate');
 
-var smtpTransport = nodemailer.createTransport({
+// configure dotenv to access environment variables
+dotenv.config();
+
+const smtpTransport = nodemailer.createTransport({
   service: 'Gmail',
   auth: {
-    user: 'justchat0007@gmail.com',
-    pass: 'kzaymwdrhnbdoaqz',
+    user: process.env.EMAIL_ADDRESS,
+    pass: process.env.EMAIL_PASSWORD,
   },
 });
 
@@ -141,7 +143,7 @@ exports.userConfirmationController = (req, res, next) => {
 exports.userLoginController = (req, res, next) => {
   // on successful authentication, passport save user detail as req.user.
   if (!req.user.verified) {
-    // send new token to email
+    // send new token to email, if user is not verified.
     // create token
     Token.create({
       userId: req.user._id,
@@ -184,6 +186,7 @@ exports.userLoginController = (req, res, next) => {
       })
       .catch((err) => next(err));
   } else {
+    // login if user is already verified
     const token = authenticate.getToken({ _id: req.user._id });
     res.statusCode = 200;
     res.setHeader('Content-Type', 'application/json');
@@ -208,12 +211,6 @@ exports.userLogoutController = (req, res, next) => {
     err.status = 403;
     next(err);
   }
-};
-
-exports.getUserNameController = (req, res, next) => {
-  res.statusCode = 200;
-  res.setHeader('Content-Type', 'application/json');
-  res.json({ username: req.user.username, userId: req.user._id });
 };
 
 exports.getuserController = (req, res, next) => {
@@ -283,6 +280,361 @@ exports.changePasswordController = (req, res, next) => {
           err.status = 401;
           next(err);
         });
+    })
+    .catch((err) => next(err));
+};
+
+exports.sendFriendRequestController = (req, res, next) => {
+  // first we find the user to whom friend request is sent and update it's DB.
+  User.findById(req.body.userId)
+    .then((user1) => {
+      if (!user1) {
+        const err = new Error(`user not found, please try again.`);
+        err.status = 404;
+        next(err);
+      } else {
+        if (user1.receivedFriendRequest.indexOf(req.user._id) !== -1) {
+          const err = new Error(`You've already sent the friend request.`);
+          err.status = 403;
+          next(err);
+        }
+        if (user1.sentFriendRequest.indexOf(req.user._id) !== -1) {
+          const err = new Error(`You've already received the friend request.`);
+          err.status = 403;
+          next(err);
+        } else {
+          user1.receivedFriendRequest.push(req.user._id);
+          user1
+            .save()
+            .then((user1) => {
+              // now find the user, who has sent the friend request and update it's DB
+              User.findById(req.user._id)
+                .then((user2) => {
+                  if (!user2) {
+                    const err = new Error(`user not found, please try again.`);
+                    err.status = 404;
+                    next(err);
+                  } else {
+                    if (
+                      user2.sentFriendRequest.indexOf(req.body.userId) !== -1
+                    ) {
+                      const err = new Error(
+                        `You've already sent the friend request.`
+                      );
+                      err.status = 403;
+                      next(err);
+                    }
+                    if (
+                      user2.receivedFriendRequest.indexOf(req.body.userId) !==
+                      -1
+                    ) {
+                      const err = new Error(
+                        `You've already received the friend request.`
+                      );
+                      err.status = 403;
+                      next(err);
+                    } else {
+                      user2.sentFriendRequest.push(req.body.userId);
+                      user2
+                        .save()
+                        .then((user2) => {
+                          res.statusCode = 200;
+                          res.setHeader('Content-Type', 'application/json');
+                          res.json({
+                            user: user1,
+                            message: 'Friend request sent successfully.',
+                          });
+                        })
+                        .catch((err) => next(err));
+                    }
+                  }
+                })
+                .catch((err) => nexxt(err));
+            })
+            .catch((err) => next(err));
+        }
+      }
+    })
+    .catch((err) => next(err));
+};
+
+exports.cancelFriendRequestController = (req, res, next) => {
+  // first we find the user whose friend request is to be cancelled and update it's DB.
+  User.findById(req.body.userId)
+    .then((user1) => {
+      if (!user1) {
+        const err = new Error(`user not found, please try again.`);
+        err.status = 404;
+        next(err);
+      } else {
+        if (user1.receivedFriendRequest.indexOf(req.user._id) === -1) {
+          const err = new Error(`Friend request not sent yet.`);
+          err.status = 403;
+          next(err);
+        } else {
+          user1.receivedFriendRequest.splice(
+            user1.receivedFriendRequest.indexOf(req.user._id),
+            1
+          );
+          user1
+            .save()
+            .then((user1) => {
+              // now find the user, who want to cancel the friend request and update it's DB
+              User.findById(req.user._id)
+                .then((user2) => {
+                  if (!user2) {
+                    const err = new Error(`user not found, please try again.`);
+                    err.status = 404;
+                    next(err);
+                  } else {
+                    if (
+                      user2.sentFriendRequest.indexOf(req.body.userId) === -1
+                    ) {
+                      const err = new Error(
+                        `You haven't sent the friend request yet.`
+                      );
+                      err.status = 403;
+                      next(err);
+                    } else {
+                      user2.sentFriendRequest.splice(
+                        user2.sentFriendRequest.indexOf(req.body.userId),
+                        1
+                      );
+                      user2
+                        .save()
+                        .then((user2) => {
+                          res.statusCode = 200;
+                          res.setHeader('Content-Type', 'application/json');
+                          res.json({
+                            user: user1,
+                            message: 'Friend request cancelled successfully.',
+                          });
+                        })
+                        .catch((err) => next(err));
+                    }
+                  }
+                })
+                .catch((err) => nexxt(err));
+            })
+            .catch((err) => next(err));
+        }
+      }
+    })
+    .catch((err) => next(err));
+};
+
+exports.acceptFriendRequestController = (req, res, next) => {
+  // first we find the user whose friend request is to be accepted and update it's DB.
+  User.findById(req.body.userId)
+    .then((user1) => {
+      if (!user1) {
+        const err = new Error(`user not found, please try again.`);
+        err.status = 404;
+        next(err);
+      } else {
+        if (user1.friendList.indexOf(req.user._id) !== -1) {
+          const err = new Error(`You both are already friends.`);
+          err.status = 403;
+          next(err);
+        }
+        if (user1.sentFriendRequest.indexOf(req.user._id) === -1) {
+          const err = new Error(
+            `You haven't received this friend request yet.`
+          );
+          err.status = 403;
+          next(err);
+        } else {
+          user1.sentFriendRequest.splice(
+            user1.sentFriendRequest.indexOf(req.user._id),
+            1
+          );
+          user1.friendList.push(req.user._id);
+          user1
+            .save()
+            .then((user1) => {
+              // now find the user, who want to accept the friend request and update it's DB
+              User.findById(req.user._id)
+                .then((user2) => {
+                  if (!user2) {
+                    const err = new Error(`user not found, please try again.`);
+                    err.status = 404;
+                    next(err);
+                  } else {
+                    if (user2.friendList.indexOf(req.body.userId) !== -1) {
+                      const err = new Error(`You both are already friends.`);
+                      err.status = 403;
+                      next(err);
+                    }
+                    if (
+                      user2.receivedFriendRequest.indexOf(req.body.userId) ===
+                      -1
+                    ) {
+                      const err = new Error(
+                        `You haven't received this friend request yet.`
+                      );
+                      err.status = 403;
+                      next(err);
+                    } else {
+                      user2.receivedFriendRequest.splice(
+                        user2.receivedFriendRequest.indexOf(req.body.userId),
+                        1
+                      );
+                      user2.friendList.push(req.body.userId);
+                      user2
+                        .save()
+                        .then((user2) => {
+                          res.statusCode = 200;
+                          res.setHeader('Content-Type', 'application/json');
+                          res.json({
+                            user: user1,
+                            message: 'Friend request accepted successfully.',
+                          });
+                        })
+                        .catch((err) => next(err));
+                    }
+                  }
+                })
+                .catch((err) => nexxt(err));
+            })
+            .catch((err) => next(err));
+        }
+      }
+    })
+    .catch((err) => next(err));
+};
+
+exports.rejectFriendRequestController = (req, res, next) => {
+  // first we find the user whose friend request is to be accepted and update it's DB.
+  User.findById(req.body.userId)
+    .then((user1) => {
+      if (!user1) {
+        const err = new Error(`user not found, please try again.`);
+        err.status = 404;
+        next(err);
+      } else {
+        if (user1.friendList.indexOf(req.user._id) !== -1) {
+          const err = new Error(`You both are already friends.`);
+          err.status = 403;
+          next(err);
+        }
+        if (user1.sentFriendRequest.indexOf(req.user._id) === -1) {
+          const err = new Error(
+            `You haven't received this friend request yet.`
+          );
+          err.status = 403;
+          next(err);
+        } else {
+          user1.sentFriendRequest.splice(
+            user1.sentFriendRequest.indexOf(req.user._id),
+            1
+          );
+          user1
+            .save()
+            .then((user1) => {
+              // now find the user, who want to accept the friend request and update it's DB
+              User.findById(req.user._id)
+                .then((user2) => {
+                  if (!user2) {
+                    const err = new Error(`user not found, please try again.`);
+                    err.status = 404;
+                    next(err);
+                  } else {
+                    if (user2.friendList.indexOf(req.body.userId) !== -1) {
+                      const err = new Error(`You both are already friends.`);
+                      err.status = 403;
+                      next(err);
+                    }
+                    if (
+                      user2.receivedFriendRequest.indexOf(req.body.userId) ===
+                      -1
+                    ) {
+                      const err = new Error(
+                        `You haven't received this friend request yet.`
+                      );
+                      err.status = 403;
+                      next(err);
+                    } else {
+                      user2.receivedFriendRequest.splice(
+                        user2.receivedFriendRequest.indexOf(req.body.userId),
+                        1
+                      );
+                      user2
+                        .save()
+                        .then((user2) => {
+                          res.statusCode = 200;
+                          res.setHeader('Content-Type', 'application/json');
+                          res.json({
+                            user: user1,
+                            message: 'Friend request accepted successfully.',
+                          });
+                        })
+                        .catch((err) => next(err));
+                    }
+                  }
+                })
+                .catch((err) => nexxt(err));
+            })
+            .catch((err) => next(err));
+        }
+      }
+    })
+    .catch((err) => next(err));
+};
+
+exports.unFriendRequestController = (req, res, next) => {
+  // first we find the user who's to be unfriend and update it's DB.
+  User.findById(req.body.userId)
+    .then((user1) => {
+      if (!user1) {
+        const err = new Error(`user not found, please try again.`);
+        err.status = 404;
+        next(err);
+      } else {
+        if (user1.friendList.indexOf(req.user._id) === -1) {
+          const err = new Error(`You both are not friends.`);
+          err.status = 403;
+          next(err);
+        } else {
+          user1.friendList.splice(user1.friendList.indexOf(req.user._id), 1);
+          user1
+            .save()
+            .then((user1) => {
+              // now find the user, who want to accept the friend request and update it's DB
+              User.findById(req.user._id)
+                .then((user2) => {
+                  if (!user2) {
+                    const err = new Error(`user not found, please try again.`);
+                    err.status = 404;
+                    next(err);
+                  } else {
+                    if (user2.friendList.indexOf(req.body.userId) === -1) {
+                      const err = new Error(`You both are not friends.`);
+                      err.status = 403;
+                      next(err);
+                    } else {
+                      user2.friendList.splice(
+                        user2.friendList.indexOf(req.body.userId),
+                        1
+                      );
+                      user2
+                        .save()
+                        .then((user2) => {
+                          res.statusCode = 200;
+                          res.setHeader('Content-Type', 'application/json');
+                          res.json({
+                            user: user1,
+                            message: `${user1.username} unfriended successfully.`,
+                          });
+                        })
+                        .catch((err) => next(err));
+                    }
+                  }
+                })
+                .catch((err) => nexxt(err));
+            })
+            .catch((err) => next(err));
+        }
+      }
     })
     .catch((err) => next(err));
 };

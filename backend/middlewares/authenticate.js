@@ -1,11 +1,11 @@
-const passport = require("passport");
-const LocalStrategy = require("passport-local").Strategy;
-const JwtStrategy = require("passport-jwt").Strategy;
-const ExtractJwt = require("passport-jwt").ExtractJwt;
-const jwt = require("jsonwebtoken"); // used to create, sign, and verify tokens
-const dotenv = require("dotenv");
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
+const JwtStrategy = require('passport-jwt').Strategy;
+const ExtractJwt = require('passport-jwt').ExtractJwt;
+const jwt = require('jsonwebtoken'); // used to create, sign, and verify tokens
+const dotenv = require('dotenv');
 
-const User = require("../models/user.model");
+const User = require('../models/user.model');
 
 // configure dotenv to access environment variables
 dotenv.config();
@@ -18,7 +18,7 @@ passport.deserializeUser(User.deserializeUser());
 /* passport-local-mongoose provides authenticate(),serializeUser()
 deserializeUser() method */
 
-exports.getToken = function(user) {
+exports.getToken = function (user) {
   return jwt.sign(user, JWTSecretKey, { expiresIn: 864000 });
 };
 
@@ -30,6 +30,7 @@ exports.jwtPassport = passport.use(
   new JwtStrategy(opts, (jwt_payload, done) => {
     User.findOne({ _id: jwt_payload._id }, (err, user) => {
       if (err) {
+        console.log(err);
         return done(err, false);
       } else if (user) {
         return done(null, user);
@@ -40,4 +41,4 @@ exports.jwtPassport = passport.use(
   })
 );
 
-exports.verifyUser = passport.authenticate("jwt", { session: false });
+exports.verifyUser = passport.authenticate('jwt', { session: false });

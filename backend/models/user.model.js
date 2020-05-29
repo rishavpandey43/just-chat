@@ -20,6 +20,24 @@ const userSchema = new Schema(
     phone: { type: Number },
     address: { type: String },
     verified: { type: Boolean, required: true },
+    friendList: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+      },
+    ],
+    receivedFriendRequest: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+      },
+    ],
+    sentFriendRequest: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+      },
+    ],
   },
   {
     timestamps: true,

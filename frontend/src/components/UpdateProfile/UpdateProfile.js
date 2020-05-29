@@ -22,7 +22,7 @@ const UpdateProfile = (props) => {
     });
   }, []);
 
-  const updateProfile = (e) => {
+  const _updateProfile = (e) => {
     setState({
       user: { ...state.user },
       isUpdating: true,
@@ -103,7 +103,7 @@ const UpdateProfile = (props) => {
         </div>
         <div className="update-box">
           <div className="form-div">
-            <form onSubmit={updateProfile.bind(null)}>
+            <form onSubmit={_updateProfile}>
               <div className="row">
                 <div className="col-12 col-sm-6">
                   <div className="form-group">

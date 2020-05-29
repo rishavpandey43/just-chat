@@ -35,12 +35,6 @@ userRouter
     userRouterController.userLogoutController
   )
   .get(
-    '/get-username',
-    cors.corsWithOptions,
-    authenticate.verifyUser,
-    userRouterController.getUserNameController
-  )
-  .get(
     '/get-user-detail',
     cors.corsWithOptions,
     authenticate.verifyUser,
@@ -58,6 +52,36 @@ userRouter
     cors.corsWithOptions,
     authenticate.verifyUser,
     userRouterController.changePasswordController
+  )
+  .post(
+    '/send-friend-request',
+    cors.corsWithOptions,
+    authenticate.verifyUser,
+    userRouterController.sendFriendRequestController
+  )
+  .post(
+    '/cancel-friend-request',
+    cors.corsWithOptions,
+    authenticate.verifyUser,
+    userRouterController.cancelFriendRequestController
+  )
+  .post(
+    '/accept-friend-request',
+    cors.corsWithOptions,
+    authenticate.verifyUser,
+    userRouterController.acceptFriendRequestController
+  )
+  .post(
+    '/reject-friend-request',
+    cors.corsWithOptions,
+    authenticate.verifyUser,
+    userRouterController.rejectFriendRequestController
+  )
+  .post(
+    '/unfriend',
+    cors.corsWithOptions,
+    authenticate.verifyUser,
+    userRouterController.unFriendRequestController
   );
 
 module.exports = userRouter;

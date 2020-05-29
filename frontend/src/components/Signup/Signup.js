@@ -41,7 +41,7 @@ class Signup extends Component {
     this.setState({ user: tempuser });
   };
 
-  signup = (e) => {
+  _handleSubmit = (e) => {
     e.preventDefault();
     this.setState({
       responseData: {
@@ -165,7 +165,7 @@ class Signup extends Component {
                       <h3>Create an account for free</h3>
                     </div>
                     <div className="form-div">
-                      <form onSubmit={this.signup.bind(null)}>
+                      <form onSubmit={this._handleSubmit.bind(null)}>
                         <div className="row">
                           <div className="col-12 col-sm-6">
                             <div className="form-group">
