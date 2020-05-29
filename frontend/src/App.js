@@ -1,23 +1,23 @@
 // import packages
-import React, { useEffect } from "react";
-import { Switch, Router, Route, Redirect } from "react-router-dom";
+import React, { useEffect } from 'react';
+import { Switch, Router, Route, Redirect } from 'react-router-dom';
 
 // import bootstrap for css styling
-import "bootstrap/dist/css/bootstrap.min.css";
-import "./app.css";
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './app.css';
 
 // import components
-import SideBar from "./components/SideBar/SideBar";
-import HomePage from "./components/HomePage/HomePage";
-import Login from "./components/Login/Login";
-import Signup from "./components/Signup/Signup";
-import PrivateRoute from "./components/PrivateRoute/PrivateRoute";
-import Profile from "./components/Profile/Profile";
-import ChatBox from "./components/ChatBox/ChatBox";
-import UpdateProfile from "./components/UpdateProfile/UpdateProfile";
-import ChangePassword from "./components/ChangePassword/ChangePassword";
+import SideBar from './components/SideBar/SideBar';
+import HomePage from './components/HomePage/HomePage';
+import Login from './components/Login/Login';
+import Signup from './components/Signup/Signup';
+import PrivateRoute from './components/PrivateRoute/PrivateRoute';
+import Profile from './components/Profile/Profile';
+import Friends from './components/Friends/Friends';
+import ChangePassword from './components/ChangePassword/ChangePassword';
+import UpdateProfile from './components/UpdateProfile/UpdateProfile';
 
-import Flash from "./components/Flash/Flash";
+import Flash from './components/Flash/Flash';
 
 export default function MainApp(props) {
   useEffect(() => {
@@ -26,13 +26,13 @@ export default function MainApp(props) {
     }
   }, []);
   return (
-    <div style={{ position: "relative" }}>
+    <div style={{ position: 'relative' }}>
       <Flash />
       <div className="main-wrapper">
         <SideBar {...props} />
         <main
           className={`${
-            props.auth.isAuthenticated ? "sidebar-active" : "sidebar-inactive"
+            props.auth.isAuthenticated ? 'sidebar-active' : 'sidebar-inactive'
           }`}
         >
           <Router history={props.history}>
@@ -49,16 +49,9 @@ export default function MainApp(props) {
               />
               <PrivateRoute
                 exact
-                path="/chat"
+                path="/friends"
                 mainProps={{ ...props }} // * pass the main app props separately to handle it PrivateProps component
-                component={(props) => <ChatBox {...props} />}
-                // * The newly constructed props in PrivateRoute is then passed to protected components
-              />
-              <PrivateRoute
-                exact
-                path="/update-profile"
-                mainProps={{ ...props }} // * pass the main app props separately to handle it PrivateProps component
-                component={(props) => <UpdateProfile {...props} />}
+                component={(props) => <Friends {...props} />}
                 // * The newly constructed props in PrivateRoute is then passed to protected components
               />
               <PrivateRoute
@@ -66,6 +59,13 @@ export default function MainApp(props) {
                 path="/change-password"
                 mainProps={{ ...props }}
                 component={(props) => <ChangePassword {...props} />}
+                // * The newly constructed props in PrivateRoute is then passed to protected components
+              />
+              <PrivateRoute
+                exact
+                path="/update-profile"
+                mainProps={{ ...props }} // * pass the main app props separately to handle it PrivateProps component
+                component={(props) => <UpdateProfile {...props} />}
                 // * The newly constructed props in PrivateRoute is then passed to protected components
               />
               <Redirect to="/" />

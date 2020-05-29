@@ -140,7 +140,7 @@ app.use('/group', groupRouter);
 
 // error handler
 app.use((err, req, res, next) => {
-  console.log('Error- ', err);
+  // console.log('Error- ', err);
   // console.log(err.message);
   res.statusCode = err.status || 500;
   res.statusText = err.statusText || 'Internal Server Error';

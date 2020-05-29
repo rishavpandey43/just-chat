@@ -1,19 +1,19 @@
-import React, { useState } from "react";
-import axios from "axios";
+import React, { useState } from 'react';
+import axios from 'axios';
 
-import displayFlash from "../../utils/flashEvent";
+import displayFlash from '../../utils/flashEvent';
 
-import Loading from "../Loading/Loading";
+import Loading from '../Loading/Loading';
 
-import "./changePassword.css";
+import './changePassword.css';
 
 const baseUrl = process.env.REACT_APP_API_BASE_URL;
 
 const ChangePassword = (props) => {
   const [state, setState] = useState({
-    currentPassword: "",
-    newPassword: "",
-    confirmNewPassword: "",
+    currentPassword: '',
+    newPassword: '',
+    confirmNewPassword: '',
     updating: false,
   });
 
@@ -27,19 +27,19 @@ const ChangePassword = (props) => {
     }
 
     if (tempState.newPassword !== tempState.confirmNewPassword) {
-      alert("Both the new password and confirm new password should be same");
+      alert('Both the new password and confirm new password should be same');
       return;
     }
 
     tempState.updating = true;
     setState({ ...tempState });
     axios
-      .put(baseUrl + "user/change-password", JSON.stringify(state), {
+      .put(baseUrl + 'user/change-password', JSON.stringify(state), {
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
           Authorization: `Bearer ${
-            localStorage.getItem("chat_auth_token") ||
-            sessionStorage.getItem("chat_auth_token")
+            localStorage.getItem('chat_auth_token') ||
+            sessionStorage.getItem('chat_auth_token')
           }`,
         },
         withCredentials: true,
@@ -47,33 +47,33 @@ const ChangePassword = (props) => {
       .then((response) => {
         setState({
           updating: false,
-          currentPassword: "",
-          newPassword: "",
-          confirmNewPassword: "",
+          currentPassword: '',
+          newPassword: '',
+          confirmNewPassword: '',
         });
-        displayFlash.emit("get-message", {
+        displayFlash.emit('get-message', {
           message: response.data.message,
-          type: "success",
+          type: 'success',
         });
       })
       .catch((error) => {
         setState({
           updating: false,
-          currentPassword: "",
-          newPassword: "",
-          confirmNewPassword: "",
+          currentPassword: '',
+          newPassword: '',
+          confirmNewPassword: '',
         });
         if (error.response) {
-          displayFlash.emit("get-message", {
+          displayFlash.emit('get-message', {
             message:
               error.response.data.message ||
-              "password incorrect, try with valid password",
-            type: "danger",
+              'password incorrect, try with valid password',
+            type: 'danger',
           });
         } else {
-          displayFlash.emit("get-message", {
+          displayFlash.emit('get-message', {
             message: `Network Error, Connection to server couldn't be established. Please try again.`,
-            type: "danger",
+            type: 'danger',
           });
         }
       });
@@ -84,10 +84,10 @@ const ChangePassword = (props) => {
       <Loading isTrue={props.user.isFetching} />
     </div>
   ) : props.user.responseStatus === 503 ? (
-    <div className="profile-wrapper">
+    <div className="change-password-wrapper">
       <div className="main-wrapper-error">
         <img
-          src={require("../../assets/images/server_down.png")}
+          src={require('../../assets/images/server_down.png')}
           alt="not found"
           width="100%"
         />

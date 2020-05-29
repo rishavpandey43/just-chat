@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
 
 import { FaHome, FaUser } from 'react-icons/fa';
 import { FiPhone, FiMail } from 'react-icons/fi';
@@ -10,11 +9,14 @@ import Loading from '../Loading/Loading';
 import './profile.css';
 
 import { baseUrl } from '../../utils/constant';
+import displayFlash from '../../utils/flashEvent';
 
 const Profile = (props) => {
   const [state, setState] = useState({
     user: props.user.user ? { ...props.user.user } : null,
-    isLoading: false,
+    isFetching: false,
+    isLoading1: false,
+    isLoading2: false,
     errMessage: props.user.errMessage,
   });
 
@@ -22,7 +24,7 @@ const Profile = (props) => {
     let tempState = { ...state };
     if (props.user.user) {
       if (props.user.user.username !== props.match.params.username) {
-        tempState.isLoading = true;
+        tempState.isFetching = true;
         setState({ ...tempState });
         axios
           .get(baseUrl + '/user/get-user-detail', {
@@ -36,7 +38,7 @@ const Profile = (props) => {
           })
           .then((response) => {
             tempState.user = { ...response.data.user };
-            tempState.isLoading = false;
+            tempState.isFetching = false;
             setState({ ...tempState });
           })
           .catch((error) => {
@@ -44,7 +46,7 @@ const Profile = (props) => {
             tempState.errMessage = error.response
               ? error.response.data.errMessage || error.response.statusText
               : 'Some error occured, please try again';
-            tempState.isLoading = false;
+            tempState.isFetching = false;
             setState({ ...tempState });
           });
       } else {
@@ -54,9 +56,49 @@ const Profile = (props) => {
     }
   }, []);
 
-  return props.user.isFetching || state.isLoading ? (
+  const _friendRequestAction = (endPoint, loading) => {
+    let tempState = { ...state };
+    tempState[loading] = true;
+    setState({ ...tempState });
+    axios
+      .post(
+        baseUrl + endPoint,
+        { userId: state.user._id },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${props.auth.token}`,
+          },
+        }
+      )
+      .then((response) => {
+        props.getuserFetch();
+        tempState.user = { ...response.data.user };
+        tempState[loading] = false;
+        setState({ ...tempState });
+        displayFlash.emit('get-message', {
+          message: response.data.message,
+          type: 'success',
+        });
+      })
+      .catch((error) => {
+        tempState.errMessage = error.response
+          ? error.response.data.errMessage || error.response.statusText
+          : 'Some error occured, please try again';
+        tempState[loading] = false;
+        setState({ ...tempState });
+        displayFlash.emit('get-message', {
+          message: error.response
+            ? error.response.data.errMessage || error.response.statusText
+            : 'Some error occured, please try again',
+          type: 'error',
+        });
+      });
+  };
+
+  return props.user.isFetching || state.isFetching ? (
     <div className="loading-wrapper text-center m-5">
-      <Loading isTrue={props.user.isFetching || state.isLoading} />
+      <Loading isTrue={props.user.isFetching || state.isFetching} />
     </div>
   ) : props.user.responseStatus === 503 ? (
     <div className="profile-wrapper">
@@ -103,21 +145,99 @@ const Profile = (props) => {
                   ''
                 ) : (
                   <div className="action-btn mt-5">
-                    <div className="add-friend">
-                      <button className="btn">Add Friend</button>
-                    </div>
-                    <div className="row mt-4">
-                      <div className="col-6">
-                        <div className="send-message">
-                          <button className="btn">Send Message</button>
+                    {props.user.user.receivedFriendRequest.filter(
+                      (friend) => friend._id === state.user._id
+                    )[0] ? (
+                      <>
+                        <div>
+                          <button
+                            className="btn"
+                            onClick={_friendRequestAction.bind(
+                              null,
+                              '/user/accept-friend-request',
+                              'isLoading1'
+                            )}
+                          >
+                            Accept Friend Request
+                          </button>
+                          <Loading isTrue={state.isLoading1} />
+                        </div>
+                        <div className="mt-3">
+                          <button
+                            className="btn"
+                            onClick={_friendRequestAction.bind(
+                              null,
+                              '/user/reject-friend-request',
+                              'isLoading2'
+                            )}
+                          >
+                            Reject Friend Request
+                          </button>
+                          <Loading isTrue={state.isLoading2} />
+                        </div>
+                      </>
+                    ) : !props.user.user.friendList.filter(
+                        (friend) => friend._id === state.user._id
+                      )[0] ? (
+                      !props.user.user.sentFriendRequest.filter(
+                        (friend) => friend._id === state.user._id
+                      )[0] ? (
+                        <div>
+                          <button
+                            className="btn"
+                            onClick={_friendRequestAction.bind(
+                              null,
+                              '/user/send-friend-request',
+                              'isLoading1'
+                            )}
+                          >
+                            Send Friend Request
+                          </button>
+                          <Loading isTrue={state.isLoading1} />
+                        </div>
+                      ) : (
+                        <div>
+                          <button
+                            className="btn"
+                            onClick={_friendRequestAction.bind(
+                              null,
+                              '/user/cancel-friend-request',
+                              'isLoading1'
+                            )}
+                          >
+                            Cancel Friend Request
+                          </button>
+                          <Loading isTrue={state.isLoading1} />
+                        </div>
+                      )
+                    ) : null}
+
+                    {props.user.user.friendList.filter(
+                      (friend) => friend._id === state.user._id
+                    )[0] ? (
+                      <div className="row mt-4">
+                        <div className="col-6">
+                          <div className="send-message">
+                            <button className="btn">Send Message</button>
+                          </div>
+                        </div>
+                        <div className="col-6">
+                          <div className="unfriend">
+                            <button
+                              className="btn"
+                              onClick={_friendRequestAction.bind(
+                                null,
+                                '/user/unfriend',
+                                'isLoading1'
+                              )}
+                            >
+                              Unfriend
+                            </button>
+                            <Loading isTrue={state.isLoading1} />
+                          </div>
                         </div>
                       </div>
-                      <div className="col-6">
-                        <div className="unfriend">
-                          <button className="btn"> Unfriend</button>
-                        </div>
-                      </div>
-                    </div>
+                    ) : null}
                   </div>
                 )}
               </div>
@@ -160,7 +280,7 @@ const Profile = (props) => {
                     state.user.contactNum ? 'd-block' : 'd-none'
                   }`}
                 >
-                  <span className="icon">
+                  <span className="icon mr-3">
                     <FiPhone className="fa-colored-icon" />
                   </span>
                   <span className="text">{state.user.contactNum}</span>
@@ -170,7 +290,7 @@ const Profile = (props) => {
                     state.user.email ? 'd-block' : 'd-none'
                   }`}
                 >
-                  <span className="icon">
+                  <span className="icon mr-3">
                     <FiMail className="fa-colored-icon" />
                   </span>
                   <span className="text">{state.user.email}</span>
@@ -180,7 +300,7 @@ const Profile = (props) => {
                     state.user.address ? 'd-block' : 'd-none'
                   }`}
                 >
-                  <span className="icon">
+                  <span className="icon mr-3">
                     <FaHome className="fa-colored-icon" />
                   </span>
                   <span className="text">{state.user.address}</span>
