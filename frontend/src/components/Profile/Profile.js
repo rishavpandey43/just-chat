@@ -95,6 +95,7 @@ const Profile = (props) => {
         });
       });
   };
+
   return props.user.isFetching || state.isFetching ? (
     <div className="loading-wrapper text-center m-5">
       <Loading isTrue={props.user.isFetching || state.isFetching} />
@@ -144,9 +145,9 @@ const Profile = (props) => {
                   ''
                 ) : (
                   <div className="action-btn mt-5">
-                    {props.user.user.receivedFriendRequest.indexOf(
-                      state.user._id
-                    ) !== -1 ? (
+                    {props.user.user.receivedFriendRequest.filter(
+                      (friend) => friend._id === state.user._id
+                    )[0] ? (
                       <>
                         <div>
                           <button
@@ -175,11 +176,12 @@ const Profile = (props) => {
                           <Loading isTrue={state.isLoading2} />
                         </div>
                       </>
-                    ) : props.user.user.friendList.indexOf(state.user._id) ===
-                      -1 ? (
-                      props.user.user.sentFriendRequest.indexOf(
-                        state.user._id
-                      ) === -1 ? (
+                    ) : !props.user.user.friendList.filter(
+                        (friend) => friend._id === state.user._id
+                      )[0] ? (
+                      !props.user.user.sentFriendRequest.filter(
+                        (friend) => friend._id === state.user._id
+                      )[0] ? (
                         <div>
                           <button
                             className="btn"
@@ -210,8 +212,9 @@ const Profile = (props) => {
                       )
                     ) : null}
 
-                    {props.user.user.friendList.indexOf(state.user._id) !==
-                    -1 ? (
+                    {props.user.user.friendList.filter(
+                      (friend) => friend._id === state.user._id
+                    )[0] ? (
                       <div className="row mt-4">
                         <div className="col-6">
                           <div className="send-message">
@@ -228,7 +231,6 @@ const Profile = (props) => {
                                 'isLoading1'
                               )}
                             >
-                              {' '}
                               Unfriend
                             </button>
                             <Loading isTrue={state.isLoading1} />
@@ -278,7 +280,7 @@ const Profile = (props) => {
                     state.user.contactNum ? 'd-block' : 'd-none'
                   }`}
                 >
-                  <span className="icon">
+                  <span className="icon mr-3">
                     <FiPhone className="fa-colored-icon" />
                   </span>
                   <span className="text">{state.user.contactNum}</span>
@@ -288,7 +290,7 @@ const Profile = (props) => {
                     state.user.email ? 'd-block' : 'd-none'
                   }`}
                 >
-                  <span className="icon">
+                  <span className="icon mr-3">
                     <FiMail className="fa-colored-icon" />
                   </span>
                   <span className="text">{state.user.email}</span>
@@ -298,7 +300,7 @@ const Profile = (props) => {
                     state.user.address ? 'd-block' : 'd-none'
                   }`}
                 >
-                  <span className="icon">
+                  <span className="icon mr-3">
                     <FaHome className="fa-colored-icon" />
                   </span>
                   <span className="text">{state.user.address}</span>

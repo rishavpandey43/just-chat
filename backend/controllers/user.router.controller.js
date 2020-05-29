@@ -218,6 +218,11 @@ exports.getuserController = (req, res, next) => {
     username:
       req.query.username !== '' ? req.query.username : req.user.username,
   })
+    .populate([
+      { path: 'friendList', model: 'User' },
+      { path: 'receivedFriendRequest', model: 'User' },
+      { path: 'sentFriendRequest', model: 'User' },
+    ])
     .then((user) => {
       if (!user) {
         const err = new Error(
@@ -293,6 +298,11 @@ exports.sendFriendRequestController = (req, res, next) => {
         err.status = 404;
         next(err);
       } else {
+        if (user1.friendList.indexOf(req.user._id) !== -1) {
+          const err = new Error(`You both are already friends.`);
+          err.status = 403;
+          next(err);
+        }
         if (user1.receivedFriendRequest.indexOf(req.user._id) !== -1) {
           const err = new Error(`You've already sent the friend request.`);
           err.status = 403;
@@ -315,6 +325,11 @@ exports.sendFriendRequestController = (req, res, next) => {
                     err.status = 404;
                     next(err);
                   } else {
+                    if (user2.friendList.indexOf(req.body.userId) !== -1) {
+                      const err = new Error(`You both are already friends.`);
+                      err.status = 403;
+                      next(err);
+                    }
                     if (
                       user2.sentFriendRequest.indexOf(req.body.userId) !== -1
                     ) {
@@ -367,6 +382,11 @@ exports.cancelFriendRequestController = (req, res, next) => {
         err.status = 404;
         next(err);
       } else {
+        if (user1.friendList.indexOf(req.user._id) !== -1) {
+          const err = new Error(`You both are already friends.`);
+          err.status = 403;
+          next(err);
+        }
         if (user1.receivedFriendRequest.indexOf(req.user._id) === -1) {
           const err = new Error(`Friend request not sent yet.`);
           err.status = 403;
@@ -387,6 +407,11 @@ exports.cancelFriendRequestController = (req, res, next) => {
                     err.status = 404;
                     next(err);
                   } else {
+                    if (user2.friendList.indexOf(req.body.userId) !== -1) {
+                      const err = new Error(`You both are already friends.`);
+                      err.status = 403;
+                      next(err);
+                    }
                     if (
                       user2.sentFriendRequest.indexOf(req.body.userId) === -1
                     ) {
@@ -565,7 +590,7 @@ exports.rejectFriendRequestController = (req, res, next) => {
                           res.setHeader('Content-Type', 'application/json');
                           res.json({
                             user: user1,
-                            message: 'Friend request accepted successfully.',
+                            message: 'Friend request rejected successfully.',
                           });
                         })
                         .catch((err) => next(err));

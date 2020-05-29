@@ -79,7 +79,7 @@ const UpdateProfile = (props) => {
       <Loading isTrue={props.user.isFetching} />
     </div>
   ) : props.user.responseStatus === 503 ? (
-    <div className="profile-wrapper">
+    <div className="update-profile-wrapper">
       <div className="main-wrapper-error">
         <img
           src={require('../../assets/images/server_down.png')}

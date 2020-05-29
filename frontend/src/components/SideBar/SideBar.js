@@ -51,7 +51,7 @@ const SideBar = (props) => {
             </div>
             <ul className="sidebar-list">
               <li className="list">
-                <Link to={`/${props.user.user.username}`}>
+                <Link to={`/profile/${props.user.user.username}`}>
                   <span className="icon">
                     <AiOutlineProfile />
                   </span>
@@ -67,7 +67,7 @@ const SideBar = (props) => {
                 </Link>
               </li>
               <li className="list">
-                <Link to="/">
+                <Link to="/friends">
                   <span className="icon">
                     <FiUsers />
                   </span>
@@ -82,40 +82,41 @@ const SideBar = (props) => {
                   <span className="content">Messages</span>
                 </Link>
               </li>
-              <li
-                className="list"
-                tabIndex="0"
-                onKeyPress={(event) => {
-                  console.log(event.which, event.keycode);
-                  if (event.which === 13) {
+              <li className="list">
+                <div
+                  tabIndex="0"
+                  onKeyPress={(event) => {
+                    console.log(event.which, event.keycode);
+                    if (event.which === 13) {
+                      let tempState = { ...state };
+                      tempState.displaySettingOption = tempState.displaySettingOption
+                        ? false
+                        : true;
+                      setState(tempState);
+                    } else return;
+                  }}
+                  onClick={() => {
                     let tempState = { ...state };
                     tempState.displaySettingOption = tempState.displaySettingOption
                       ? false
                       : true;
                     setState(tempState);
-                  } else return;
-                }}
-                onClick={() => {
-                  let tempState = { ...state };
-                  tempState.displaySettingOption = tempState.displaySettingOption
-                    ? false
-                    : true;
-                  setState(tempState);
-                }}
-              >
-                <span className="icon">
-                  <AiOutlineSetting />
-                </span>
-                <span className="content">
-                  <span>Setting</span>
-                </span>
-                <span className="pl-4">
-                  <FaAngleRight
-                    className={`${
-                      state.displaySettingOption ? 'rotate-90' : ''
-                    }`}
-                  />
-                </span>
+                  }}
+                >
+                  <span className="icon">
+                    <AiOutlineSetting />
+                  </span>
+                  <span className="content">
+                    <span>Setting</span>
+                  </span>
+                  <span className="pl-4">
+                    <FaAngleRight
+                      className={`${
+                        state.displaySettingOption ? 'rotate-90' : ''
+                      }`}
+                    />
+                  </span>
+                </div>
               </li>
               <div
                 className={`setting-option mt-3 ${
