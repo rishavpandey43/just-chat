@@ -1,5 +1,5 @@
-const mongoose = require("mongoose");
-var passportLocalMongoose = require("passport-local-mongoose");
+const mongoose = require('mongoose');
+var passportLocalMongoose = require('passport-local-mongoose');
 
 const Schema = mongoose.Schema;
 
@@ -17,8 +17,27 @@ const userSchema = new Schema(
     title: { type: String },
     aboutMe: { type: String },
     dob: { type: Date },
-    contactNum: { type: String },
+    phone: { type: Number },
     address: { type: String },
+    verified: { type: Boolean, required: true },
+    friendList: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+      },
+    ],
+    receivedFriendRequest: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+      },
+    ],
+    sentFriendRequest: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+      },
+    ],
   },
   {
     timestamps: true,
@@ -27,8 +46,8 @@ const userSchema = new Schema(
 
 userSchema.plugin(passportLocalMongoose);
 
-const chatAppDB = mongoose.connection.useDb("chat_app_db");
+const chatAppDB = mongoose.connection.useDb('chat_app_db');
 
-const User = chatAppDB.model("User", userSchema);
+const User = chatAppDB.model('User', userSchema);
 
 module.exports = User;

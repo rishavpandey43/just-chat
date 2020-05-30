@@ -7,17 +7,17 @@ import Loading from "../Loading/Loading";
 
 const HomePage = (props) => {
   useEffect(() => {
-    if (props.authDetail.isAuthenticated) {
-      if (props.userDetail.user) {
-        props.history.push(`/profile/${props.userDetail.user.username}`);
+    if (props.auth.isAuthenticated) {
+      if (props.user.user) {
+        props.history.push(`/profile/${props.user.user.username}`);
       }
     }
   }, []);
 
-  return props.authDetail.isAuthenticated ? (
-    props.userDetail.isLoading ? (
+  return props.auth.isAuthenticated ? (
+    props.user.isLoading ? (
       <div className="loading-wrapper text-center m-5">
-        <Loading isTrue={props.userDetail.isLoading} />
+        <Loading isTrue={props.user.isLoading} />
       </div>
     ) : (
       ""

@@ -1,3 +1,7 @@
+body {
+  position: relative;
+}
+
 .main-wrapper {
   display: flex;
 }
@@ -42,8 +46,12 @@ a:hover {
   background-color: transparent;
 }
 
-button:focus {
-  outline: none;
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  margin: 0;
 }
 
 .btn {
@@ -51,11 +59,7 @@ button:focus {
   box-shadow: none;
 }
 
-body {
-  position: relative;
-}
-
-.no-internet-error {
+.main-wrapper-error {
   text-align: center;
   width: 50%;
   margin: auto;
@@ -71,6 +75,7 @@ body {
 
 .row {
   margin: 0px;
+  flex: 1;
 }
 
 .form-label {
@@ -91,14 +96,15 @@ body {
   border-bottom: 1px solid #c90bce;
 }
 
-.form-div .btn {
+.main-theme-btn {
+  border: 1px solid #c90bce;
   background-color: #c90bce;
   color: #fff;
   border-radius: 2rem;
   padding: 0.4rem 2rem;
 }
 
-.form-div .btn:focus {
+.main-theme-btn:focus {
   box-shadow: none;
 }
 

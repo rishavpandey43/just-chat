@@ -77,7 +77,7 @@ class ChatBox extends Component {
         if (this.state.socketInstance) {
           this.state.socketInstance.emit("join-group", {
             groupId: this.state.currentGroup.groupDetail.groupId,
-            userId: this.props.authDetail.userId,
+            userId: this.props.auth.userId,
           });
         }
       })
@@ -106,7 +106,7 @@ class ChatBox extends Component {
     this.setState({ currentGroup });
     // socketInstance.emit("join-group", {
     //   groupId: currentGroup.groupDetail.groupId,
-    //   userId: this.props.authDetail.userId,
+    //   userId: this.props.auth.userId,
     // });
   };
 
@@ -140,7 +140,7 @@ class ChatBox extends Component {
                 ) : (
                   <Messages
                     currentGroup={this.state.currentGroup}
-                    currentUserId={this.props.authDetail.userId}
+                    currentUserId={this.props.auth.userId}
                     sendMessage={this.sendMessage}
                   />
                 )}

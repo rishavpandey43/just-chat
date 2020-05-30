@@ -1,7 +1,7 @@
 const express = require("express");
 
-const authenticate = require("../utils/authenticate");
-const cors = require("../utils/cors.js");
+const authenticate = require("../middlewares/authenticate");
+const cors = require("../middlewares/cors.js");
 
 const groupRouterController = require("../controllers/group.router.controller");
 

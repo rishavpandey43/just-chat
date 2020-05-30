@@ -1,101 +1,103 @@
-import React, { Component } from "react";
-import axios from "axios";
-import { Link } from "react-router-dom";
+import React, { Component } from 'react';
+import axios from 'axios';
+import { Link } from 'react-router-dom';
 
-import "./signup.css";
+import Loading from '../Loading/Loading';
 
-import displayFlash from "../../utils/flashEvent";
+import './signup.css';
 
-import Loading from "../Loading/Loading";
+import { baseUrl } from '../../utils/constant';
+import displayFlash from '../../utils/flashEvent';
+
 class Signup extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      userDetail: {
-        username: "",
-        firstName: "",
-        lastName: "",
-        email: "",
-        password: "",
-        rePassword: "",
+      user: {
+        username: '',
+        firstName: '',
+        lastName: '',
+        email: '',
+        password: '',
+        rePassword: '',
       },
-      loadingIsTrue: false,
+      isLoading: false,
       responseData: {
-        message: "",
+        message: '',
         status: null,
       },
     };
   }
 
   componentDidMount() {
-    if (this.props.authDetail.isAuthenticated) {
-      this.props.history.push("/");
+    if (this.props.auth.isAuthenticated) {
+      this.props.history.push('/');
     }
   }
 
   handleInputChange = (target, e) => {
-    const tempUserDetail = { ...this.state.userDetail };
-    tempUserDetail[target] = e.target.value;
-    this.setState({ userDetail: tempUserDetail });
+    const tempuser = { ...this.state.user };
+    tempuser[target] = e.target.value;
+    this.setState({ user: tempuser });
   };
 
-  signup = (e) => {
+  _handleSubmit = (e) => {
     e.preventDefault();
     this.setState({
       responseData: {
-        message: "",
+        message: '',
         status: null,
       },
     });
     let isEmpty = true;
-    for (const key in this.state.userDetail) {
-      if (this.state.userDetail[key] === "") {
+    for (const key in this.state.user) {
+      if (this.state.user[key] === '') {
         isEmpty = true;
         break;
       } else isEmpty = false;
     }
     if (!isEmpty) {
       // CHECK VALIDATION OF USER DETAILS
-      const newUser = JSON.stringify({ ...this.state.userDetail });
-      if (/\s/g.test(this.state.userDetail.username)) {
+      const newUser = JSON.stringify({ ...this.state.user });
+      if (/\s/g.test(this.state.user.username)) {
         let responseData = {
           message:
-            "username consist of whitespace, please avoid whitespace to continue.",
+            'username consist of whitespace, please avoid whitespace to continue.',
           status: 422,
         };
         this.setState({
-          loadingIsTrue: false,
+          isLoading: false,
           responseData,
         });
         return;
       }
-      if (this.state.userDetail.password !== this.state.userDetail.rePassword) {
+      if (this.state.user.password !== this.state.user.rePassword) {
         let responseData = {
-          message: "Both password should be same",
+          message: 'Both password should be same',
           status: 422,
         };
         this.setState({
-          loadingIsTrue: false,
+          isLoading: false,
           responseData,
         });
         return;
       }
-      if (this.state.userDetail.password.length < 8) {
+      if (this.state.user.password.length < 8) {
         let responseData = {
-          message: "password length should be greater than or equal to 8",
+          message: 'password length should be greater than or equal to 8',
           status: 422,
         };
         this.setState({
-          loadingIsTrue: false,
+          isLoading: false,
           responseData,
         });
         return;
       }
 
-      this.setState({ loadingIsTrue: true });
+      this.setState({ isLoading: true });
       axios
-        .post(process.env.REACT_APP_API_BASE_URL + "user/signup", newUser, {
-          headers: { "Content-Type": "application/json" },
+        .post(baseUrl + '/user/signup', newUser, {
+          headers: { 'Content-Type': 'application/json' },
         })
         .then((res) => {
           let responseData = {
@@ -103,43 +105,43 @@ class Signup extends Component {
             status: res.status,
           };
           this.setState({
-            loadingIsTrue: false,
+            isLoading: false,
             responseData,
-            userDetail: {
-              username: "",
-              firstName: "",
-              lastName: "",
-              email: "",
-              password: "",
-              rePassword: "",
+            user: {
+              username: '',
+              firstName: '',
+              lastName: '',
+              email: '',
+              password: '',
+              rePassword: '',
             },
           });
-          displayFlash.emit("get-message", {
+          displayFlash.emit('get-message', {
             message: responseData.message,
-            type: "success",
+            type: 'success',
           });
         })
         .catch((err) => {
           let responseData = {
-            message: "Internal Server Error, please try again.",
+            message: 'Internal Server Error, please try again.',
             status: 500,
           };
           if (err.response) {
             responseData = {
-              message: err.response.data.message,
+              message: err.response.data.errMessage,
               status: err.response.status,
             };
           }
           this.setState({
-            loadingIsTrue: false,
+            isLoading: false,
             responseData,
           });
-          displayFlash.emit("get-message", {
+          displayFlash.emit('get-message', {
             message: responseData.message,
-            type: "danger",
+            type: 'danger',
           });
         });
-    } else alert("Please fill all the details first to signup");
+    } else alert('Please fill all the details first to signup');
   };
   render() {
     return (
@@ -150,7 +152,7 @@ class Signup extends Component {
               <div className="col-12 col-sm-6 grid-sec">
                 <div className="img-container">
                   <img
-                    src={require("../../assets/images/sign_up.png")}
+                    src={require('../../assets/images/sign_up.png')}
                     alt="main-illustrator"
                     width="100%"
                   />
@@ -163,7 +165,7 @@ class Signup extends Component {
                       <h3>Create an account for free</h3>
                     </div>
                     <div className="form-div">
-                      <form onSubmit={this.signup.bind(null)}>
+                      <form onSubmit={this._handleSubmit.bind(null)}>
                         <div className="row">
                           <div className="col-12 col-sm-6">
                             <div className="form-group">
@@ -173,10 +175,10 @@ class Signup extends Component {
                                 className="form-control"
                                 placeholder="John"
                                 required
-                                value={this.state.userDetail.firstName}
+                                value={this.state.user.firstName}
                                 onChange={this.handleInputChange.bind(
                                   null,
-                                  "firstName"
+                                  'firstName'
                                 )}
                               />
                             </div>
@@ -189,10 +191,10 @@ class Signup extends Component {
                                 className="form-control"
                                 placeholder="Doe"
                                 required
-                                value={this.state.userDetail.lastName}
+                                value={this.state.user.lastName}
                                 onChange={this.handleInputChange.bind(
                                   null,
-                                  "lastName"
+                                  'lastName'
                                 )}
                               />
                             </div>
@@ -207,10 +209,10 @@ class Signup extends Component {
                             required
                             name="username"
                             minLength="5"
-                            value={this.state.userDetail.username}
+                            value={this.state.user.username}
                             onChange={this.handleInputChange.bind(
                               null,
-                              "username"
+                              'username'
                             )}
                           />
                         </div>
@@ -223,10 +225,10 @@ class Signup extends Component {
                             required
                             name="email"
                             minLength="5"
-                            value={this.state.userDetail.email}
+                            value={this.state.user.email}
                             onChange={this.handleInputChange.bind(
                               null,
-                              "email"
+                              'email'
                             )}
                           />
                         </div>
@@ -240,10 +242,10 @@ class Signup extends Component {
                                 type="password"
                                 className="form-control"
                                 required
-                                value={this.state.userDetail.password}
+                                value={this.state.user.password}
                                 onChange={this.handleInputChange.bind(
                                   null,
-                                  "password"
+                                  'password'
                                 )}
                               />
                             </div>
@@ -257,10 +259,10 @@ class Signup extends Component {
                                 type="password"
                                 className="form-control"
                                 required
-                                value={this.state.userDetail.rePassword}
+                                value={this.state.user.rePassword}
                                 onChange={this.handleInputChange.bind(
                                   null,
-                                  "rePassword"
+                                  'rePassword'
                                 )}
                               />
                             </div>
@@ -269,14 +271,15 @@ class Signup extends Component {
 
                         <small className="form-text text-muted mb-4">
                           Already have a account,
-                          <Link to="/login" style={{ color: "blue" }}>
+                          <Link to="/login" style={{ color: 'blue' }}>
                             Sign in
                           </Link>
                         </small>
                         <div className="form-group">
-                          <button type="submit" className="btn">
+                          <button type="submit" className="main-theme-btn">
                             Signup
                           </button>
+                          <Loading isTrue={this.state.isLoading} />
                         </div>
                       </form>
                       <div className="home-page-link">

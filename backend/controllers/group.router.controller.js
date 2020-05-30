@@ -4,7 +4,7 @@ const User = require("../models/user.model"); // import message group schema
 const Message = require("../models/message.model"); // import message group schema
 const Group = require("../models/group.model"); // import message group schema
 
-const createGroupController = (req, res, next) => {
+exports.createGroupController = (req, res, next) => {
   Group.findOne({ name: req.body.name })
     .then((group) => {
       if (group) {
@@ -69,7 +69,7 @@ const createGroupController = (req, res, next) => {
     .catch((err) => next(err));
 };
 
-const joinGroupController = (req, res, next) => {
+exports.joinGroupController = (req, res, next) => {
   // check if the requested group is private, and handle the request of private group
   if (req.body.private) {
     Group.findOne({ name: req.body.name })
@@ -212,7 +212,7 @@ const joinGroupController = (req, res, next) => {
   }
 };
 
-const getGroupListController = (req, res, next) => {
+exports.getGroupListController = (req, res, next) => {
   // find only those group,in which user is member
   Group.find({
     $or: [{ owner: req.user._id }, { members: req.user._id }],
@@ -235,7 +235,3 @@ const getGroupListController = (req, res, next) => {
     })
     .catch((err) => next(err));
 };
-
-exports.createGroupController = createGroupController;
-exports.getGroupListController = getGroupListController;
-exports.joinGroupController = joinGroupController;

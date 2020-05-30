@@ -49,12 +49,7 @@
 
 .sidebar-wrapper .btn {
   color: #fff;
-  outline: none;
   margin-left: auto;
-}
-
-.sidebar-wrapper .btn:focus {
-  box-shadow: none;
 }
 
 .sidebar-wrapper .sidebar-list .list {
