@@ -1,5 +1,6 @@
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
+const xoauth2 = require('xoauth2');
 const dotenv = require('dotenv');
 
 const User = require('../models/user.model'); // import User Schema
@@ -12,9 +13,29 @@ dotenv.config();
 
 const smtpTransport = nodemailer.createTransport({
   service: 'Gmail',
+  // auth: {
+  //   xoauth2: xoauth2.createXOAuth2Generator({
+  //     user: process.env.GMAIL_ADDRESS,
+  //     clientId: process.env.GMAIL_CLIENT_ID,
+  //     clientSecret: process.env.GMAIL_CLIENT_SECRET,
+  //     refreshToken: process.env,
+  //   }),
+  // },
+  // auth: {
+  //   user: process.env.GMAIL_ADDRESS,
+  //   pass: process.env.GMAIL_PASSWORD,
+  // },
   auth: {
-    user: process.env.EMAIL_ADDRESS,
-    pass: process.env.EMAIL_PASSWORD,
+    type: 'OAuth2',
+    user: process.env.GMAIL_ADDRESS, // email you are using with nodemailer
+    pass: process.env.GMAIL_PASSWORD, // email password
+    clientId: process.env.GMAIL_CLIENT_ID,
+    clientSecrect: process.env.GMAIL_CLIENT_SECRET,
+    refreshToken: process.env.GMAIL_CLIENT_REFRESH_TOKEN,
+    accessToken: process.env.GMAIL_CLIENT_ACCESS_TOKEN,
+  },
+  tls: {
+    rejectUnauthorized: false,
   },
 });
 
@@ -58,7 +79,7 @@ exports.userSignupController = (req, res, next) => {
           token: crypto.randomBytes(16).toString('hex'),
         })
           .then((token) => {
-            const verificationLink = `http://${req.headers.host}/user/verify-user/?token=${token.token}`;
+            const verificationLink = `https://${req.headers.host}/user/verify-user/?token=${token.token}`;
             let mailOptions = {
               from: 'no-reply@yourwebapplication.com',
               to: user.email,
