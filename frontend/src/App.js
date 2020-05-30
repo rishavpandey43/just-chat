@@ -1,6 +1,11 @@
 // import packages
 import React, { useEffect } from 'react';
-import { Switch, Router, Route, Redirect } from 'react-router-dom';
+import {
+  HashRouter as Router,
+  Switch,
+  Route,
+  Redirect,
+} from 'react-router-dom';
 
 // import bootstrap for css styling
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -35,8 +40,8 @@ export default function MainApp(props) {
             props.auth.isAuthenticated ? 'sidebar-active' : 'sidebar-inactive'
           }`}
         >
-          <Router history={props.history}>
-            <Switch location={props.location}>
+          <Router>
+            <Switch>
               <Route exact path="/" component={() => <HomePage {...props} />} />
               <Route path="/login" component={() => <Login {...props} />} />
               <Route path="/signup" component={() => <Signup {...props} />} />
