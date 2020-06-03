@@ -21,22 +21,19 @@ const smtpTransport = nodemailer.createTransport({
   //     refreshToken: process.env,
   //   }),
   // },
-  // auth: {
-  //   user: process.env.GMAIL_ADDRESS,
-  //   pass: process.env.GMAIL_PASSWORD,
-  // },
   auth: {
-    type: 'OAuth2',
-    user: process.env.GMAIL_ADDRESS, // email you are using with nodemailer
-    pass: process.env.GMAIL_PASSWORD, // email password
-    clientId: process.env.GMAIL_CLIENT_ID,
-    clientSecrect: process.env.GMAIL_CLIENT_SECRET,
-    refreshToken: process.env.GMAIL_CLIENT_REFRESH_TOKEN,
-    accessToken: process.env.GMAIL_CLIENT_ACCESS_TOKEN,
+    user: process.env.GMAIL_ADDRESS,
+    pass: process.env.GMAIL_PASSWORD,
   },
-  tls: {
-    rejectUnauthorized: false,
-  },
+  // auth: {
+  //   type: 'OAuth2',
+  //   user: process.env.GMAIL_ADDRESS, // email you are using with nodemailer
+  //   // pass: process.env.GMAIL_PASSWORD, // email password
+  //   clientId: process.env.GMAIL_CLIENT_ID,
+  //   clientSecrect: process.env.GMAIL_CLIENT_SECRET,
+  //   refreshToken: process.env.GMAIL_CLIENT_REFRESH_TOKEN,
+  //   accessToken: process.env.GMAIL_CLIENT_ACCESS_TOKEN,
+  // },
 });
 
 exports.userSignupController = (req, res, next) => {
@@ -79,20 +76,20 @@ exports.userSignupController = (req, res, next) => {
           token: crypto.randomBytes(16).toString('hex'),
         })
           .then((token) => {
-            const verificationLink = `https://${req.headers.host}/user/verify-user/?token=${token.token}`;
+            const activationLink = `${req.headers.origin}/#/user/activate-account/${token.token}`;
             let mailOptions = {
-              from: 'no-reply@yourwebapplication.com',
+              from: 'justchat0007@gmail.com',
               to: user.email,
-              subject: 'Account Verification',
+              subject: 'Just Chat Account activation',
               html: `
                 <html>
                   <h3>Hello ${user.username}</h3>
-                  <p>Thanks for trying our chat application. You're just one step left to start enjoying our service.</p>
-                  <p>Please confirm your account by clicking here</p>
+                  <p>Thanks for trying our chat application. You're just one step away to complete your registration.</p>
+                  <p>Click the following button to confirm and activate your new account</p>
                   <p> <strong>Note:</strong> Link will automatically expire in 10 minutes.</p>
-                  <button style="border: 1px solid #c90bce; background-color: #c90bce; color: #fff; border-radius: 2rem; padding: 0.4rem 2rem;"><a href="${verificationLink}">Verify now</a></button>
+                  <button style="border: 1px solid #c90bce; background-color: #c90bce; color: #fff; border-radius: 2rem; padding: 0.4rem 2rem;"><a href="${activationLink}">Verify now</a></button>
                   <br/>
-                  <p>You can also paste this url  <strong>${verificationLink}</strong> in the browser </p>
+                  <p>If the above button is not working, try copying and pasting <strong>${activationLink}</strong> into the address bar of your web browser </p>
                   <br/>
                   <br/>
                 </html>
@@ -100,14 +97,20 @@ exports.userSignupController = (req, res, next) => {
             };
             smtpTransport.sendMail(mailOptions, (error, info) => {
               if (error) {
-                const err = new Error(`Internal Server Error`);
-                err.status = 500;
-                next(err);
+                console.log('error-', error);
+                // * here delete the created account, if mail can't be sent
+                User.findByIdAndDelete(user._id)
+                  .then(() => {
+                    const err = new Error(`Internal Server Error`);
+                    err.status = 500;
+                    next(err);
+                  })
+                  .catch((err) => next(err));
               } else {
                 res.statusCode = 200;
                 res.setHeader('Content-Type', 'application/json');
                 res.json({
-                  message: `A verification email has been sent to ${user.email}.`,
+                  message: `A activation email has been sent to ${user.email}.`,
                 });
               }
             });
@@ -118,12 +121,79 @@ exports.userSignupController = (req, res, next) => {
   );
 };
 
-exports.userConfirmationController = (req, res, next) => {
-  Token.findOne({ token: req.query.token })
+exports.resendActivationLink = (req, res, next) => {
+  User.findOne({
+    email: req.query.email,
+    username: req.query.username,
+  }).then((user) => {
+    if (!user) {
+      const err = new Error(
+        `No user found with given detail, try with correct credentials.`
+      );
+      err.status = 404;
+      next(err);
+    } else {
+      // check it's verified or not
+      if (user.verified) {
+        const err = new Error(
+          `${user.username} is already verified, try logging in.`
+        );
+        err.status = 400;
+        next(err);
+      } else {
+        // now create token
+        Token.create({
+          userId: user._id,
+          token: crypto.randomBytes(16).toString('hex'),
+        })
+          .then((token) => {
+            const activationLink = `${req.headers.origin}/#/user/activate-account/${token.token}`;
+            let mailOptions = {
+              from: 'justchat0007@gmail.com',
+              to: user.email,
+              subject: 'Just Chat Account Activation',
+              html: `
+                    <html>
+                      <h3>Hello ${user.username}</h3>
+                      <p>Thanks for trying our chat application. You're just one step away to complete your registration.</p>
+                      <p>Click the following button to confirm and activate your new account</p>
+                      <p> <strong>Note:</strong> Link will automatically expire in 10 minutes.</p>
+                      <button style="border: 1px solid #c90bce; background-color: #c90bce; color: #fff; border-radius: 2rem; padding: 0.4rem 2rem;"><a href="${activationLink}">Verify now</a></button>
+                      <br/>
+                      <p>If the above button is not working, try copying and pasting <strong>${activationLink}</strong> into the address bar of your web browser </p>
+                      <br/>
+                      <br/>
+                    </html>
+                  `,
+            };
+            smtpTransport.sendMail(mailOptions, (error, info) => {
+              if (error) {
+                const err = new Error(`Internal Server Error`);
+                err.status = 500;
+                next(err);
+              } else {
+                res.statusCode = 200;
+                res.setHeader('Content-Type', 'application/json');
+                res.json({
+                  message: `A activation email has been sent to ${user.email}.`,
+                });
+              }
+            });
+          })
+          .catch((err) => next(err));
+      }
+    }
+  });
+};
+
+exports.userActivationController = (req, res, next) => {
+  Token.findOne({
+    token: req.query.token,
+  })
     .then((token) => {
       if (!token) {
         let error = new Error(
-          `Token is either expired or invalid, You can ask for new token through login page`
+          `Token is either expired or invalid, You can request for new token to activate your account`
         );
         error.status = 400;
         next(error);
@@ -141,18 +211,19 @@ exports.userConfirmationController = (req, res, next) => {
                 let error = new Error(`You're already verified, Please login.`);
                 error.status = 400;
                 next(error);
+              } else {
+                user.verified = true;
+                user
+                  .save()
+                  .then((user) => {
+                    res.statusCode = 200;
+                    res.setHeader('Content-Type', 'application/json');
+                    res.json({
+                      message: `${user.username} has been successfully verified.`,
+                    });
+                  })
+                  .catch((err) => next(err));
               }
-              user.verified = true;
-              user
-                .save()
-                .then((user) => {
-                  res.statusCode = 200;
-                  res.setHeader('Content-Type', 'application/json');
-                  res.json({
-                    message: `${user.username} has been successfully verified.`,
-                  });
-                })
-                .catch((err) => next(err));
             }
           })
           .catch((err) => next(err));
@@ -171,20 +242,20 @@ exports.userLoginController = (req, res, next) => {
       token: crypto.randomBytes(16).toString('hex'),
     })
       .then((token) => {
-        const verificationLink = `http://${req.headers.host}/user/verify-user/?token=${token.token}`;
+        const activationLink = `${req.headers.origin}/#/user/activate-account/${token.token}`;
         let mailOptions = {
-          from: 'no-reply@yourwebapplication.com',
-          to: req.user.email,
-          subject: 'Account Verification',
+          from: 'justchat0007@gmail.com',
+          to: user.email,
+          subject: 'Just Chat Account Activation',
           html: `
                 <html>
-                  <h3>Hello ${req.user.username}</h3>
-                  <p>Thanks for trying our chat application. You're just one step left to start enjoying our service.</p>
-                  <p>Please confirm your account by clicking here</p>
-                  <p> <strong>Note:</strong> Link will automatically expire in 10 minutes.</p>
-                  <button style="border: 1px solid #c90bce; background-color: #c90bce; color: #fff; border-radius: 2rem; padding: 0.4rem 2rem;"><a href="${verificationLink}">Verify now</a></button>
+                  <h3>Hello ${user.username}</h3>
+                  <p>Thanks for trying our chat application. You're just one step away to complete your registration.</p>
+                  <p>Click the following button to confirm and activate your new account</p>
+                  <p> <strong>Note:</strong> Link will automatically expire in 10 minute.</p>
+                  <button style="border: 1px solid #c90bce; background-color: #c90bce; color: #fff; border-radius: 2rem; padding: 0.4rem 2rem;"><a href="${activationLink}">Verify now</a></button>
                   <br/>
-                  <p>You can also paste this url  <strong>${verificationLink}</strong> in the browser </p>
+                  <p>If the above button is not working, try copying and pasting <strong>${activationLink}</strong> into the address bar of your web browser </p>
                   <br/>
                   <br/>
                 </html>
