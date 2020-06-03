@@ -7,7 +7,6 @@ const User = require('../models/user.model'); // import User Schema
 const Token = require('../models/token.model');
 
 const authenticate = require('../middlewares/authenticate');
-const helpers = require('../utils/helpers');
 
 // configure dotenv to access environment variables
 dotenv.config();
