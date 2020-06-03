@@ -1,0 +1,28 @@
+.activation-page .page-wrapper {
+  margin-top: 3rem;
+  flex-direction: column;
+  align-items: center;
+}
+
+.error-div {
+  padding: 1rem;
+  margin: 2rem;
+  background-color: #c90bce;
+  color: #fff;
+  border-radius: 1rem;
+}
+
+.error-msg {
+  font-size: 1.2rem;
+  padding: 1rem;
+}
+
+.link {
+  font-size: 1.2rem;
+  margin: 0.3rem 1rem;
+  padding: 0.5rem;
+}
+
+.btn-wrapper {
+  margin-top: 3rem;
+}
