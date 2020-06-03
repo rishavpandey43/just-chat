@@ -21,7 +21,16 @@ userRouter
     cors.corsWithOptions,
     userRouterController.userSignupController
   )
-  .get('/verify-user', userRouterController.userConfirmationController)
+  .get(
+    '/resend-activation-link',
+    cors.corsWithOptions,
+    userRouterController.resendActivationLink
+  )
+  .get(
+    '/activate-user',
+    cors.corsWithOptions,
+    userRouterController.userActivationController
+  )
   .post(
     '/login',
     cors.corsWithOptions,

@@ -14,6 +14,7 @@ import './app.css';
 // import components
 import SideBar from './components/SideBar/SideBar';
 import HomePage from './components/HomePage/HomePage';
+import ActivateAccount from './components/ActivateAccount/ActivateAccount';
 import Login from './components/Login/Login';
 import Signup from './components/Signup/Signup';
 import PrivateRoute from './components/PrivateRoute/PrivateRoute';
@@ -43,6 +44,11 @@ export default function MainApp(props) {
           <Router>
             <Switch>
               <Route exact path="/" component={() => <HomePage {...props} />} />
+              <Route
+                path="/user/activate-account/:token"
+                mainProps={{ ...props }}
+                component={(props) => <ActivateAccount {...props} />}
+              />
               <Route path="/login" component={() => <Login {...props} />} />
               <Route path="/signup" component={() => <Signup {...props} />} />
               <PrivateRoute
