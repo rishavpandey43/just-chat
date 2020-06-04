@@ -135,7 +135,7 @@ const Profile = (props) => {
           <div className="row">
             <div className="col-12 col-md-6">
               <div className="profile-detail">
-                <div className="name">
+                <div className="user-name">
                   <h3>{`${state.user.firstName} ${state.user.lastName} ${
                     state.user._id === props.auth.userId ? '(You)' : ''
                   }`}</h3>
@@ -277,33 +277,45 @@ const Profile = (props) => {
               <ul>
                 <li
                   className={`info-list ${
-                    state.user.contactNum ? 'd-block' : 'd-none'
+                    state.user.contactNum ? 'd-flex' : 'd-none'
                   }`}
                 >
-                  <span className="icon mr-3">
-                    <FiPhone className="fa-colored-icon" />
-                  </span>
-                  <span className="text">{state.user.contactNum}</span>
+                  <div className="icon-wrapper">
+                    <span className="mr-3">
+                      <FiPhone className="fa-colored-icon" />
+                    </span>
+                  </div>
+                  <div className="text-wrapper">
+                    <span className="">{state.user.contactNum}</span>
+                  </div>
                 </li>
                 <li
                   className={`info-list ${
-                    state.user.email ? 'd-block' : 'd-none'
+                    state.user.email ? 'd-flex' : 'd-none'
                   }`}
                 >
-                  <span className="icon mr-3">
-                    <FiMail className="fa-colored-icon" />
-                  </span>
-                  <span className="text">{state.user.email}</span>
+                  <div className="icon-wrapper">
+                    <span className="mr-3">
+                      <FiMail className="fa-colored-icon" />
+                    </span>
+                  </div>
+                  <div className="text-wrapper">
+                    <span className="">{state.user.email}</span>
+                  </div>
                 </li>
                 <li
                   className={`info-list ${
-                    state.user.address ? 'd-block' : 'd-none'
+                    state.user.address ? 'd-flex' : 'd-none'
                   }`}
                 >
-                  <span className="icon mr-3">
-                    <FaHome className="fa-colored-icon" />
-                  </span>
-                  <span className="text">{state.user.address}</span>
+                  <div className="icon-wrapper">
+                    <span className="mr-3">
+                      <FaHome className="fa-colored-icon" />
+                    </span>
+                  </div>
+                  <div className="text-wrapper">
+                    <span className="">{state.user.address}</span>
+                  </div>
                 </li>
               </ul>
             </div>
@@ -320,7 +332,7 @@ const Profile = (props) => {
   <form>
     <div className="search-bar">
       <div className="search-input">
-        <input type="text" className="input" placeholder="search" required />
+        <input type="text-wrapper" className="input" placeholder="search" required />
       </div>
       <div className="search-btn">
         <button className="btn">

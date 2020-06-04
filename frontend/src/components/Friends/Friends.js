@@ -76,19 +76,23 @@ const Friends = (props) => {
           <div className="row">
             {state.friendList.list.length > 0 ? (
               state.friendList.list.map((friend, index) => (
-                <div className="col-6" key={index}>
+                <div className="col-12 col-sm-12 col-lg-6" key={index}>
                   <div className="friend-wrapper">
-                    <div className="img flex-grow-1">
-                      <img
-                        src={require('../../assets/images/profile_pic.png')}
-                        alt=""
-                        width="100px"
-                      />
+                    <div className="">
+                      <div className="img">
+                        <img
+                          src={require('../../assets/images/profile_pic.png')}
+                          alt=""
+                          width="100%"
+                        />
+                      </div>
                     </div>
-                    <div className="name flex-grow-1">
-                      <Link to={`/profile/${friend.username}`}>
-                        <span>{`${friend.firstName} ${friend.lastName}`}</span>
-                      </Link>
+                    <div className="">
+                      <div className="name">
+                        <Link to={`/profile/${friend.username}`}>
+                          <span>{`${friend.firstName} ${friend.lastName}`}</span>
+                        </Link>
+                      </div>
                     </div>
                     {/* <div className="dropdown option flex-grow-1">
                     <div

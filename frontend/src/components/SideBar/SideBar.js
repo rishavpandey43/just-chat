@@ -15,29 +15,49 @@ import './sideBar.css';
 
 const SideBar = (props) => {
   const [state, setState] = useState({
+    displayMobileNav: false,
     displaySettingOption: false,
   });
+
+  const toggleSettingMenu = () => {
+    setState({
+      ...state,
+      displaySettingOption: !state.displaySettingOption,
+    });
+  };
+
+  const toggleMobileNav = () => {
+    setState({
+      ...state,
+      displayMobileNav: !state.displayMobileNav,
+    });
+  };
+
   return (
     <aside
-      className={`${
-        props.auth.isAuthenticated ? 'aside d-block' : 'aside d-none'
+      className={`aside ${state.displayMobileNav ? 'open-sidebar' : ''} ${
+        props.auth.isAuthenticated ? 'd-block' : 'd-none'
       }`}
     >
       {props.user.isFetching ? (
-        <div className="loading-wrapper text-center m-5">
+        <div className="loading-wrapper text-center mt-5">
           <Loading isTrue={props.user.isFetching} />
         </div>
       ) : !props.user.user ? (
         ''
       ) : (
         <div className="sidebar-wrapper">
-          <div className="sidebar-btn">
-            <button className="btn">
+          <div className="sidebar-toggle-btn d-none">
+            <button className="btn" onClick={toggleMobileNav}>
               <GiHamburgerMenu />
             </button>
           </div>
-          <div>
-            <div className="profile-detail">
+          <div className="sidebar-nav-wrapper">
+            <div
+              className={`profile-detail ${
+                state.displayMobileNav ? 'd-block' : ''
+              }`}
+            >
               <div className="image">
                 <img
                   src={require('../../assets/images/user.png')}
@@ -49,67 +69,122 @@ const SideBar = (props) => {
                 <span>{`${props.user.user.firstName} ${props.user.user.lastName}`}</span>
               </div>
             </div>
-            <ul className="sidebar-list">
-              <li className="list">
-                <Link to={`/profile/${props.user.user.username}`}>
+            <ul className="sidebar-nav">
+              <li className="nav-item">
+                <Link
+                  className="link"
+                  onClick={() => {
+                    if (state.displayMobileNav) {
+                      setState({ ...state, displayMobileNav: false });
+                    }
+                  }}
+                  to={`/profile/${props.user.user.username}`}
+                >
                   <span className="icon">
                     <AiOutlineProfile />
                   </span>
-                  <span className="content">Profile</span>
+                  <span
+                    className={`content ${
+                      state.displayMobileNav ? 'd-inline' : ''
+                    }`}
+                  >
+                    Profile
+                  </span>
                 </Link>
               </li>
-              <li className="list">
-                <Link to={`/${props.auth.username}`}>
+              <li className="nav-item">
+                <Link
+                  className="link"
+                  onClick={() => {
+                    if (state.displayMobileNav) {
+                      setState({ ...state, displayMobileNav: false });
+                    }
+                  }}
+                  to={`/${props.auth.username}`}
+                >
                   <span className="icon">
                     <IoMdNotificationsOutline />
                   </span>
-                  <span className="content">Notifications</span>
+                  <span
+                    className={`content ${
+                      state.displayMobileNav ? 'd-inline' : ''
+                    }`}
+                  >
+                    Notifications
+                  </span>
                 </Link>
               </li>
-              <li className="list">
-                <Link to="/friends">
+              <li className="nav-item">
+                <Link
+                  className="link"
+                  onClick={() => {
+                    if (state.displayMobileNav) {
+                      setState({ ...state, displayMobileNav: false });
+                    }
+                  }}
+                  to="/friends"
+                >
                   <span className="icon">
                     <FiUsers />
                   </span>
-                  <span className="content">Friends</span>
+                  <span
+                    className={`content ${
+                      state.displayMobileNav ? 'd-inline' : ''
+                    }`}
+                  >
+                    Friends
+                  </span>
                 </Link>
               </li>
-              <li className="list">
-                <Link to="/">
+              <li className="nav-item">
+                <Link
+                  className="link"
+                  onClick={() => {
+                    if (state.displayMobileNav) {
+                      setState({ ...state, displayMobileNav: false });
+                    }
+                  }}
+                  to="/"
+                >
                   <span className="icon">
                     <TiMessages />
                   </span>
-                  <span className="content">Messages</span>
+                  <span
+                    className={`content ${
+                      state.displayMobileNav ? 'd-inline' : ''
+                    }`}
+                  >
+                    Messages
+                  </span>
                 </Link>
               </li>
-              <li className="list">
+              <li className="nav-item">
                 <div
                   tabIndex="0"
                   onKeyPress={(event) => {
-                    console.log(event.which, event.keycode);
                     if (event.which === 13) {
-                      let tempState = { ...state };
-                      tempState.displaySettingOption = tempState.displaySettingOption
-                        ? false
-                        : true;
-                      setState(tempState);
+                      toggleSettingMenu();
                     } else return;
                   }}
                   onClick={() => {
-                    let tempState = { ...state };
-                    tempState.displaySettingOption = tempState.displaySettingOption
-                      ? false
-                      : true;
-                    setState(tempState);
+                    toggleSettingMenu();
                   }}
                 >
                   <span className="icon">
                     <AiOutlineSetting />
                   </span>
-                  <span className="content">
+                  <span
+                    className={`content ${
+                      state.displayMobileNav ? 'd-inline' : ''
+                    }`}
+                  >
                     <span>Setting</span>
                   </span>
-                  <span className="pl-4">
+                  <span
+                    className={`pl-4 content ${
+                      state.displayMobileNav ? 'd-inline' : ''
+                    }`}
+                  >
                     <FaAngleRight
                       className={`${
                         state.displaySettingOption ? 'rotate-90' : ''
@@ -123,37 +198,82 @@ const SideBar = (props) => {
                   state.displaySettingOption ? 'd-block' : 'd-none'
                 }`}
               >
-                <ul className="sidebar-list">
-                  <li className="list">
-                    <span className="icon">
-                      <FaEdit />
-                    </span>
-                    <span className="content">
-                      <Link to="/change-password">Change Password</Link>
-                    </span>
+                <ul className="sidebar-nav">
+                  <li className="nav-item">
+                    <Link
+                      className="link"
+                      onClick={() => {
+                        setState({
+                          displayMobileNav: false,
+                          displaySettingOption: false,
+                        });
+                      }}
+                      to="/change-password"
+                    >
+                      <span className="icon">
+                        <FaEdit />
+                      </span>
+                      <span
+                        className={`content ${
+                          state.displayMobileNav ? 'd-inline' : ''
+                        }`}
+                      >
+                        Change Password
+                      </span>
+                    </Link>
                   </li>
-                  <li className="list">
-                    <span className="icon">
-                      <MdUpdate />
-                    </span>
-                    <span className="content">
-                      <Link to="/update-profile">Update Profile</Link>
-                    </span>
+                  <li className="nav-item">
+                    <Link
+                      className="link"
+                      onClick={() => {
+                        setState({
+                          displayMobileNav: false,
+                          displaySettingOption: false,
+                        });
+                      }}
+                      to="/update-profile"
+                    >
+                      <span className="icon">
+                        <MdUpdate />
+                      </span>
+                      <span
+                        className={`content ${
+                          state.displayMobileNav ? 'd-inline' : ''
+                        }`}
+                      >
+                        Update Profile
+                      </span>
+                    </Link>
+                  </li>
+                  <li className="nav-item">
+                    <div
+                      tabIndex="0"
+                      onClick={() => {
+                        props.logoutFetch();
+                        toggleMobileNav();
+                        toggleSettingMenu();
+                      }}
+                      onKeyPress={(event) => {
+                        if (event.which === 13) {
+                          props.logoutFetch();
+                        } else return;
+                      }}
+                    >
+                      <span className="icon">
+                        <FiLogOut />
+                      </span>
+                      <span
+                        className={`content ${
+                          state.displayMobileNav ? 'd-inline' : ''
+                        }`}
+                      >
+                        Logout
+                      </span>
+                    </div>
                   </li>
                 </ul>
               </div>
             </ul>
-          </div>
-
-          <div className="logout">
-            <button
-              role="button"
-              tabIndex="0"
-              onClick={props.logoutFetch}
-              className="logout-btn btn"
-            >
-              <FiLogOut />
-            </button>
           </div>
         </div>
       )}
