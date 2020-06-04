@@ -50,6 +50,8 @@
 .sidebar-wrapper .sidebar-nav .nav-item .link {
   display: block;
   cursor: pointer;
+  margin: 0;
+  padding: 0;
 }
 
 .sidebar-wrapper .sidebar-nav .icon {
