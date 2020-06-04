@@ -1,17 +1,18 @@
 body {
   position: relative;
+  /* word-break: break-all; */
 }
 
 .main-wrapper {
+  position: relative;
   display: flex;
+  flex-direction: row;
+  max-height: 100vh !important;
 }
 
 .sidebar-active {
   padding: 1rem 2rem;
-  width: calc(100vw - 200px);
-  position: absolute;
-  top: 0px;
-  left: 180px;
+  width: 100%;
   overflow-x: auto;
 }
 
@@ -128,4 +129,42 @@ input[type='number']::-webkit-outer-spin-button {
   border: 1px solid #eee;
   box-shadow: 10px 25px 20px -21px rgba(0, 0, 0, 0.2);
   font-size: 1.2em;
+}
+
+@media only screen and (max-width: 768px) {
+  .main-theme-btn {
+    padding: 0.4rem 1rem;
+  }
+  .sidebar-active,
+  .main-page-card {
+    padding: 1rem;
+  }
+}
+
+@media only screen and (max-width: 300px) {
+  .sidebar-active,
+  .main-page-card {
+    padding: 0.5rem;
+  }
+}
+
+::-webkit-scrollbar {
+  width: 3px;
+  background: #ededed;
+}
+@media only screen and (max-width: 768px) {
+  ::-webkit-scrollbar {
+    width: 0px;
+  }
+}
+
+::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0);
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0);
+}
+
+::-webkit-scrollbar-thumb {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
+  background: #c90bce;
 }

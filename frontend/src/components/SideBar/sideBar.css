@@ -1,30 +1,15 @@
 .aside {
   background-color: #31353d;
   color: #fff;
-  width: 180px;
-  position: fixed;
+  width: 300px;
+  position: relative;
   height: 100vh;
+  z-index: 100;
+  overflow-x: auto;
 }
 
 .sidebar-wrapper {
-  position: relative;
   font-size: 1.2em;
-  height: calc(100vh - 16px);
-}
-
-.logout {
-  position: absolute;
-  bottom: 0px;
-  left: 0px;
-  display: flex;
-  width: 100%;
-  flex-direction: column;
-  justify-content: center;
-}
-
-.logout .logout-btn {
-  margin: auto;
-  padding: 1rem;
 }
 
 .sidebar-wrapper .profile-detail {
@@ -42,9 +27,14 @@
   padding: 0px;
 }
 
-.sidebar-wrapper .sidebar-btn {
-  width: 100%;
-  display: none;
+.sidebar-wrapper .sidebar-toggle-btn {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+}
+
+.sidebar-nav-wrapper {
+  margin-top: 4rem;
 }
 
 .sidebar-wrapper .btn {
@@ -52,29 +42,68 @@
   margin-left: auto;
 }
 
-.sidebar-wrapper .sidebar-list .list {
+.sidebar-wrapper .sidebar-nav .nav-item {
   margin: 1.5rem 0rem;
   cursor: pointer;
 }
 
-.sidebar-wrapper .sidebar-list .list a {
+.sidebar-wrapper .sidebar-nav .nav-item .link {
+  display: block;
   cursor: pointer;
-  padding: 0.5rem 0.2rem;
 }
 
-.sidebar-wrapper .sidebar-list .icon {
+.sidebar-wrapper .sidebar-nav .icon {
   padding: 0rem 1rem;
 }
 
-.setting-option .sidebar-list .list {
+.setting-option .sidebar-nav .nav-item {
   padding: 0.2rem 0.2rem;
   margin: 0.5rem 0rem;
 }
 
 .sidebar-wrapper .setting-option .content {
   font-size: 0.7em !important;
+  padding: 0.5rem 0.2rem;
 }
 
 .rotate-90 {
   transform: rotate(90deg);
+}
+
+.logout {
+  position: absolute;
+  bottom: 0px;
+  left: 0px;
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.logout .logout-btn {
+  margin: auto;
+  padding: 1rem;
+}
+
+@media only screen and (max-width: 768px) {
+  .open-sidebar {
+    position: absolute;
+    top: 0px;
+    width: 70% !important;
+  }
+  .aside {
+    width: 60px;
+  }
+
+  .sidebar-toggle-btn {
+    display: block !important;
+  }
+
+  .sidebar-wrapper .profile-detail {
+    display: none;
+  }
+
+  .nav-item .content {
+    display: none;
+  }
 }

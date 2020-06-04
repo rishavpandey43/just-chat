@@ -83,7 +83,7 @@ exports.userSignupController = (req, res, next) => {
               subject: 'Just Chat Account activation',
               html: `
                 <html>
-                  <h3>Hello ${user.username}</h3>
+                  <h3>Hello ${user.username},</h3>
                   <p>Thanks for trying our chat application. You're just one step away to complete your registration.</p>
                   <p>Click the following button to confirm and activate your new account</p>
                   <p> <strong>Note:</strong> Link will automatically expire in 10 minutes.</p>
@@ -110,7 +110,7 @@ exports.userSignupController = (req, res, next) => {
                 res.statusCode = 200;
                 res.setHeader('Content-Type', 'application/json');
                 res.json({
-                  message: `A activation email has been sent to ${user.email}.`,
+                  message: `An activation email has been sent to ${user.email}.`,
                 });
               }
             });
@@ -154,11 +154,11 @@ exports.resendActivationLink = (req, res, next) => {
               subject: 'Just Chat Account Activation',
               html: `
                     <html>
-                      <h3>Hello ${user.username}</h3>
+                      <h3>Hello ${user.username},</h3>
                       <p>Thanks for trying our chat application. You're just one step away to complete your registration.</p>
-                      <p>Click the following button to confirm and activate your new account</p>
+                      <p>Click the following button to confirm and activate your new account.</p>
                       <p> <strong>Note:</strong> Link will automatically expire in 10 minutes.</p>
-                      <button style="border: 1px solid #c90bce; background-color: #c90bce; color: #fff; border-radius: 2rem; padding: 0.4rem 2rem;"><a href="${activationLink}">Verify now</a></button>
+                      <button style="border: 1px solid #c90bce; background-color: #c90bce; color: #fff; border-radius: 2rem; padding: 0.6rem 2rem;"><a href="${activationLink}">Verify now</a></button>
                       <br/>
                       <p>If the above button is not working, try copying and pasting <strong>${activationLink}</strong> into the address bar of your web browser </p>
                       <br/>
@@ -175,7 +175,7 @@ exports.resendActivationLink = (req, res, next) => {
                 res.statusCode = 200;
                 res.setHeader('Content-Type', 'application/json');
                 res.json({
-                  message: `A activation email has been sent to ${user.email}.`,
+                  message: `An activation email has been sent to ${user.email}.`,
                 });
               }
             });
@@ -245,11 +245,11 @@ exports.userLoginController = (req, res, next) => {
         const activationLink = `${req.headers.origin}/#/user/activate-account/${token.token}`;
         let mailOptions = {
           from: 'justchat0007@gmail.com',
-          to: user.email,
+          to: req.user.email,
           subject: 'Just Chat Account Activation',
           html: `
                 <html>
-                  <h3>Hello ${user.username}</h3>
+                  <h3>Hello ${req.user.username},</h3>
                   <p>Thanks for trying our chat application. You're just one step away to complete your registration.</p>
                   <p>Click the following button to confirm and activate your new account</p>
                   <p> <strong>Note:</strong> Link will automatically expire in 10 minute.</p>

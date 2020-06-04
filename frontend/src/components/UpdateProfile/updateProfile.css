@@ -1,5 +1,5 @@
 .update-box {
-  width: 50%;
+  width: 60%;
 }
 
 textarea.form-control {
@@ -25,4 +25,16 @@ textarea.form-control {
   border: none;
   box-shadow: none;
   border-bottom: 1px solid #c90bce;
+}
+
+@media only screen and (max-width: 1000px) {
+  .update-box {
+    width: 70%;
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  .update-box {
+    width: 100%;
+  }
 }
