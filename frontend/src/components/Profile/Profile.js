@@ -134,7 +134,7 @@ const Profile = (props) => {
         <div className="general-info-wrapper">
           <div className="row">
             <div className="col-12 col-md-6">
-              <div className="profile-detail">
+              <div className="profile-detail text-center">
                 <div className="user-name">
                   <h3>{`${state.user.firstName} ${state.user.lastName} ${
                     state.user._id === props.auth.userId ? '(You)' : ''
@@ -216,13 +216,13 @@ const Profile = (props) => {
                       (friend) => friend._id === state.user._id
                     )[0] ? (
                       <div className="row mt-4">
-                        <div className="col-6">
-                          <div className="send-message">
+                        <div className="col-12 col-sm-12 col-md-12 col-lg-6 d-flex align-items-center justify-content-center">
+                          <div className="send-message mt-3">
                             <button className="btn">Send Message</button>
                           </div>
                         </div>
-                        <div className="col-6">
-                          <div className="unfriend">
+                        <div className="col-12 col-sm-12 col-md-12 col-lg-6 d-flex align-items-center justify-content-center">
+                          <div className="unfriend mt-3">
                             <button
                               className="btn"
                               onClick={_friendRequestAction.bind(
@@ -242,7 +242,7 @@ const Profile = (props) => {
                 )}
               </div>
             </div>
-            <div className="col-12 col-md-6">
+            <div className="col-12 col-md-6 d-flex align-items-center">
               <div className="profile-photo">
                 <img
                   src={require('../../assets/images/profile_pic.png')}

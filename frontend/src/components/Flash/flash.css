@@ -1,10 +1,10 @@
 .flash-wrapper {
   position: fixed;
-  top: 10vh;
+  bottom: 10vh;
   right: 2%;
   min-width: 20%;
   max-width: 40%;
-  height: 50px;
+  min-height: 50px;
   border: 1px solid #fafafa;
   border-radius: 10px;
   z-index: 100;
@@ -22,4 +22,10 @@
   align-items: center;
   justify-self: center;
   height: 100%;
+}
+
+@media only screen and (max-width: 768px) {
+  .flash-wrapper {
+    max-width: 80%;
+  }
 }

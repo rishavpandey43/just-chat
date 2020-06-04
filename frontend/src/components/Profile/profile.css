@@ -86,4 +86,7 @@
   .personal-info-wrapper {
     width: 100%;
   }
+  .general-info-wrapper .row {
+    flex-direction: column-reverse;
+  }
 }
