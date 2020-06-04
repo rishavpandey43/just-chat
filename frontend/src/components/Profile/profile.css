@@ -62,5 +62,28 @@
 }
 
 .personal-info .info-list {
+  display: flex;
+  flex-direction: row;
   padding: 1rem 1rem;
+}
+
+.personal-info .info-list > div {
+  flex: 1;
+}
+
+.text-wrapper {
+  flex: 10 !important;
+  word-break: break-all;
+}
+
+@media only screen and (max-width: 1200px) {
+  .personal-info-wrapper {
+    width: 100%;
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  .personal-info-wrapper {
+    width: 100%;
+  }
 }
