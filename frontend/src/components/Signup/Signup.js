@@ -149,7 +149,7 @@ class Signup extends Component {
         <div className="container">
           <div className="page-wrapper">
             <div className="row">
-              <div className="col-12 col-sm-6 grid-sec">
+              <div className="col-12 col-sm-12 col-md-6 grid-sec">
                 <div className="img-container">
                   <img
                     src={require('../../assets/images/sign_up.png')}
@@ -158,7 +158,7 @@ class Signup extends Component {
                   />
                 </div>
               </div>
-              <div className="col-12 col-sm-6 grid-sec">
+              <div className="col-12 col-sm-12 col-md-6 grid-sec">
                 <div className="card">
                   <div className="card-body">
                     <div className="heading">

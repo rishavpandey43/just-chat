@@ -39,7 +39,7 @@ const Login = (props) => {
       <div className="container">
         <div className="page-wrapper">
           <div className="row">
-            <div className="col-12 col-sm-6 grid-sec">
+            <div className="col-12 col-sm-12 col-md-6 grid-sec">
               <div className="img-container">
                 <img
                   src={require('../../assets/images/sign_in.png')}
@@ -48,7 +48,7 @@ const Login = (props) => {
                 />
               </div>
             </div>
-            <div className="col-12 col-sm-6 grid-sec">
+            <div className="col-12 col-sm-12 col-md-6 grid-sec">
               <div className="card">
                 <div className="card-body">
                   <div className="heading">
