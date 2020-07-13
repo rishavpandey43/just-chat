@@ -10,7 +10,7 @@ const User = require('../models/user.model');
 // configure dotenv to access environment variables
 dotenv.config();
 
-const JWTSecretKey = process.env.JWT_SECRET_KEY;
+const JWTSecretKey = process.env.JWT_SECRET_KEY_1;
 
 passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
@@ -18,8 +18,8 @@ passport.deserializeUser(User.deserializeUser());
 /* passport-local-mongoose provides authenticate(),serializeUser()
 deserializeUser() method */
 
-exports.getToken = function (user) {
-  return jwt.sign(user, JWTSecretKey, { expiresIn: 864000 });
+exports.getAuthToken = function (user) {
+  return jwt.sign(user, JWTSecretKey, { expiresIn: 604800 });
 };
 
 var opts = {};
@@ -30,7 +30,6 @@ exports.jwtPassport = passport.use(
   new JwtStrategy(opts, (jwt_payload, done) => {
     User.findOne({ _id: jwt_payload._id }, (err, user) => {
       if (err) {
-        console.log(err);
         return done(err, false);
       } else if (user) {
         return done(null, user);

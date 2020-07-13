@@ -120,20 +120,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(morgan('tiny'));
 app.use(cookieParser(process.env.COOKIE_SECRET_KEY));
-app.use(
-  session({
-    name: 'SESSION_ID',
-    resave: false,
-    saveUninitialized: false,
-    secret: process.env.SESSION_SECRET,
-    store: new fileStore({
-      logFn: function () {},
-    }) /* { logFn: function() {} } */,
-  })
-);
 
 app.use(passport.initialize());
-app.use(passport.session());
 
 app.use('/user', userRouter);
 app.use('/group', groupRouter);

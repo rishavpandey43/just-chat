@@ -1,12 +1,13 @@
 // * Import required modules/dependencies
-import axios from "axios";
+import axios from 'axios';
 
 // * Import all store related stuffs
-import * as actionTypes from "../types/actionTypes";
+import * as actionTypes from '../types/actionTypes';
+import { logoutFetch } from './AuthActions';
 
 // * Import utilites
-import displayFlash from "../../../utils/flashEvent";
-import { baseUrl } from "../../../utils/constant";
+import displayFlash from '../../../utils/flashEvent';
+import { baseUrl, storageAuthTokenName } from '../../../utils/constant';
 
 export const getuserRequest = () => {
   return {
@@ -34,42 +35,47 @@ export const getuserFetch = () => (dispatch) => {
   dispatch(getuserRequest());
 
   axios
-    .get(baseUrl + "/user/get-user-detail", {
+    .get(baseUrl + '/user/get-user-detail', {
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
         Authorization: `Bearer ${
-          localStorage.getItem("chat_auth_token") ||
-          sessionStorage.getItem("chat_auth_token")
+          localStorage.getItem(storageAuthTokenName) ||
+          sessionStorage.getItem(storageAuthTokenName)
         }`,
-      },
-      params: {
-        username: "",
       },
     })
     .then((response) => {
       dispatch(getuserSuccess(response));
     })
     .catch((error) => {
-      dispatch(
-        getuserFailure({
-          message: error.response
-            ? error.response.statusText || error.response.data.message
-            : "Unable to connect to server, please try again later",
-          status: error.response ? error.response.status || 503 : 503,
-        })
-      );
-      displayFlash.emit("get-message", {
-        message: `${
-          error.response
-            ? error.response.statusText || error.response.data.message
-            : "Unable to connect to server, please try again later"
-        }`,
-        type: "danger",
-      });
+      if (
+        error.response &&
+        (error.response.status === 401 ||
+          error.response.statusText === 'Unauthorized')
+      ) {
+        dispatch(logoutFetch());
+      } else {
+        dispatch(
+          getuserFailure({
+            message: error.response
+              ? error.response.statusText || error.response.data.message
+              : 'Unable to connect to server, please try again later',
+            status: error.response ? error.response.status || 503 : 503,
+          })
+        );
+        displayFlash.emit('get-message', {
+          message: `${
+            error.response
+              ? error.response.statusText || error.response.data.message
+              : 'Unable to connect to server, please try again later'
+          }`,
+          type: 'danger',
+        });
+      }
     });
 };
 
-export const removeuser = () => {
+export const removeUser = () => {
   return {
     type: actionTypes.REMOVE_USER_DETAIL,
   };
@@ -105,8 +111,8 @@ export const removeuser = () => {
 //       headers: {
 //         "Content-Type": "application/json",
 //         Authorization: `Bearer ${
-//           localStorage.getItem("chat_auth_token") ||
-//           sessionStorage.getItem("chat_auth_token")
+//           localStorage.getItem(storageAuthTokenName) ||
+//           sessionStorage.getItem(storageAuthTokenName)
 //         }`,
 //       },
 //     })

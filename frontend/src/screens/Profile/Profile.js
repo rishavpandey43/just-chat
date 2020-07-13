@@ -4,7 +4,7 @@ import axios from 'axios';
 import { FaHome, FaUser } from 'react-icons/fa';
 import { FiPhone, FiMail } from 'react-icons/fi';
 
-import Loading from '../Loading/Loading';
+import Loading from '../../components/Loading/Loading';
 
 import './profile.css';
 
@@ -30,7 +30,7 @@ const Profile = (props) => {
           .get(baseUrl + '/user/get-user-detail', {
             headers: {
               'Content-Type': 'application/json',
-              Authorization: `Bearer ${props.auth.token}`,
+              Authorization: `Bearer ${props.auth.authToken}`,
             },
             params: {
               username: `${props.match.params.username}`,
@@ -42,12 +42,20 @@ const Profile = (props) => {
             setState({ ...tempState });
           })
           .catch((error) => {
-            tempState.user = null;
-            tempState.errMessage = error.response
-              ? error.response.data.errMessage || error.response.statusText
-              : 'Some error occured, please try again';
-            tempState.isFetching = false;
-            setState({ ...tempState });
+            if (
+              error.response &&
+              (error.response.status === 401 ||
+                error.response.statusText === 'Unauthorized')
+            ) {
+              props.logoutFetch();
+            } else {
+              tempState.user = null;
+              tempState.errMessage = error.response
+                ? error.response.data.errMessage || error.response.statusText
+                : 'Some error occured, please try again';
+              tempState.isFetching = false;
+              setState({ ...tempState });
+            }
           });
       } else {
         tempState.user = props.user.user ? { ...props.user.user } : null;
@@ -67,7 +75,7 @@ const Profile = (props) => {
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${props.auth.token}`,
+            Authorization: `Bearer ${props.auth.authToken}`,
           },
         }
       )
@@ -82,17 +90,25 @@ const Profile = (props) => {
         });
       })
       .catch((error) => {
-        tempState.errMessage = error.response
-          ? error.response.data.errMessage || error.response.statusText
-          : 'Some error occured, please try again';
-        tempState[loading] = false;
-        setState({ ...tempState });
-        displayFlash.emit('get-message', {
-          message: error.response
+        if (
+          error.response &&
+          (error.response.status === 401 ||
+            error.response.statusText === 'Unauthorized')
+        ) {
+          props.logoutFetch();
+        } else {
+          tempState.errMessage = error.response
             ? error.response.data.errMessage || error.response.statusText
-            : 'Some error occured, please try again',
-          type: 'error',
-        });
+            : 'Some error occured, please try again';
+          tempState[loading] = false;
+          setState({ ...tempState });
+          displayFlash.emit('get-message', {
+            message: error.response
+              ? error.response.data.errMessage || error.response.statusText
+              : 'Some error occured, please try again',
+            type: 'error',
+          });
+        }
       });
   };
 
@@ -100,24 +116,7 @@ const Profile = (props) => {
     <div className="loading-wrapper text-center m-5">
       <Loading isTrue={props.user.isFetching || state.isFetching} />
     </div>
-  ) : props.user.responseStatus === 503 ? (
-    <div className="profile-wrapper">
-      <div className="main-wrapper-error">
-        <img
-          src={require('../../assets/images/server_down.png')}
-          alt="not found"
-          width="100%"
-        />
-        <h3 className="text-center">{state.errMessage}</h3>
-        <button
-          className="main-theme-btn"
-          onClick={props.getuserFetch.bind(null)}
-        >
-          Refresh
-        </button>
-      </div>
-    </div>
-  ) : !state.user ? (
+  ) : !state.user || state.errMessage ? (
     <div className="profile-wrapper">
       <div className="main-wrapper-error">
         <img

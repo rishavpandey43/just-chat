@@ -4,7 +4,7 @@ import { IoMdOptions } from 'react-icons/io';
 
 import './friends.css';
 
-import Loading from '../Loading/Loading';
+import Loading from '../../components/Loading/Loading';
 
 const Friends = (props) => {
   const [state, setState] = useState({
