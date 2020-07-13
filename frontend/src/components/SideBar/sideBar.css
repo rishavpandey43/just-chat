@@ -91,7 +91,7 @@
   .open-sidebar {
     position: absolute;
     top: 0px;
-    width: 70% !important;
+    width: 200px !important;
   }
   .aside {
     width: 60px;

@@ -1,9 +1,9 @@
-import React, { useEffect } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect } from 'react';
+import { Link } from 'react-router-dom';
 
-import "./homepage.css";
+import './homepage.css';
 
-import Loading from "../Loading/Loading";
+import Loading from '../../components/Loading/Loading';
 
 const HomePage = (props) => {
   useEffect(() => {
@@ -20,7 +20,7 @@ const HomePage = (props) => {
         <Loading isTrue={props.user.isLoading} />
       </div>
     ) : (
-      ""
+      ''
     )
   ) : (
     <div className="home-page">
@@ -30,7 +30,7 @@ const HomePage = (props) => {
             <div className="col-12 col-sm-6 grid-sec">
               <div className="img-container">
                 <img
-                  src={require("../../assets/images/group_chat_img.png")}
+                  src={require('../../assets/images/group_chat_img.png')}
                   alt="main-illustrator"
                   width="100%"
                 />

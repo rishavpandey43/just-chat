@@ -13,15 +13,15 @@ import './app.css';
 
 // import components
 import SideBar from './components/SideBar/SideBar';
-import HomePage from './components/HomePage/HomePage';
-import ActivateAccount from './components/ActivateAccount/ActivateAccount';
-import Login from './components/Login/Login';
-import Signup from './components/Signup/Signup';
+import HomePage from './screens/HomePage/HomePage';
+import ActivateAccount from './screens/ActivateAccount/ActivateAccount';
+import Login from './screens/Login/Login';
+import Signup from './screens/Signup/Signup';
 import PrivateRoute from './components/PrivateRoute/PrivateRoute';
-import Profile from './components/Profile/Profile';
-import Friends from './components/Friends/Friends';
-import ChangePassword from './components/ChangePassword/ChangePassword';
-import UpdateProfile from './components/UpdateProfile/UpdateProfile';
+import Profile from './screens/Profile/Profile';
+import Friends from './screens/Friends/Friends';
+import ChangePassword from './screens/ChangePassword/ChangePassword';
+import UpdateProfile from './screens/UpdateProfile/UpdateProfile';
 
 import Flash from './components/Flash/Flash';
 

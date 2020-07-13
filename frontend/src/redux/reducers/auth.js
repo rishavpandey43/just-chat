@@ -1,4 +1,6 @@
-import * as actionTypes from "../actions/types/actionTypes";
+import * as actionTypes from '../actions/types/actionTypes';
+
+import { storageAuthTokenName, storageUserIdName } from '../../utils/constant';
 
 // The auth reducer. The starting state sets authentication
 // based on a token being in local storage. In a real app,
@@ -7,19 +9,19 @@ import * as actionTypes from "../actions/types/actionTypes";
 const initialState = {
   isLoading: false,
   isAuthenticated:
-    localStorage.getItem("chat_auth_token") ||
-    sessionStorage.getItem("chat_auth_token")
+    localStorage.getItem(storageAuthTokenName) ||
+    sessionStorage.getItem(storageAuthTokenName)
       ? true
       : false,
   errMessage: null,
   successMessage: null,
-  token:
-    localStorage.getItem("chat_auth_token") ||
-    sessionStorage.getItem("chat_auth_token") ||
+  authToken:
+    localStorage.getItem(storageAuthTokenName) ||
+    sessionStorage.getItem(storageAuthTokenName) ||
     null,
   userId:
-    localStorage.getItem("chat_auth_userId") ||
-    sessionStorage.getItem("chat_auth_userId") ||
+    localStorage.getItem(storageUserIdName) ||
+    sessionStorage.getItem(storageUserIdName) ||
     null,
 };
 
@@ -36,9 +38,9 @@ const auth = (state = initialState, action) => {
         ...state,
         isLoading: false,
         isAuthenticated: true,
-        errMessage: "",
+        errMessage: '',
         successMessage: action.message,
-        token: action.token,
+        authToken: action.authToken,
         userId: action.userId,
       };
     case actionTypes.LOGIN_FAILURE:
@@ -58,18 +60,18 @@ const auth = (state = initialState, action) => {
         ...state,
         isLoading: false,
         isAuthenticated: false,
-        errMessage: "",
+        errMessage: '',
         successMessage: action.message,
-        token: null,
+        authToken: null,
         userId: null,
-        username: "",
+        username: '',
       };
     case actionTypes.LOGOUT_FAILURE:
       return {
         ...state,
         isLoading: false,
         errMessage: action.message,
-        successMessage: "",
+        successMessage: '',
       };
     default:
       return state;
