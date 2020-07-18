@@ -3,12 +3,11 @@ import axios from 'axios';
 
 import displayFlash from '../../utils/flashEvent';
 
-import Loading from '../Loading/Loading';
+import Loading from '../../components/Loading/Loading';
 
 import './changePassword.css';
 
-const baseUrl = process.env.REACT_APP_API_BASE_URL;
-
+import { baseUrl } from '../../utils/constant';
 const ChangePassword = (props) => {
   const [state, setState] = useState({
     currentPassword: '',
@@ -37,10 +36,7 @@ const ChangePassword = (props) => {
       .put(baseUrl + 'user/change-password', JSON.stringify(state), {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${
-            localStorage.getItem('chat_auth_token') ||
-            sessionStorage.getItem('chat_auth_token')
-          }`,
+          Authorization: `Bearer ${this.props.auth.authToken}`,
         },
         withCredentials: true,
       })

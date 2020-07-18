@@ -2,7 +2,7 @@ import React, { useState, useEffect, Component } from 'react';
 import axios from 'axios';
 import 'react-datepicker/dist/react-datepicker.css';
 
-import Loading from '../Loading/Loading';
+import Loading from '../../components/Loading/Loading';
 
 import './updateProfile.css';
 
@@ -42,10 +42,7 @@ const UpdateProfile = (props) => {
       .put(baseUrl + '/user/update-user-detail', JSON.stringify(data), {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${
-            localStorage.getItem('chat_auth_token') ||
-            sessionStorage.getItem('chat_auth_token')
-          }`,
+          Authorization: `Bearer ${this.props.auth.authToken}`,
         },
       })
       .then((response) => {
@@ -60,42 +57,44 @@ const UpdateProfile = (props) => {
         });
       })
       .catch((error) => {
-        displayFlash.emit('get-message', {
-          message: `${
-            error.response
-              ? error.response.data.message || error.response.data
-              : 'Unable to connect to server, please try again later'
-          }`,
-          type: 'danger',
-        });
-        setState({
-          user: props.user.user ? { ...props.user.user } : null,
-          isUpdating: false,
-        });
+        if (
+          error.response &&
+          (error.response.status === 401 ||
+            error.response.statusText === 'Unauthorized')
+        ) {
+          props.logoutFetch();
+        } else {
+          displayFlash.emit('get-message', {
+            message: `${
+              error.response
+                ? error.response.data.message || error.response.data
+                : 'Unable to connect to server, please try again later'
+            }`,
+            type: 'danger',
+          });
+          setState({
+            user: props.user.user ? { ...props.user.user } : null,
+            isUpdating: false,
+          });
+        }
       });
   };
   return props.user.isFetching ? (
     <div className="loading-wrapper text-center m-5">
       <Loading isTrue={props.user.isFetching} />
     </div>
-  ) : props.user.responseStatus === 503 ? (
-    <div className="update-profile-wrapper">
+  ) : !state.user ? (
+    <div className="profile-wrapper">
       <div className="main-wrapper-error">
         <img
           src={require('../../assets/images/server_down.png')}
           alt="not found"
           width="100%"
         />
-        <h3 className="text-center">{state.errMessage}</h3>
-        <button
-          className="main-theme-btn"
-          onClick={props.getuserFetch.bind(null)}
-        >
-          Refresh
-        </button>
+        <h3 className="text-center">Some error occured, please try again</h3>
       </div>
     </div>
-  ) : !state.user ? null : (
+  ) : (
     <div className="update-profile-wrapper">
       <div className="main-page-card">
         <div className="mb-5">

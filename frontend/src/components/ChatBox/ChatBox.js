@@ -1,17 +1,21 @@
-import React, { Component } from "react";
-import { Link } from "react-router-dom";
-import axios from "axios";
-import moment from "moment";
+import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
+import axios from 'axios';
+import moment from 'moment';
 
-import "./chatbox.css";
+import './chatbox.css';
 
-import Inbox from "./Inbox/Inbox";
-import Messages from "./Messages/Messages";
-import Loading from "../Loading/Loading";
+import Inbox from './Inbox/Inbox';
+import Messages from './Messages/Messages';
+import Loading from '../Loading/Loading';
 
-import displayFlash from "../../utils/flashEvent";
+import displayFlash from '../../utils/flashEvent';
 
-const baseUrl = process.env.REACT_APP_API_BASE_URL;
+import {
+  baseUrl,
+  storageAuthTokenName,
+  storageRefreshTokenName,
+} from '../../utils/constant';
 
 // const socketInstance = socketIOClient(baseUrl);
 class ChatBox extends Component {
@@ -46,12 +50,12 @@ class ChatBox extends Component {
   fetchGroupList = () => {
     this.setState({ isFetching: true });
     axios
-      .get(baseUrl + "group/get-group-list", {
+      .get(baseUrl + 'group/get-group-list', {
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
           Authorization: `Bearer ${
-            localStorage.getItem("chat_auth_token") ||
-            sessionStorage.getItem("chat_auth_token")
+            localStorage.getItem('chat_auth_token') ||
+            sessionStorage.getItem('chat_auth_token')
           }`,
         },
         withCredentials: true,
@@ -63,7 +67,7 @@ class ChatBox extends Component {
               groupId: group._id,
               name: group.name,
               owner: group.owner,
-              createdAt: moment(group.createdAt).format("Do MMMM YYYY"),
+              createdAt: moment(group.createdAt).format('Do MMMM YYYY'),
             },
             messages: [...group.messages],
           });
@@ -75,7 +79,7 @@ class ChatBox extends Component {
           isFetching: false,
         });
         if (this.state.socketInstance) {
-          this.state.socketInstance.emit("join-group", {
+          this.state.socketInstance.emit('join-group', {
             groupId: this.state.currentGroup.groupDetail.groupId,
             userId: this.props.auth.userId,
           });
@@ -88,13 +92,13 @@ class ChatBox extends Component {
           currentGroup: null,
         });
         error.response
-          ? displayFlash.emit("get-message", {
+          ? displayFlash.emit('get-message', {
               message: error.response.data.message,
-              type: "danger",
+              type: 'danger',
             })
-          : displayFlash.emit("get-message", {
+          : displayFlash.emit('get-message', {
               message: `Network Error, Connection to server couldn't be established. Please try again.`,
-              type: "danger",
+              type: 'danger',
             });
       });
   };
@@ -124,7 +128,7 @@ class ChatBox extends Component {
                   currentGroupName={
                     this.state.currentGroup
                       ? this.state.currentGroup.groupDetail.name
-                      : ""
+                      : ''
                   }
                   updateCurrentRecipient={this.updateCurrentRecipient}
                   fetchGroupList={this.fetchGroupList}

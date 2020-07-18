@@ -279,36 +279,21 @@ exports.userLoginController = (req, res, next) => {
       .catch((err) => next(err));
   } else {
     // login if user is already verified
-    const token = authenticate.getToken({ _id: req.user._id });
+    const authToken = authenticate.getAuthToken({ _id: req.user._id });
     res.statusCode = 200;
     res.setHeader('Content-Type', 'application/json');
     res.json({
       message: 'You are successfully logged in!',
-      token,
+      authToken,
       userId: req.user._id,
       username: req.user.username,
     });
   }
 };
 
-exports.userLogoutController = (req, res, next) => {
-  if (req.user) {
-    req.session.destroy();
-    res.clearCookie('SESSION_ID'); // clean up!
-    res.statusCode = 200;
-    res.setHeader('Content-Type', 'application/json');
-    res.json({ message: 'You are successfully logged out!' });
-  } else {
-    const err = new Error('You are not logged in!');
-    err.status = 403;
-    next(err);
-  }
-};
-
 exports.getuserController = (req, res, next) => {
   User.findOne({
-    username:
-      req.query.username !== '' ? req.query.username : req.user.username,
+    username: req.query.username || req.user.username,
   })
     .populate([
       { path: 'friendList', model: 'User' },

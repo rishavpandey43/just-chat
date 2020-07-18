@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 
-import Loading from '../Loading/Loading';
+import Loading from '../../components/Loading/Loading';
 
 import { baseUrl } from '../../utils/constant';
 import displayFlash from '../../utils/flashEvent';

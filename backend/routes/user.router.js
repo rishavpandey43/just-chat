@@ -38,12 +38,6 @@ userRouter
     userRouterController.userLoginController
   )
   .get(
-    '/logout',
-    cors.corsWithOptions,
-    authenticate.verifyUser,
-    userRouterController.userLogoutController
-  )
-  .get(
     '/get-user-detail',
     cors.corsWithOptions,
     authenticate.verifyUser,
