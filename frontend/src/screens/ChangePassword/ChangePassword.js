@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-
-import displayFlash from '../../utils/flashEvent';
+import { toast } from 'react-toastify';
 
 import Loading from '../../components/Loading/Loading';
 
@@ -33,10 +32,10 @@ const ChangePassword = (props) => {
     tempState.updating = true;
     setState({ ...tempState });
     axios
-      .put(baseUrl + 'user/change-password', JSON.stringify(state), {
+      .put(baseUrl + '/user/change-password', JSON.stringify(state), {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${this.props.auth.authToken}`,
+          Authorization: `Bearer ${props.auth.authToken}`,
         },
         withCredentials: true,
       })
@@ -47,9 +46,14 @@ const ChangePassword = (props) => {
           newPassword: '',
           confirmNewPassword: '',
         });
-        displayFlash.emit('get-message', {
-          message: response.data.message,
-          type: 'success',
+        toast.success(response.data.message, {
+          position: 'top-right',
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
         });
       })
       .catch((error) => {
@@ -59,44 +63,24 @@ const ChangePassword = (props) => {
           newPassword: '',
           confirmNewPassword: '',
         });
-        if (error.response) {
-          displayFlash.emit('get-message', {
-            message:
-              error.response.data.message ||
-              'password incorrect, try with valid password',
-            type: 'danger',
-          });
-        } else {
-          displayFlash.emit('get-message', {
-            message: `Network Error, Connection to server couldn't be established. Please try again.`,
-            type: 'danger',
-          });
-        }
+        toast.error(
+          error.response
+            ? error.response.data.errMessage || error.response.statusText
+            : 'Some error occured, please try again',
+          {
+            position: 'top-right',
+            autoClose: 2000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+          }
+        );
       });
   };
 
-  return props.user.isFetching ? (
-    <div className="loading-wrapper text-center m-5">
-      <Loading isTrue={props.user.isFetching} />
-    </div>
-  ) : props.user.responseStatus === 503 ? (
-    <div className="change-password-wrapper">
-      <div className="main-wrapper-error">
-        <img
-          src={require('../../assets/images/server_down.png')}
-          alt="not found"
-          width="100%"
-        />
-        <h3 className="text-center">{props.user.errMessage}</h3>
-        <button
-          className="main-theme-btn"
-          onClick={props.getuserFetch.bind(null)}
-        >
-          Refresh
-        </button>
-      </div>
-    </div>
-  ) : !props.user ? null : (
+  return !props.user ? null : (
     <div className="change-password-wrapper">
       <div className="main-page-card">
         <div className="heading">

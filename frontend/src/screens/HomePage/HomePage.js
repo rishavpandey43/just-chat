@@ -3,26 +3,16 @@ import { Link } from 'react-router-dom';
 
 import './homepage.css';
 
-import Loading from '../../components/Loading/Loading';
-
-const HomePage = (props) => {
+const HomePage = ({ auth, user, history }) => {
   useEffect(() => {
-    if (props.auth.isAuthenticated) {
-      if (props.user.user) {
-        props.history.push(`/profile/${props.user.user.username}`);
+    if (auth.isAuthenticated) {
+      if (user.user) {
+        history.push(`/login`);
       }
     }
-  }, []);
+  }, [auth, user, history]);
 
-  return props.auth.isAuthenticated ? (
-    props.user.isLoading ? (
-      <div className="loading-wrapper text-center m-5">
-        <Loading isTrue={props.user.isLoading} />
-      </div>
-    ) : (
-      ''
-    )
-  ) : (
+  return (
     <div className="home-page">
       <div className="container">
         <div className="page-wrapper">
