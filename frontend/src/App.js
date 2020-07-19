@@ -10,6 +10,7 @@ import {
 // import bootstrap for css styling
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './app.css';
+import 'react-toastify/dist/ReactToastify.css';
 
 // import components
 import SideBar from './components/SideBar/SideBar';
@@ -23,17 +24,41 @@ import Friends from './screens/Friends/Friends';
 import ChangePassword from './screens/ChangePassword/ChangePassword';
 import UpdateProfile from './screens/UpdateProfile/UpdateProfile';
 
-import Flash from './components/Flash/Flash';
+import Loading from './components/Loading/Loading';
 
 export default function MainApp(props) {
+  let auth = props.auth;
+  let getUserFetch = props.getUserFetch;
   useEffect(() => {
-    if (props.auth.isAuthenticated) {
-      props.getuserFetch();
+    if (auth.isAuthenticated) {
+      getUserFetch();
     }
-  }, []);
-  return (
+  }, [auth, getUserFetch]);
+  return props.user.isFetching ? (
+    <div className="loading-wrapper d-flex justify-content-center align-items-center">
+      <div className="loader-error-wrapper">
+        <Loading isTrue={props.user.isFetching}></Loading>
+      </div>
+    </div>
+  ) : props.user.errMessage ? (
+    <div className="main-wrapper-error">
+      <img
+        src={require('./assets/images/common_error.png')}
+        alt="not found"
+        width="100%"
+      />
+      <h3 className="text-center">{props.user.errMessage}</h3>
+      <button
+        className="btn main-btn err-btn"
+        onClick={() => {
+          props.getUserFetch();
+        }}
+      >
+        Retry
+      </button>
+    </div>
+  ) : (
     <div style={{ position: 'relative' }}>
-      <Flash />
       <div className="main-wrapper">
         <SideBar {...props} />
         <main
@@ -42,7 +67,7 @@ export default function MainApp(props) {
           }`}
         >
           <Router>
-            <Switch>
+            <Switch location={props.location}>
               <Route exact path="/" component={() => <HomePage {...props} />} />
               <Route
                 path="/user/activate-account/:token"

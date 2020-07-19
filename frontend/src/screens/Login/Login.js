@@ -1,7 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
+import { toast } from 'react-toastify';
 
 import Loading from '../../components/Loading/Loading';
+
+import {
+  baseUrl,
+  storageAuthTokenName,
+  storageUserIdName,
+} from '../../utils/constant';
 
 import './login.css';
 const Login = (props) => {
@@ -18,6 +26,7 @@ const Login = (props) => {
       username: '',
       password: '',
     },
+    isLoading: false,
     rememberMe: false,
   });
 
@@ -27,12 +36,70 @@ const Login = (props) => {
       credentials: { ...state.credentials },
       rememberMe: state.rememberMe,
     };
-    props.loginFetch(formData);
+
+    setState({ ...state, isLoading: true });
+
+    axios
+      .post(baseUrl + '/user/login', JSON.stringify(formData.credentials), {
+        headers: { 'Content-Type': 'application/json' },
+        withCredentials: true,
+      })
+      .then((response) => {
+        setState({ ...state, isLoading: false });
+        if (formData.rememberMe) {
+          localStorage.setItem(storageAuthTokenName, response.data.authToken);
+          localStorage.setItem(storageUserIdName, response.data.userId);
+        } else {
+          sessionStorage.setItem(storageAuthTokenName, response.data.authToken);
+          sessionStorage.setItem(storageUserIdName, response.data.userId);
+        }
+        props.loginSuccess(response.data);
+        props.getUserFetch();
+        toast.success(response.data.message, {
+          position: 'top-right',
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      })
+      .catch((error) => {
+        setState({ ...state, isLoading: false });
+        if (error.response) {
+          toast.error(
+            `${error.response.data.errMessage || error.response.statusText}`,
+            {
+              position: 'top-right',
+              autoClose: 2000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+            }
+          );
+        } else {
+          toast.error(
+            `Network Error, Connection to server couldn't be established. Please try again.`,
+            {
+              position: 'top-right',
+              autoClose: 2000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+            }
+          );
+        }
+      });
   };
 
-  return props.auth.isAuthenticated && !props.user.user ? (
+  return props.auth.isAuthenticated && props.user.isFetching ? (
     <div style={{ width: '40%', margin: '4rem auto', textAlign: 'center' }}>
-      <Loading isTrue={props.auth.isAuthenticated && !props.user.user} />
+      <Loading isTrue={props.auth.isAuthenticated && props.user.isFetching} />
     </div>
   ) : (
     <div className="login-signup">
@@ -118,7 +185,7 @@ const Login = (props) => {
                         <button type="submit" className="main-theme-btn">
                           Login
                         </button>
-                        <Loading isTrue={props.auth.isLoading} />
+                        <Loading isTrue={state.isLoading} />
                       </div>
                     </form>
                     <div className="home-page-link">

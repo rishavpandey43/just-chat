@@ -7,7 +7,6 @@ import { storageAuthTokenName, storageUserIdName } from '../../utils/constant';
 // we would also want a util to check if the token is expired.
 
 const initialState = {
-  isLoading: false,
   isAuthenticated:
     localStorage.getItem(storageAuthTokenName) ||
     sessionStorage.getItem(storageAuthTokenName)
@@ -27,16 +26,9 @@ const initialState = {
 
 const auth = (state = initialState, action) => {
   switch (action.type) {
-    case actionTypes.LOGIN_REQUEST:
-      return {
-        ...state,
-        isLoading: true,
-        isAuthenticated: false,
-      };
     case actionTypes.LOGIN_SUCCESS:
       return {
         ...state,
-        isLoading: false,
         isAuthenticated: true,
         errMessage: '',
         successMessage: action.message,
@@ -46,19 +38,12 @@ const auth = (state = initialState, action) => {
     case actionTypes.LOGIN_FAILURE:
       return {
         ...state,
-        isLoading: false,
         isAuthenticated: false,
         errMessage: action.message,
-      };
-    case actionTypes.LOGOUT_REQUEST:
-      return {
-        ...state,
-        isLoading: true,
       };
     case actionTypes.LOGOUT_SUCCESS:
       return {
         ...state,
-        isLoading: false,
         isAuthenticated: false,
         errMessage: '',
         successMessage: action.message,
@@ -69,7 +54,6 @@ const auth = (state = initialState, action) => {
     case actionTypes.LOGOUT_FAILURE:
       return {
         ...state,
-        isLoading: false,
         errMessage: action.message,
         successMessage: '',
       };

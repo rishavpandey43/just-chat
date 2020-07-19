@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import { toast } from 'react-toastify';
 
 import Loading from '../../components/Loading/Loading';
 
@@ -37,20 +38,38 @@ class ActivateAccount extends Component {
           activationErrorMessage: null,
         });
         this.props.history.push('/login');
-        displayFlash.emit('get-message', {
-          message: response.data.message || 'Account activated successfully',
-          type: 'success',
-        });
+        toast.success(
+          response.data.message || 'Account activated successfully',
+          {
+            position: 'top-right',
+            autoClose: 2000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+          }
+        );
       })
-      .catch((err) => {
+      .catch((error) => {
         this.setState({
           isActivationLoading: false,
-          activationErrorMessage: err.response.data.errMessage,
+          activationErrorMessage: error.response.data.errMessage,
         });
-        displayFlash.emit('get-message', {
-          message: 'Account activation failed',
-          type: 'danger',
-        });
+        toast.error(
+          error.response
+            ? error.response.data.errMessage || error.response.statusText
+            : 'Some error occured, please try again',
+          {
+            position: 'top-right',
+            autoClose: 2000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+          }
+        );
       });
   };
   _resendVerificationLink = (e) => {
