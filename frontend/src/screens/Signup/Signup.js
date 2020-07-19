@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
-import axios from 'axios';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
+import { toast } from 'react-toastify';
 
 import Loading from '../../components/Loading/Loading';
 
 import './signup.css';
 
 import { baseUrl } from '../../utils/constant';
-import displayFlash from '../../utils/flashEvent';
 
 class Signup extends Component {
   constructor(props) {
@@ -116,9 +116,14 @@ class Signup extends Component {
               rePassword: '',
             },
           });
-          displayFlash.emit('get-message', {
-            message: responseData.message,
-            type: 'success',
+          toast.success(responseData.message, {
+            position: 'top-right',
+            autoClose: 2000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
           });
         })
         .catch((err) => {
@@ -136,9 +141,14 @@ class Signup extends Component {
             isLoading: false,
             responseData,
           });
-          displayFlash.emit('get-message', {
-            message: responseData.message,
-            type: 'danger',
+          toast.error(responseData.message, {
+            position: 'top-right',
+            autoClose: 2000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
           });
         });
     } else alert('Please fill all the details first to signup');

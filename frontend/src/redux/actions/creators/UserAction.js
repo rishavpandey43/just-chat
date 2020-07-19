@@ -6,33 +6,30 @@ import * as actionTypes from '../types/actionTypes';
 import { logoutFetch } from './AuthActions';
 
 // * Import utilites
-import displayFlash from '../../../utils/flashEvent';
 import { baseUrl, storageAuthTokenName } from '../../../utils/constant';
 
-export const getuserRequest = () => {
+export const getUserRequest = () => {
   return {
     type: actionTypes.GET_USER_DETAIL_REQUEST,
   };
 };
 
-export const getuserSuccess = (response) => {
+export const getUserSuccess = (data) => {
   return {
     type: actionTypes.GET_USER_DETAIL_SUCCESS,
-    user: response.data.user,
-    status: response.status,
+    user: data.user,
   };
 };
 
-export const getuserFailure = (response) => {
+export const getUserFailure = (data) => {
   return {
     type: actionTypes.GET_USER_DETAIL_FAILURE,
-    message: response.message,
-    status: response.status,
+    message: data.message,
   };
 };
 
-export const getuserFetch = () => (dispatch) => {
-  dispatch(getuserRequest());
+export const getUserFetch = () => (dispatch) => {
+  dispatch(getUserRequest());
 
   axios
     .get(baseUrl + '/user/get-user-detail', {
@@ -45,7 +42,7 @@ export const getuserFetch = () => (dispatch) => {
       },
     })
     .then((response) => {
-      dispatch(getuserSuccess(response));
+      dispatch(getUserSuccess(response.data));
     })
     .catch((error) => {
       if (
@@ -56,21 +53,12 @@ export const getuserFetch = () => (dispatch) => {
         dispatch(logoutFetch());
       } else {
         dispatch(
-          getuserFailure({
+          getUserFailure({
             message: error.response
               ? error.response.statusText || error.response.data.message
               : 'Unable to connect to server, please try again later',
-            status: error.response ? error.response.status || 503 : 503,
           })
         );
-        displayFlash.emit('get-message', {
-          message: `${
-            error.response
-              ? error.response.statusText || error.response.data.message
-              : 'Unable to connect to server, please try again later'
-          }`,
-          type: 'danger',
-        });
       }
     });
 };

@@ -3,6 +3,29 @@ body {
   /* word-break: break-all; */
 }
 
+.text-green {
+  color: #6fcf97;
+}
+
+.text-orange {
+  color: #f2c34c;
+}
+
+.text-red {
+  color: #eb5757;
+}
+
+.loading-wrapper {
+  width: 100vw;
+  height: 100vh;
+}
+
+.loader-error-wrapper {
+  margin: 2rem auto;
+  text-align: center;
+  font-size: 1.5rem;
+}
+
 .main-wrapper {
   position: relative;
   display: flex;
@@ -58,6 +81,16 @@ input[type='number']::-webkit-outer-spin-button {
 .btn {
   font-size: 1.2em;
   box-shadow: none;
+}
+
+.err-btn {
+  margin-top: 2rem;
+  background-color: #c90bce;
+  color: #ffffff;
+}
+
+.err-btn:hover {
+  color: #ffffff;
 }
 
 .main-wrapper-error {

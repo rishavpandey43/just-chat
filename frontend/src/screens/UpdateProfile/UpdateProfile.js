@@ -1,15 +1,15 @@
-import React, { useState, useEffect, Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import 'react-datepicker/dist/react-datepicker.css';
+import { toast } from 'react-toastify';
 
 import Loading from '../../components/Loading/Loading';
 
 import './updateProfile.css';
+import 'react-datepicker/dist/react-datepicker.css';
 
 import { baseUrl } from '../../utils/constant';
-import displayFlash from '../../utils/flashEvent';
 
-const UpdateProfile = (props) => {
+const UpdateProfile = ({ auth, user, getUserSuccess, logoutFetch }) => {
   const [state, setState] = useState({
     user: null,
     isUpdating: false,
@@ -17,14 +17,14 @@ const UpdateProfile = (props) => {
 
   useEffect(() => {
     setState({
-      user: props.user.user ? { ...props.user.user } : null,
+      user: user.user ? { ...user.user } : null,
       isUpdating: false,
     });
-  }, []);
+  }, [user]);
 
   const _updateProfile = (e) => {
     setState({
-      user: { ...state.user },
+      ...state,
       isUpdating: true,
     });
     e.preventDefault();
@@ -42,19 +42,21 @@ const UpdateProfile = (props) => {
       .put(baseUrl + '/user/update-user-detail', JSON.stringify(data), {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${this.props.auth.authToken}`,
+          Authorization: `Bearer ${auth.authToken}`,
         },
       })
       .then((response) => {
-        props.getuserFetch();
-        displayFlash.emit('get-message', {
-          message: response.data.message,
-          type: 'success',
+        toast.success(response.data.message, {
+          position: 'top-right',
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
         });
-        setState({
-          user: { ...state.user },
-          isUpdating: false,
-        });
+        setState({ ...state, isUpdating: false });
+        getUserSuccess(response.data);
       })
       .catch((error) => {
         if (
@@ -62,39 +64,32 @@ const UpdateProfile = (props) => {
           (error.response.status === 401 ||
             error.response.statusText === 'Unauthorized')
         ) {
-          props.logoutFetch();
+          logoutFetch();
         } else {
-          displayFlash.emit('get-message', {
-            message: `${
+          toast.error(
+            `${
               error.response
                 ? error.response.data.message || error.response.data
                 : 'Unable to connect to server, please try again later'
             }`,
-            type: 'danger',
-          });
+            {
+              position: 'top-right',
+              autoClose: 2000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+            }
+          );
           setState({
-            user: props.user.user ? { ...props.user.user } : null,
+            ...state,
             isUpdating: false,
           });
         }
       });
   };
-  return props.user.isFetching ? (
-    <div className="loading-wrapper text-center m-5">
-      <Loading isTrue={props.user.isFetching} />
-    </div>
-  ) : !state.user ? (
-    <div className="profile-wrapper">
-      <div className="main-wrapper-error">
-        <img
-          src={require('../../assets/images/server_down.png')}
-          alt="not found"
-          width="100%"
-        />
-        <h3 className="text-center">Some error occured, please try again</h3>
-      </div>
-    </div>
-  ) : (
+  return !state.user ? null : (
     <div className="update-profile-wrapper">
       <div className="main-page-card">
         <div className="mb-5">

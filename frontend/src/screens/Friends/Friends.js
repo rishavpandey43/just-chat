@@ -1,10 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { IoMdOptions } from 'react-icons/io';
 
 import './friends.css';
-
-import Loading from '../../components/Loading/Loading';
 
 const Friends = (props) => {
   const [state, setState] = useState({
@@ -51,11 +48,7 @@ const Friends = (props) => {
 
   // const option
 
-  return props.user.isFetching ? (
-    <div className="loading-wrapper text-center m-5">
-      <Loading isTrue={props.user.isFetching} />
-    </div>
-  ) : (
+  return (
     <div className="profile-wrapper">
       <div className="main-page-card">
         <div>

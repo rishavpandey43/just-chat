@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { toast } from 'react-toastify';
 
 import { FaHome, FaUser } from 'react-icons/fa';
 import { FiPhone, FiMail } from 'react-icons/fi';
@@ -9,31 +10,36 @@ import Loading from '../../components/Loading/Loading';
 import './profile.css';
 
 import { baseUrl } from '../../utils/constant';
-import displayFlash from '../../utils/flashEvent';
 
-const Profile = (props) => {
+const Profile = ({ auth, user, match, getuserFetch, logoutFetch }) => {
   const [state, setState] = useState({
-    user: props.user.user ? { ...props.user.user } : null,
+    user: user.user ? { ...user.user } : null,
     isFetching: false,
     isLoading1: false,
     isLoading2: false,
-    errMessage: props.user.errMessage,
+    errMessage: user.errMessage,
   });
 
   useEffect(() => {
-    let tempState = { ...state };
-    if (props.user.user) {
-      if (props.user.user.username !== props.match.params.username) {
+    let tempState = {
+      user: user.user ? { ...user.user } : null,
+      isFetching: false,
+      isLoading1: false,
+      isLoading2: false,
+      errMessage: user.errMessage,
+    };
+    if (user.user) {
+      if (user.user.username !== match.params.username) {
         tempState.isFetching = true;
         setState({ ...tempState });
         axios
           .get(baseUrl + '/user/get-user-detail', {
             headers: {
               'Content-Type': 'application/json',
-              Authorization: `Bearer ${props.auth.authToken}`,
+              Authorization: `Bearer ${auth.authToken}`,
             },
             params: {
-              username: `${props.match.params.username}`,
+              username: `${match.params.username}`,
             },
           })
           .then((response) => {
@@ -47,7 +53,7 @@ const Profile = (props) => {
               (error.response.status === 401 ||
                 error.response.statusText === 'Unauthorized')
             ) {
-              props.logoutFetch();
+              logoutFetch();
             } else {
               tempState.user = null;
               tempState.errMessage = error.response
@@ -58,11 +64,17 @@ const Profile = (props) => {
             }
           });
       } else {
-        tempState.user = props.user.user ? { ...props.user.user } : null;
+        tempState.user = user.user ? { ...user.user } : null;
         setState({ ...tempState });
       }
     }
-  }, []);
+  }, [
+    auth.authToken,
+    logoutFetch,
+    match.params.username,
+    user.user,
+    user.errMessage,
+  ]);
 
   const _friendRequestAction = (endPoint, loading) => {
     let tempState = { ...state };
@@ -75,18 +87,23 @@ const Profile = (props) => {
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${props.auth.authToken}`,
+            Authorization: `Bearer ${auth.authToken}`,
           },
         }
       )
       .then((response) => {
-        props.getuserFetch();
+        getuserFetch();
         tempState.user = { ...response.data.user };
         tempState[loading] = false;
         setState({ ...tempState });
-        displayFlash.emit('get-message', {
-          message: response.data.message,
-          type: 'success',
+        toast.success(response.data.message, {
+          position: 'top-right',
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
         });
       })
       .catch((error) => {
@@ -95,26 +112,34 @@ const Profile = (props) => {
           (error.response.status === 401 ||
             error.response.statusText === 'Unauthorized')
         ) {
-          props.logoutFetch();
+          logoutFetch();
         } else {
           tempState.errMessage = error.response
             ? error.response.data.errMessage || error.response.statusText
             : 'Some error occured, please try again';
           tempState[loading] = false;
           setState({ ...tempState });
-          displayFlash.emit('get-message', {
-            message: error.response
+          toast.error(
+            error.response
               ? error.response.data.errMessage || error.response.statusText
               : 'Some error occured, please try again',
-            type: 'error',
-          });
+            {
+              position: 'top-right',
+              autoClose: 2000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+            }
+          );
         }
       });
   };
 
-  return props.user.isFetching || state.isFetching ? (
-    <div className="loading-wrapper text-center m-5">
-      <Loading isTrue={props.user.isFetching || state.isFetching} />
+  return state.isFetching ? (
+    <div className="d-flex justify-content-center align-items-center m-5">
+      <Loading isTrue={user.isFetching || state.isFetching} />
     </div>
   ) : !state.user || state.errMessage ? (
     <div className="profile-wrapper">
@@ -136,15 +161,15 @@ const Profile = (props) => {
               <div className="profile-detail text-center">
                 <div className="user-name">
                   <h3>{`${state.user.firstName} ${state.user.lastName} ${
-                    state.user._id === props.auth.userId ? '(You)' : ''
+                    state.user._id === auth.userId ? '(You)' : ''
                   }`}</h3>
                   <span>{state.user.title}</span>
                 </div>
-                {state.user._id === props.auth.userId ? (
+                {state.user._id === auth.userId ? (
                   ''
                 ) : (
                   <div className="action-btn mt-5">
-                    {props.user.user.receivedFriendRequest.filter(
+                    {user.user.receivedFriendRequest.filter(
                       (friend) => friend._id === state.user._id
                     )[0] ? (
                       <>
@@ -175,10 +200,10 @@ const Profile = (props) => {
                           <Loading isTrue={state.isLoading2} />
                         </div>
                       </>
-                    ) : !props.user.user.friendList.filter(
+                    ) : !user.user.friendList.filter(
                         (friend) => friend._id === state.user._id
                       )[0] ? (
-                      !props.user.user.sentFriendRequest.filter(
+                      !user.user.sentFriendRequest.filter(
                         (friend) => friend._id === state.user._id
                       )[0] ? (
                         <div>
@@ -211,7 +236,7 @@ const Profile = (props) => {
                       )
                     ) : null}
 
-                    {props.user.user.friendList.filter(
+                    {user.user.friendList.filter(
                       (friend) => friend._id === state.user._id
                     )[0] ? (
                       <div className="row mt-4">
@@ -325,22 +350,5 @@ const Profile = (props) => {
     </div>
   );
 };
-
-{
-  /* <div className="search-bar-wrapper">
-  <form>
-    <div className="search-bar">
-      <div className="search-input">
-        <input type="text-wrapper" className="input" placeholder="search" required />
-      </div>
-      <div className="search-btn">
-        <button className="btn">
-          <MdSearch />
-        </button>
-      </div>
-    </div>
-  </form>
-</div>; */
-}
 
 export default Profile;
