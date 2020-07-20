@@ -11,13 +11,21 @@ import './profile.css';
 
 import { baseUrl } from '../../utils/constant';
 
-const Profile = ({ auth, user, match, getuserFetch, logoutFetch }) => {
+const Profile = ({
+  auth,
+  user,
+  match,
+  getUserSuccess,
+  getUserFetch,
+  logoutFetch,
+}) => {
   const [state, setState] = useState({
     user: user.user ? { ...user.user } : null,
     isFetching: false,
     isLoading1: false,
     isLoading2: false,
-    errMessage: user.errMessage,
+    profileErrMessage: user.errMessage,
+    errMessage: '',
   });
 
   useEffect(() => {
@@ -26,7 +34,7 @@ const Profile = ({ auth, user, match, getuserFetch, logoutFetch }) => {
       isFetching: false,
       isLoading1: false,
       isLoading2: false,
-      errMessage: user.errMessage,
+      profileErrMessage: user.errMessage,
     };
     if (user.user) {
       if (user.user.username !== match.params.username) {
@@ -56,7 +64,7 @@ const Profile = ({ auth, user, match, getuserFetch, logoutFetch }) => {
               logoutFetch();
             } else {
               tempState.user = null;
-              tempState.errMessage = error.response
+              tempState.profileErrMessage = error.response
                 ? error.response.data.errMessage || error.response.statusText
                 : 'Some error occured, please try again';
               tempState.isFetching = false;
@@ -77,6 +85,16 @@ const Profile = ({ auth, user, match, getuserFetch, logoutFetch }) => {
   ]);
 
   const _friendRequestAction = (endPoint, loading) => {
+    if (endPoint === '/user/unfriend') {
+      if (
+        !window.confirm(
+          `Do you really want to unfriend ${state.user.firstName} ${state.user.lastName}?`
+        )
+      ) {
+        return;
+      }
+    }
+
     let tempState = { ...state };
     tempState[loading] = true;
     setState({ ...tempState });
@@ -92,8 +110,8 @@ const Profile = ({ auth, user, match, getuserFetch, logoutFetch }) => {
         }
       )
       .then((response) => {
-        getuserFetch();
-        tempState.user = { ...response.data.user };
+        getUserFetch();
+        tempState.user = response.data.user1;
         tempState[loading] = false;
         setState({ ...tempState });
         toast.success(response.data.message, {
@@ -141,7 +159,7 @@ const Profile = ({ auth, user, match, getuserFetch, logoutFetch }) => {
     <div className="d-flex justify-content-center align-items-center m-5">
       <Loading isTrue={user.isFetching || state.isFetching} />
     </div>
-  ) : !state.user || state.errMessage ? (
+  ) : !state.user || state.profileErrMessage ? (
     <div className="profile-wrapper">
       <div className="main-wrapper-error">
         <img
@@ -149,7 +167,7 @@ const Profile = ({ auth, user, match, getuserFetch, logoutFetch }) => {
           alt="not found"
           width="100%"
         />
-        <h3 className="text-center">{state.errMessage}</h3>
+        <h3 className="text-center">{state.profileErrMessage}</h3>
       </div>
     </div>
   ) : (

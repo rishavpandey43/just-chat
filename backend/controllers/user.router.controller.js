@@ -376,7 +376,7 @@ exports.sendFriendRequestController = (req, res, next) => {
         next(err);
       } else {
         if (user1.friendList.indexOf(req.user._id) !== -1) {
-          const err = new Error(`You both are already friends.`);
+          const err = new Error(`You both are friends already.`);
           err.status = 403;
           next(err);
         }
@@ -403,7 +403,7 @@ exports.sendFriendRequestController = (req, res, next) => {
                     next(err);
                   } else {
                     if (user2.friendList.indexOf(req.body.userId) !== -1) {
-                      const err = new Error(`You both are already friends.`);
+                      const err = new Error(`You both are friends already.`);
                       err.status = 403;
                       next(err);
                     }
@@ -460,7 +460,7 @@ exports.cancelFriendRequestController = (req, res, next) => {
         next(err);
       } else {
         if (user1.friendList.indexOf(req.user._id) !== -1) {
-          const err = new Error(`You both are already friends.`);
+          const err = new Error(`You both are friends already.`);
           err.status = 403;
           next(err);
         }
@@ -485,7 +485,7 @@ exports.cancelFriendRequestController = (req, res, next) => {
                     next(err);
                   } else {
                     if (user2.friendList.indexOf(req.body.userId) !== -1) {
-                      const err = new Error(`You both are already friends.`);
+                      const err = new Error(`You both are friends already.`);
                       err.status = 403;
                       next(err);
                     }
@@ -535,7 +535,7 @@ exports.acceptFriendRequestController = (req, res, next) => {
         next(err);
       } else {
         if (user1.friendList.indexOf(req.user._id) !== -1) {
-          const err = new Error(`You both are already friends.`);
+          const err = new Error(`You both are friends already.`);
           err.status = 403;
           next(err);
         }
@@ -563,7 +563,7 @@ exports.acceptFriendRequestController = (req, res, next) => {
                     next(err);
                   } else {
                     if (user2.friendList.indexOf(req.body.userId) !== -1) {
-                      const err = new Error(`You both are already friends.`);
+                      const err = new Error(`You both are friends already.`);
                       err.status = 403;
                       next(err);
                     }
@@ -615,7 +615,7 @@ exports.rejectFriendRequestController = (req, res, next) => {
         next(err);
       } else {
         if (user1.friendList.indexOf(req.user._id) !== -1) {
-          const err = new Error(`You both are already friends.`);
+          const err = new Error(`You both are friends already.`);
           err.status = 403;
           next(err);
         }
@@ -642,7 +642,7 @@ exports.rejectFriendRequestController = (req, res, next) => {
                     next(err);
                   } else {
                     if (user2.friendList.indexOf(req.body.userId) !== -1) {
-                      const err = new Error(`You both are already friends.`);
+                      const err = new Error(`You both are friends already.`);
                       err.status = 403;
                       next(err);
                     }
@@ -725,7 +725,7 @@ exports.unFriendRequestController = (req, res, next) => {
                           res.setHeader('Content-Type', 'application/json');
                           res.json({
                             user: user1,
-                            message: `${user1.username} unfriended successfully.`,
+                            message: `${user1.firstName} ${user1.lastName} is not your friend anymore.`,
                           });
                         })
                         .catch((err) => next(err));
