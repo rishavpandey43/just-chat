@@ -428,12 +428,20 @@ exports.sendFriendRequestController = (req, res, next) => {
                     } else {
                       user2.sentFriendRequest.push(req.body.userId);
                       user2
+                        .populate([
+                          { path: 'friendList', model: 'User' },
+                          { path: 'receivedFriendRequest', model: 'User' },
+                          { path: 'sentFriendRequest', model: 'User' },
+                        ])
+                        .execPopulate();
+                      user2
                         .save()
                         .then((user2) => {
                           res.statusCode = 200;
                           res.setHeader('Content-Type', 'application/json');
                           res.json({
-                            user: user1,
+                            user1: user1,
+                            user2: user2,
                             message: 'Friend request sent successfully.',
                           });
                         })
@@ -441,7 +449,7 @@ exports.sendFriendRequestController = (req, res, next) => {
                     }
                   }
                 })
-                .catch((err) => nexxt(err));
+                .catch((err) => next(err));
             })
             .catch((err) => next(err));
         }
@@ -503,12 +511,20 @@ exports.cancelFriendRequestController = (req, res, next) => {
                         1
                       );
                       user2
+                        .populate([
+                          { path: 'friendList', model: 'User' },
+                          { path: 'receivedFriendRequest', model: 'User' },
+                          { path: 'sentFriendRequest', model: 'User' },
+                        ])
+                        .execPopulate();
+                      user2
                         .save()
                         .then((user2) => {
                           res.statusCode = 200;
                           res.setHeader('Content-Type', 'application/json');
                           res.json({
-                            user: user1,
+                            user1: user1,
+                            user2: user2,
                             message: 'Friend request cancelled successfully.',
                           });
                         })
@@ -516,7 +532,7 @@ exports.cancelFriendRequestController = (req, res, next) => {
                     }
                   }
                 })
-                .catch((err) => nexxt(err));
+                .catch((err) => next(err));
             })
             .catch((err) => next(err));
         }
@@ -583,12 +599,20 @@ exports.acceptFriendRequestController = (req, res, next) => {
                       );
                       user2.friendList.push(req.body.userId);
                       user2
+                        .populate([
+                          { path: 'friendList', model: 'User' },
+                          { path: 'receivedFriendRequest', model: 'User' },
+                          { path: 'sentFriendRequest', model: 'User' },
+                        ])
+                        .execPopulate();
+                      user2
                         .save()
                         .then((user2) => {
                           res.statusCode = 200;
                           res.setHeader('Content-Type', 'application/json');
                           res.json({
-                            user: user1,
+                            user1: user1,
+                            user2: user2,
                             message: 'Friend request accepted successfully.',
                           });
                         })
@@ -596,7 +620,7 @@ exports.acceptFriendRequestController = (req, res, next) => {
                     }
                   }
                 })
-                .catch((err) => nexxt(err));
+                .catch((err) => next(err));
             })
             .catch((err) => next(err));
         }
@@ -661,12 +685,20 @@ exports.rejectFriendRequestController = (req, res, next) => {
                         1
                       );
                       user2
+                        .populate([
+                          { path: 'friendList', model: 'User' },
+                          { path: 'receivedFriendRequest', model: 'User' },
+                          { path: 'sentFriendRequest', model: 'User' },
+                        ])
+                        .execPopulate();
+                      user2
                         .save()
                         .then((user2) => {
                           res.statusCode = 200;
                           res.setHeader('Content-Type', 'application/json');
                           res.json({
-                            user: user1,
+                            user1: user1,
+                            user2: user2,
                             message: 'Friend request rejected successfully.',
                           });
                         })
@@ -674,7 +706,7 @@ exports.rejectFriendRequestController = (req, res, next) => {
                     }
                   }
                 })
-                .catch((err) => nexxt(err));
+                .catch((err) => next(err));
             })
             .catch((err) => next(err));
         }
@@ -719,12 +751,20 @@ exports.unFriendRequestController = (req, res, next) => {
                         1
                       );
                       user2
+                        .populate([
+                          { path: 'friendList', model: 'User' },
+                          { path: 'receivedFriendRequest', model: 'User' },
+                          { path: 'sentFriendRequest', model: 'User' },
+                        ])
+                        .execPopulate();
+                      user2
                         .save()
                         .then((user2) => {
                           res.statusCode = 200;
                           res.setHeader('Content-Type', 'application/json');
                           res.json({
-                            user: user1,
+                            user1: user1,
+                            user2: user2,
                             message: `${user1.firstName} ${user1.lastName} is not your friend anymore.`,
                           });
                         })
@@ -732,7 +772,7 @@ exports.unFriendRequestController = (req, res, next) => {
                     }
                   }
                 })
-                .catch((err) => nexxt(err));
+                .catch((err) => next(err));
             })
             .catch((err) => next(err));
         }

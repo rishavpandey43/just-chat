@@ -11,14 +11,7 @@ import './profile.css';
 
 import { baseUrl } from '../../utils/constant';
 
-const Profile = ({
-  auth,
-  user,
-  match,
-  getUserSuccess,
-  getUserFetch,
-  logoutFetch,
-}) => {
+const Profile = ({ auth, user, match, getUserSuccess, logoutFetch }) => {
   const [state, setState] = useState({
     user: user.user ? { ...user.user } : null,
     isFetching: false,
@@ -110,7 +103,7 @@ const Profile = ({
         }
       )
       .then((response) => {
-        getUserFetch();
+        getUserSuccess({ user: response.data.user2 });
         tempState.user = response.data.user1;
         tempState[loading] = false;
         setState({ ...tempState });
